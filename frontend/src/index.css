@@ -1,4 +1,3 @@
-
 :root {
   font-family: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
   --color-fondo: #FFEDDC;
@@ -6,7 +5,6 @@
   --color-texto-secundario: ;
 
   --color-principal: #D97742;
-  --color-principal-hover: ;
   --color-principal-texto: ;
 
   --color-secundario: ;
@@ -14,8 +12,17 @@
 
   --color-borde: ;
 
-  --color-boton-principal: ;
-  --color-boton-principal-texto: ;
+  --color-boton-principal: var(--color-principal);
+  --color-boton-principal-hover: #b86435;
+  --color-boton-principal-active: #97522d;
+  --color-boton-principal-texto: white;
+
+  --color-boton-secundario: white;
+  --color-boton-secundario-hover: #FFF3E8;
+  --color-boton-secundario-active: #F6E3D2;
+  --color-boton-secundario-texto: var(--color-principal);
+  --color-borde-boton: var(--color-principal);
+  --color-borde-boton-hover: #97522d;
 
   --color-enlace: ;
 
@@ -31,8 +38,6 @@
   --color-oferta: ;
   --color-reserva: ;
 }
-
-
 body {
   margin: 0;
   min-width: 320px;
@@ -47,30 +52,46 @@ h1 {
   color: var(--text-primary);
 }
 
-button {
-  border-radius: var(--border-radius-md);
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: var(--color-primary);
-  color: white;
-  cursor: pointer;
-  transition: background-color var(--transition-fast), transform var(--transition-fast);
+.ant-btn.btnPrincipal {
+  background: var(--color-boton-principal);
+  border-color: var(--color-boton-principal);
+  color: var(--color-boton-principal-texto);
+  border-radius: 8px;
+  height: 40px;
+  padding: 0 18px;
 }
 
-button:hover {
-  background-color: var(--color-primary-hover);
-  transform: translateY(-2px);
+.ant-btn.btnPrincipal:hover,
+.ant-btn.btnPrincipal:focus {
+  background: var(--color-boton-principal-hover);
+  border-color: var(--color-boton-principal-hover);
+  color: var(--color-boton-principal-texto);
 }
 
-button:active {
-  transform: translateY(0);
+.ant-btn.btnPrincipal:active {
+  background: var(--color-boton-principal-active);
+  border-color: var(--color-boton-principal-active);
+  color: var(--color-boton-principal-texto);
 }
 
-button:focus,
-button:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
+.ant-btn.btnSecundario {
+  background: var(--color-boton-secundario);
+  border: 1px solid var(--color-borde-boton);
+  color: var(--color-boton-secundario-texto);
+  border-radius: 8px;
+  height: 40px;
+  padding: 0 18px;
+}
+
+.ant-btn.btnSecundario:hover,
+.ant-btn.btnSecundario:focus {
+  background: var(--color-boton-secundario-hover);
+  border-color: var(--color-borde-boton-hover);
+  color: var(--color-borde-boton-hover);
+}
+
+.ant-btn.btnSecundario:active {
+  background: var(--color-boton-secundario-active);
+  border-color: var(--color-borde-boton-hover);
+  color: var(--color-borde-boton-hover);
 }
