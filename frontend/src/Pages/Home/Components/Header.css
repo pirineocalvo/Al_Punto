@@ -1,0 +1,69 @@
+header{
+    position: fixed;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 30px;
+    box-sizing: border-box;
+    background-color: var(--color-menu-fondo);
+}
+
+h2{
+    margin: 0 !important;
+}
+
+nav{
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.contenedorEnlace{
+    position: relative;
+}
+
+nav a,
+.enlacePadre{
+    display: block;
+    padding: 8px 0;
+    text-decoration: none;
+    color: black;
+    cursor: pointer;
+}
+
+nav a:hover,
+.submenu a:hover,
+.enlacePadre:hover{
+    border-bottom: 2px solid black;
+}
+
+.menuDesplegable::after{
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    height: 10px;
+}
+
+.submenu{
+    display: none;
+    position: absolute;
+    top: calc(100% + 10px);
+    left: -93px;
+    background-color: wheat;
+    padding: 10px;
+    min-width: 180px;
+    z-index: 1000;
+}
+
+.menuDesplegable:hover .submenu{
+    display: block;
+}
+
+.submenu a{
+    display: block;
+    padding: 6px 0;
+    margin: 0;
+    white-space: nowrap;
+}
