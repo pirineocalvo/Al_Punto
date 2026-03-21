@@ -1,0 +1,36 @@
+.light-theme {
+    /* Brand Colors */
+    --color-primary: #D97742;
+    --color-primary-hover: #C56636;
+    --color-accent: #3A2E2A;
+    
+    /* Backgrounds */
+    --bg-primary: #FFEDDC;
+    --bg-secondary: #F7D6BF;
+    --bg-card: #ffffff;
+    --bg-nav: #3A2E2A;
+    --bg-input: #FFF9F2;
+    
+    /* Text */
+    --text-primary: #FFECD1;
+    --text-secondary: #5C3D1E;
+    --text-on-dark: #FFECD1;
+    --text-muted: #9C7A5B;
+    
+    /* Borders & Dividers */
+    --border-color: #F0C99A;
+    --border-sutil: rgba(212, 147, 90, 0.3);
+    
+    /* Shadows */
+    --shadow-sm: 0 2px 4px rgba(28, 16, 7, 0.05);
+    --shadow-md: 0 4px 12px rgba(28, 16, 7, 0.1);
+
+    /* Legacy compatibility (mapeo a las nuevas variables) */
+    --primario: var(--bg-primary);
+    --secundario: var(--color-accent);
+    --texto: var(--text-primary);
+    --objetos: var(--color-primary);
+    --tarjetas: var(--bg-secondary);
+    --fondo-base: var(--bg-primary);
+    --texto-principal: var(--text-primary);
+}

@@ -1,0 +1,77 @@
+.menu-container {
+    padding: 100px 20px 60px;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+}
+
+.menu-container h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    width: 100%;
+    max-width: 1200px;
+}
+
+.menu-item-card {
+    background: var(--bg-card);
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    transition: var(--transition-normal);
+    border: 1px solid var(--border-sutil);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+}
+
+.menu-item-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-primary);
+}
+
+.ingredientlist {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px;
+}
+
+.ingredientlist td {
+    border: 1px solid var(--border-sutil);
+    padding: 4px 12px;
+    border-radius: var(--border-radius-full);
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.ingredientlist-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* Ant Design Table adjustments if used */
+.ant-table {
+    background: transparent !important;
+    color: var(--text-primary) !important;
+}
+
+.ant-table-thead > tr > th {
+    background: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+    border-bottom: 1px solid var(--border-sutil) !important;
+}
