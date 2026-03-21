@@ -5,7 +5,7 @@
   --color-texto-principal: ;
   --color-texto-secundario: ;
 
-  --color-principal: ;
+  --color-principal: #D97742;
   --color-principal-hover: ;
   --color-principal-texto: ;
 
@@ -20,7 +20,9 @@
   --color-enlace: ;
 
   --color-menu-fondo: #3A2E2A ;
-  --color-menu-texto: ;
+  --color-subMenu-fondo:var(--color-menu-fondo);
+  --color-subMenu-fondo-hover: #6e5851;
+  --color-menu-texto: #FFECD1;
 
   --color-footer-fondo: ;
   --color-footer-texto: ;
@@ -30,16 +32,6 @@
   --color-reserva: ;
 }
 
-a {
-  font-weight: 500;
-  color: var(--color-primary);
-  text-decoration: inherit;
-  transition: color var(--transition-fast);
-}
-
-a:hover {
-  color: var(--color-primary-hover);
-}
 
 body {
   margin: 0;

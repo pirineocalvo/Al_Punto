@@ -1,24 +1,29 @@
 <template>
     <header>
-        <h2>Al punto</h2>
-        <nav  v-if="!pantallaPeque">
-            <div v-for="entrada in (usuarioRegistrado ? menuConLog : menuSinLog)" :key="entrada.label" class="contenedorEnlace" :class="{ menuDesplegable: entrada.subMenu && entrada.subMenu.length }">
+        <h2>AL PUNTO</h2>
+        <nav v-if="!pantallaPeque">
+            <template v-for="entrada in (usuarioRegistrado ? menuConLog : menuSinLog)" :key="entrada.label">
+
                 <RouterLink v-if="!entrada.subMenu || !entrada.subMenu.length" :to="entrada.ruta">
                     {{ entrada.label }}
                 </RouterLink>
 
-                <span v-else class="enlacePadre">
-                    {{ entrada.label }}
-                </span>
+                <a-dropdown v-else placement="bottom" overlayClassName="dropdownNav" :getPopupContainer="(element) => element.parentElement" :align="{ offset: [0, 20] }">
+                    <span class="enlaceNav">
+                        {{ entrada.label }}
+                    </span>
+                    <template #overlay>
+                        <a-menu>
+                            <a-menu-item v-for="subEntrada in entrada.subMenu" :key="subEntrada.ruta">
+                                <RouterLink :to="subEntrada.ruta" class="submenuItem">
+                                    {{ subEntrada.label }}
+                                </RouterLink>
+                            </a-menu-item>
+                        </a-menu>
+                    </template>
+                </a-dropdown>
 
-                <div v-if="entrada.subMenu && entrada.subMenu.length" class="submenu">
-                    <div v-for="subEntrada in entrada.subMenu" :key="subEntrada.label">
-                        <RouterLink :to="subEntrada.ruta">
-                            {{ subEntrada.label }}
-                        </RouterLink>
-                    </div>
-                </div>
-            </div>
+            </template>
         </nav>
     </header>
 </template>
@@ -28,12 +33,8 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import './Header.css'
 
 const tamanoPantalla = ref(window.innerWidth)
-
 const pantallaPeque = computed(() => tamanoPantalla.value < 768)
-
-const actualizarTamanoPantalla = () => {
-    tamanoPantalla.value = window.innerWidth
-}
+const actualizarTamanoPantalla = () => { tamanoPantalla.value = window.innerWidth }
 
 onMounted(() => window.addEventListener('resize', actualizarTamanoPantalla))
 onUnmounted(() => window.removeEventListener('resize', actualizarTamanoPantalla))

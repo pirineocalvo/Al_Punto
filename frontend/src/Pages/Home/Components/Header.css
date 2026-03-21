@@ -1,69 +1,95 @@
-header{
+header {
     position: fixed;
+    height: 80px;
     width: 100%;
     display: flex;
     justify-content: space-between;
+    align-items: center;
     padding: 10px 30px;
     box-sizing: border-box;
     background-color: var(--color-menu-fondo);
+    z-index: 100;
 }
 
-h2{
+header > h2 {
     margin: 0 !important;
+    color: var(--color-principal);
+    font-weight: 700 !important;
 }
 
-nav{
+nav {
     display: flex;
     gap: 20px;
     align-items: center;
 }
 
-.contenedorEnlace{
-    position: relative;
-}
-
 nav a,
-.enlacePadre{
+.enlaceNav {
     display: block;
     padding: 8px 0;
     text-decoration: none;
-    color: black;
+    color: var(--color-menu-texto);
     cursor: pointer;
+    line-height: 1.4;
+    position: relative;
 }
 
-nav a:hover,
-.submenu a:hover,
-.enlacePadre:hover{
-    border-bottom: 2px solid black;
-}
-
-.menuDesplegable::after{
+nav a::after,
+.enlaceNav::after {
     content: "";
     position: absolute;
-    top: 100%;
     left: 0;
+    bottom: 1px;
     width: 100%;
-    height: 10px;
+    height: 2px;
+    background-color: var(--color-principal);
+    opacity: 0;
+    transition: opacity 0.15s ease;
 }
 
-.submenu{
-    display: none;
-    position: absolute;
-    top: calc(100% + 10px);
-    left: -93px;
-    background-color: wheat;
-    padding: 10px;
-    min-width: 180px;
-    z-index: 1000;
+nav a:hover::after,
+.enlaceNav:hover::after {
+    opacity: 1;
 }
 
-.menuDesplegable:hover .submenu{
-    display: block;
-}
 
-.submenu a{
-    display: block;
-    padding: 6px 0;
-    margin: 0;
+.submenuItem {
     white-space: nowrap;
+    border: 0px;
+    padding: 6px 12px;
+}
+
+/* ANT-DESING*/
+
+.dropdownNav .ant-dropdown-menu {
+    min-width: 200px !important;
+}
+
+
+.ant-dropdown .ant-dropdown-menu {
+    background-color: var(--color-subMenu-fondo);
+    border-radius: 0;
+    padding: 0px !important;
+    color: var(--color-menu-texto) !important;
+}
+.ant-dropdown .ant-dropdown-menu-item {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.ant-dropdown .ant-dropdown-menu .ant-dropdown-menu-item,
+.ant-dropdown .ant-dropdown-menu .ant-dropdown-menu-submenu-title {
+    padding: 0 !important;
+}
+
+.ant-dropdown .ant-dropdown-menu-item a {
+    color: var(--color-menu-texto) !important;
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    transition: border-color 0.15s ease;
+}
+
+.ant-dropdown .ant-dropdown-menu-item:hover,
+.ant-dropdown .ant-dropdown-menu-item a:hover {
+    background-color: var(--color-subMenu-fondo-hover);
 }
