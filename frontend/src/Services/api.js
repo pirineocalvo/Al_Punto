@@ -118,9 +118,8 @@ export const addCategory = async (data = {}) => {
 
 
 /*
-Reservas
+################# RESERVAS ENDPOINTS ########################
 */
-
 
 export const addReservation = async (reservation) => {
   try {
@@ -156,8 +155,68 @@ export const misReservas = async () => {
   }
 }
 
+
+export const todasLasReservas = async () => {
+  try {
+    const token = getAuthToken();
+    const config = {
+      headers: { authorization: `Bearer ${token}` },
+    };
+    const response = await axios.get(`${API_URL}/api/reservas/allReserve`, config);
+    return response.data;
+  } catch (error) {
+    if (error.response.status === 401) {
+      logoutUser();
+    }
+    throw error;
+  }
+}
+
 /*
-################## SUBIR TICKETS
+################# MESAS ENDPOINTS ########################
+*/
+
+
+export const todasLasMesas = async () => {
+  try {
+    const token = getAuthToken();
+    const config = {
+      headers: { authorization: `Bearer ${token}` },
+    };
+    const response = await axios.get(`${API_URL}/api/mesas/allTable`, config);
+    return response.data;
+  } catch (error) {
+    if (error.response.status === 401) {
+      logoutUser();
+    }
+    throw error;
+  }
+}
+
+
+/*
+################# MESAS ENDPOINTS ########################
+*/
+
+
+export const todasLasMesasReservadas = async () => {
+  try {
+    const token = getAuthToken();
+    const config = {
+      headers: { authorization: `Bearer ${token}` },
+    };
+    const response = await axios.get(`${API_URL}/api/mesasReservadas/allMesasReservadas`, config);
+    return response.data;
+  } catch (error) {
+    if (error.response.status === 401) {
+      logoutUser();
+    }
+    throw error;
+  }
+}
+
+/*
+################## SUBIR TICKETS ##################
 */
 
 export const uploadTickets = async (ticket) => {
@@ -176,10 +235,6 @@ export const uploadTickets = async (ticket) => {
     throw error;
   }
 };
-
-
-
-
 
 
 /* 

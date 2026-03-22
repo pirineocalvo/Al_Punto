@@ -6,14 +6,19 @@ const userRoutes = require('./routes/userRoutes');
 const menuRoutes = require('./routes/menuRoutes');
 const reserveRoutes = require('./routes/reserveRoutes.js');
 const ticketsRoutes = require('./routes/ticketsRoutes.js');
+const mesasRoutes = require('./routes/mesasRoutes.js');
+const mesasReservadasRoutes = require('./routes/mesasReservadasRoutes.js');
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 app.use('/api/user', userRoutes);
 app.use('/api/menu', menuRoutes);
+
 app.use('/api/reservas', reserveRoutes);
 app.use('/api/tickets', ticketsRoutes);
+app.use('/api/mesas', mesasRoutes);
+app.use('/api/mesasReservadas', mesasReservadasRoutes);
 app.use('/uploads', express.static('uploads'));
 const PORT = process.env.PORT;
 
