@@ -4,7 +4,7 @@ import Login from '../views/Login/Login.vue'
 import Register from '../views/Register/Register.vue'
 import Logout from '../views/Logout/Logout.vue'
 import Menu from '../views/Home/Menu/Menu.vue'
-//import Reservas from '../views/Home/Reservas/Reservas.vue'
+import Reservation from '@/views/Reservation/Reservation.vue'
 //import Dashboard from '../views/Dashboard/Dashboard.vue'
 //import AddTicket from '../views/Dashboard/AddTicket.vue'
 //import MisTickets from '../views/Dashboard/MisTickets.vue'
@@ -14,7 +14,7 @@ const routes = [
   { path: '/register', component: Register },
   { path: '/logout', component: Logout },
   { path: '/menu', component: Menu },
-  //{ path: '/reservas', component: Reservas },
+  { path: '/reservas', component: Reservation },
   //{ path: '/zonaPersonal', component: Dashboard },
   //{ path: '/addTicket', component: AddTicket },
   //{ path: '/misTickets', component: MisTickets },
