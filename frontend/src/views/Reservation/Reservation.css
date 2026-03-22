@@ -1,5 +1,8 @@
 .contenedorCalendairo{
-    width: 60%;
+    display: grid;
+    grid-template-columns: 1.5fr 0.5fr;
+    gap:  40px;
+    width: 80%;
     margin: auto;
     margin-top: 5%;
 }

@@ -195,7 +195,7 @@ export const todasLasMesas = async () => {
 
 
 /*
-################# MESAS ENDPOINTS ########################
+################# MESAS RESERVADAS ENDPOINTS ########################
 */
 
 
@@ -215,6 +215,28 @@ export const todasLasMesasReservadas = async () => {
   }
 }
 
+export const getDisponibilidadMes = async (year, month) => {
+  try {
+    const token = getAuthToken();
+    const config = {
+      headers: { authorization: `Bearer ${token}` },
+      params: { year, month }
+    };
+
+    const response = await axios.get(
+      `${API_URL}/api/mesasReservadas/disponibilidad-mes`,
+      config
+    );
+
+    return response.data;
+  } catch (error) {
+    if (error.response?.status === 401) {
+      logoutUser();
+    }
+    console.error('Error getting disponibilidad mes:', error);
+    throw error;
+  }
+};
 /*
 ################## SUBIR TICKETS ##################
 */
