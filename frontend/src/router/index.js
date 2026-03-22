@@ -1,13 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Home from '../Pages/Home/Home.vue'
-import Login from '../Pages/Login/Login.vue'
-import Register from '../Pages/Register/Register.vue'
-import Logout from '../Pages/Logout/Logout.vue'
-import Menu from '../Pages/Home/Menu/Menu.vue'
-//import Reservas from '../Pages/Home/Reservas/Reservas.vue'
-//import Dashboard from '../Pages/Dashboard/Dashboard.vue'
-//import AddTicket from '../Pages/Dashboard/AddTicket.vue'
-//import MisTickets from '../Pages/Dashboard/MisTickets.vue'
+import Home from '../views/Home/Home.vue'
+import Login from '../views/Login/Login.vue'
+import Register from '../views/Register/Register.vue'
+import Logout from '../views/Logout/Logout.vue'
+import Menu from '../views/Home/Menu/Menu.vue'
+//import Reservas from '../views/Home/Reservas/Reservas.vue'
+//import Dashboard from '../views/Dashboard/Dashboard.vue'
+//import AddTicket from '../views/Dashboard/AddTicket.vue'
+//import MisTickets from '../views/Dashboard/MisTickets.vue'
 const routes = [
   { path: '/', component: Home },
   { path: '/login', component: Login },
