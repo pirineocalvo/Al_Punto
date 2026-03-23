@@ -224,7 +224,7 @@ export const getDisponibilidadMes = async (year, month) => {
     };
 
     const response = await axios.get(
-      `${API_URL}/api/mesasReservadas/disponibilidad-mes`,
+      `${API_URL}/api/mesasReservadas/disponibilidadMes`,
       config
     );
 
@@ -237,6 +237,26 @@ export const getDisponibilidadMes = async (year, month) => {
     throw error;
   }
 };
+
+
+export const todasLasMesasLibresPorDia = async (fecha) => {
+  try {
+    const token = getAuthToken();
+    const config = {
+      headers: { authorization: `Bearer ${token}` },
+      params:{fecha}
+    };
+
+    const response = await axios.get(`${API_URL}/api/mesasReservadas/disponibilidadMesasDiaConcreto`, config);
+    return response.data;
+  } catch (error) {
+    if (error.response.status === 401) {
+      logoutUser();
+    }
+    throw error;
+  }
+}
+
 /*
 ################## SUBIR TICKETS ##################
 */
