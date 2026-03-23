@@ -239,12 +239,12 @@ export const getDisponibilidadMes = async (year, month) => {
 };
 
 
-export const todasLasMesasLibresPorDia = async (fecha) => {
+export const todasLasMesasLibresPorDia = async (fecha, ocupantes) => {
   try {
     const token = getAuthToken();
     const config = {
       headers: { authorization: `Bearer ${token}` },
-      params:{fecha}
+      params:{fecha, ocupantes}
     };
 
     const response = await axios.get(`${API_URL}/api/mesasReservadas/disponibilidadMesasDiaConcreto`, config);

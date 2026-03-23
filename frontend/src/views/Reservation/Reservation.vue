@@ -5,13 +5,17 @@ import { ref, onMounted } from 'vue'
 import dayjs from 'dayjs'
 
 const fechasCalendario = ref(dayjs());
-const horario = ['13:30:00', '14:00:00', '14:30:00', '15:00:00'];
 const diasBloqueados = ref({});
 const fechaSeleccionada = ref('');
 const mesasDia = ref([]);
+const horario = ref([]);
 const datosForm = ref({
-    ocupantes:null
+    ocupantes:null,
+    mesa:null,
+    hora:null
 });
+
+
 onMounted(async () => {
     await cargarMes(fechasCalendario.value.year(), fechasCalendario.value.month() + 1);
 })
@@ -20,8 +24,7 @@ onMounted(async () => {
 async function onSelect(date) {
     const fecha = date.format('YYYY-MM-DD');
     //mesas disponibles del dia y las horas
-    mesasDia.value = await todasLasMesasLibresPorDia(fecha);
-    console.log(mesasDia.value);
+    mesasDia.value = await todasLasMesasLibresPorDia(fecha, null);
     
     fechaSeleccionada.value = fecha;
 }
@@ -45,8 +48,25 @@ async function cargarMes(year, month) {
 }
 
 function disabledDate(current) {
-    const fecha = current.format('YYYY-MM-DD')
-    return diasBloqueados.value[fecha] === true
+    const fecha = current.format('YYYY-MM-DD');
+    
+    return (diasBloqueados.value[fecha] === true || current.isBefore(dayjs(), 'day'));
+}
+
+async function alCambiarOcupantes() {
+        const fecha = fechasCalendario.value.format('YYYY-MM-DD');
+
+    mesasDia.value = await todasLasMesasLibresPorDia(fecha, datosForm.value.ocupantes);
+}
+
+function filtrarHorario() {
+    horario.value = mesasDia.value.find((mesa)=>mesa.id == datosForm.value.mesa).horasDisponibles;
+    datosForm.value.hora = null;
+
+    
+    
+    
+    
 }
 </script>
 <template>
@@ -57,9 +77,8 @@ function disabledDate(current) {
             <div>
                 <form action="">
                     <p>Fecha: {{ fechaSeleccionada || 'Sin seleccionar' }}</p>
-
-                    <a-select v-model:value="datosForm.ocupantes" placeholder="Selecciona ocupantes"
-                        @change="alCambiarOcupantes">
+                    <p>Número de ocupantes</p>
+                    <a-select v-model:value="datosForm.ocupantes" placeholder="Selecciona ocupantes" @change="alCambiarOcupantes" :disabled="!fechaSeleccionada">
                         <a-select-option :value="1">1</a-select-option>
                         <a-select-option :value="2">2</a-select-option>
                         <a-select-option :value="3">3</a-select-option>
@@ -68,13 +87,18 @@ function disabledDate(current) {
                         <a-select-option :value="6">6</a-select-option>
                     </a-select>
 
-                    <div v-if="horario.length">
-                        <p>Horas disponibles:</p>
-                        <ul>
-                            <li v-for="hora in horario" :key="hora">
-                                {{ hora }}
-                            </li>
-                        </ul>
+                    <div v-show="datosForm.ocupantes">
+                        <p>Mesas disponibles:</p>
+                        <a-select v-model:value="datosForm.mesa" placeholder="Seleccione una mesa" @change="filtrarHorario()">
+                            <a-select-option v-for="mesa in mesasDia" :key="mesa.id" :value="mesa.id">{{ mesa.name }}</a-select-option>
+                        </a-select>
+
+                    </div>
+                    <div v-show="datosForm.mesa">
+                        <p>Fechas disponibles:</p>
+                        <a-select v-model:value="datosForm.hora" placeholder="Seleccione una hora">
+                            <a-select-option v-for="(hora, index) in horario" :key="index" :value="hora">{{ hora }}</a-select-option>
+                        </a-select>
                     </div>
                 </form>
             </div>

@@ -134,19 +134,22 @@ router.get('/disponibilidadMesasDiaConcreto', (req, res) => {
 
     const { fecha } = req.query;
     const horario = ['13:30:00', '14:00:00', '14:30:00', '15:00:00'];
-
+    const {ocupantes} = req.query;
+    const asientosMax = Number(ocupantes) + 2
     if (!fecha) {
         return res.status(400).json({ error: 'Falta la fecha' });
     }
 
-    db.all(
-        `
-        SELECT id, name, n_ocupantes, activo
-        FROM Mesas
-        WHERE activo = 1
-        `,
-        [],
-        (errMesas, mesas) => {
+    let queryMesas = `SELECT id, name, n_ocupantes, activo FROM Mesas WHERE activo = 1`;
+    const parametrosMesas = [];
+    
+    if (ocupantes) {
+        queryMesas +=` AND n_ocupantes >= ? AND n_ocupantes <= ?`;
+        parametrosMesas.push(ocupantes, asientosMax)
+    }
+
+
+    db.all(queryMesas, parametrosMesas,(errMesas, mesas) => {
             if (errMesas) {
                 return res.status(500).json({ error: 'Error al consultar las mesas' });
             }
