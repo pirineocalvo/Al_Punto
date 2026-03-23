@@ -1,90 +1,86 @@
-<template>
+<script setup>
+import AppHeader from './Components/Header.vue';
+import AppFooter from './Components/Footer.vue';
+import './Home.css';
+import { Button, Card, Row, Col, Typography } from 'ant-design-vue';
+import { h } from 'vue'
+</script>
+
+<template><!--TODO: tamaño textos-->
   <AppHeader />
-  <div class="home-container">
-    <!-- Hero Section -->
-    <section class="hero">
-      <div class="hero-content">
-        <h1>Sabores Que Enamoran</h1>
-        <p>Experiencia gastronómica de primer nivel en un ambiente refinado y acogedor.</p>
-        <button class="cta-button">Reserva Tu Mesa</button>
+  <main>
+    <div id="eslogan">
+      <div id="contenidoEslogan">
+        <a-typography-title>Sabores Que Enamoran</a-typography-title>
+        <a-typography-paragraph>
+          Experiencia gastronómica de primer nivel en un ambiente refinado y acogedor.
+        </a-typography-paragraph>
+        <a-button type="primary" size="large">
+          Reserva Tu Mesa
+        </a-button>
       </div>
-    </section>
+    </div>
 
-    <!-- About Us Section -->
-    <section class="about">
-      <div class="about-text">
-        <div class="section-title">
-          <h2>Nuestra Historia</h2>
-        </div>
-        <h2>Pasión por la Cocina Tradicional</h2>
-        <p>
-          Desde 1995, hemos estado sirviendo los platos más exquisitos con los ingredientes
-          más frescos del mercado. Nuestra filosofía se basa en el respeto al producto y
-          la constante innovación técnica.
-        </p>
-        <p>
-          Cada plato cuenta una historia, cada aroma evoca un recuerdo. Ven y déjate
-          seducir por una experiencia sensorial única que despertará todos tus sentidos.
-        </p>
-        <button class="cta-button">Conoce Más</button>
+    <div id="sobreNosotros">
+      <div class="subTitulo">
+        <a-typography-title :level="2">Nuestra Historia</a-typography-title>
+        <a-typography-text>Pasión por la Cocina Tradicional</a-typography-text>
       </div>
-      <div class="about-image">
-        <img src="/images/imagenFamiliaMenu.png" alt="Interior del restaurante" />
-      </div>
-    </section>
+      <a-typography-paragraph>Desde 1995, hemos estado sirviendo los platos más exquisitos...</a-typography-paragraph>
+      <a-typography-paragraph>Cada plato cuenta una historia...</a-typography-paragraph>
+      <a-button type="default">Conoce Más</a-button>
+    </div>
 
-    <!-- Featured Dishes Section -->
-    <section class="featured">
-      <div class="section-title">
-        <h2>Platos Destacados</h2>
-        <p>Una selección de nuestras creaciones más populares</p>
+    <div id="contenedorTarjetas">
+      <div class="subTitulo">
+        <a-typography-title :level="2">Platos destacados</a-typography-title>
+        <a-typography-text>Lo mejor de nuestro servicio</a-typography-text>
       </div>
-      <div class="featured-grid">
-        <div class="dish-card">
-          <div class="dish-img">
-            <img src="./images/huevosRotos.png" alt="Huevos rotos" />
-          </div>
-          <div class="dish-info">
-            <h2>Huevos rotos</h2>
-            <p>Compuesto por huevos de las mejores gallinas camperas y embutido ibérico.</p>
-            <span class="dish-price">31.99€</span>
-          </div>
-        </div>
-        <div class="dish-card">
-          <div class="dish-img">
-            <img src="/images/espagueti.png" alt="Pasta a la boloñesa" />
-          </div>
-          <div class="dish-info">
-            <h2>Pasta a la boloñesa</h2>
-            <p>Pasta fresca hecha a mano con tomates cherry, carne picada de la mejor calidad y queso parmesano.</p>
-            <span class="dish-price">18.50€</span>
-          </div>
-        </div>
-        <div class="dish-card">
-          <div class="dish-img">
-            <img src="/images/tartaQueso.png" alt="Tarta de queso" />
-          </div>
-          <div class="dish-info">
-            <h2>Tarta de queso</h2>
-            <p>Postre casera hecho con alimentos de origen nacional.</p>
-            <span class="dish-price">7.99€</span>
-          </div>
-        </div>
-      </div>
-    </section>
+      <a-row justify="center" :gutter="0">
+        <a-col class="colTarjeta">
+          <a-card class="tarjeta" hoverable>
+            <div class="imagenTarjeta">
+              <img src="/images/huevosRotos.png" />
+            </div>
+            <div class="infoTarjeta">
+              <h2>Huevos rotos</h2>
+              <p>Compuesto por huevos de las mejores gallinas camperas...</p>
+              <span class="precioPlato">31.99€</span>
+            </div>
+          </a-card>
+        </a-col>
+        <a-col class="colTarjeta">
+          <a-card class="tarjeta" hoverable>
+            <div class="imagenTarjeta">
+              <img src="/images/espagueti.png" />
+            </div>
+            <div class="infoTarjeta">
+              <h2>Pasta a la boloñesa</h2>
+              <p>Pasta fresca hecha a mano...</p>
+              <span class="precioPlato">18.50€</span>
+            </div>
+          </a-card>
+        </a-col>
+        <a-col class="colTarjeta">
+          <a-card class="tarjeta" hoverable>
+            <div class="imagenTarjeta">
+              <img src="/images/tartaQueso.png" />
+            </div>
+            <div class="infoTarjeta">
+              <h2>Tarta de queso</h2>
+              <p>Postre casera hecho con alimentos...</p>
+              <span class="precioPlato">7.99€</span>
+            </div>
+          </a-card>
+        </a-col>
+      </a-row>
+    </div>
 
-    <!-- Call to Action Section -->
-    <section class="cta-banner">
-      <h3>¿Listo para vivir la experiencia?</h3>
-      <p>Abierto todos los días de 13:00 a 23:00</p>
-      <button class="cta-button">Ver Menú Completo</button>
+    <section id="preFooter">
+      <a-typography-title :level="3">¿Listo para vivir la experiencia?</a-typography-title>
+      <a-typography-paragraph>Abierto todos los días de 13:00 a 23:00</a-typography-paragraph>
+      <a-button type="primary" size="large">Ver Menú Completo</a-button>
     </section>
-  </div>
+  </main>
   <AppFooter />
 </template>
-
-<script setup>
-import AppHeader from './Components/Header.vue'
-import AppFooter from './Components/Footer.vue'
-import './Home.css'
-</script>
