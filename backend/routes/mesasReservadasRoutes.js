@@ -27,6 +27,30 @@ router.get('/allMesasReservadas', (req, res) => {
     });
 });
 
+router.post('/guardarMesaReservada', (req, res) => {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Token no proporcionado o formato inválido' });
+    }
+
+    const token = authHeader.split(' ')[1];
+    const userId = decrypt(token);
+
+    if (!userId) {
+        return res.status(401).json({ error: 'Token inválido' });
+    }
+
+    const {idReserva, mesa} = req.body;
+    
+    db.run('INSERT INTO Mesas_reservadas (id_reservas, id_mesa) VALUES (?,?)',[idReserva, mesa], (err, rows) => {
+        if (err) {
+            return res.status(500).json({ error: 'Error al consultar la base de datos' });
+        }
+        res.json(rows);
+    });
+});
+
 // OBTENER DISPONIBILIDAD DEL MES
 router.get('/disponibilidadMes', (req, res) => {
     const authHeader = req.headers.authorization;

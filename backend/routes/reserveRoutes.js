@@ -15,12 +15,13 @@ router.post('/addreserve', (req, res) => {
         return res.status(401).json({ error: 'Token inválido' });
     }
     const reserva = req.body;
+    
     db.run('INSERT INTO Reservations (user_id, reserve_date, reserve_hour, guests) VALUES (?,?,?,?)',
-        [userId, reserva.fecha, reserva.hora, reserva.comensales], function(err) {
+        [userId, reserva.fecha, reserva.hora, reserva.ocupantes], function(err) {
             if (err) {
                 return res.status(500).json({ error: 'Error al consultar la base de datos' });
             }
-            res.status(200).json({ message: 'Reserva realizada con exito' });
+            res.status(200).json({ id: this.lastID });
         });
 });
 

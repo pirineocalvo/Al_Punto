@@ -127,8 +127,17 @@ export const addReservation = async (reservation) => {
     const config = {
       headers: { authorization: `Bearer ${token}` },
     };
+
+    
     const response = await axios.post(`${API_URL}/api/reservas/addreserve`, reservation, config);
-    return response.data;
+    reservation ={
+      ...reservation,
+      idReserva:response.data.id  
+    }
+    console.log(reservation);
+    
+    const responseMesasReservadas = await axios.post(`${API_URL}/api/mesasReservadas/guardarMesaReservada`, reservation, config);
+      return responseMesasReservadas.data; 
   } catch (error) {
     if (error.response.status === 401) {
       logoutUser();
