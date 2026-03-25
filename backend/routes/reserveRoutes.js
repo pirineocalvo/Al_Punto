@@ -16,8 +16,8 @@ router.post('/addreserve', (req, res) => {
     }
     const reserva = req.body;
     
-    db.run('INSERT INTO Reservations (user_id, reserve_date, reserve_hour, guests) VALUES (?,?,?,?)',
-        [userId, reserva.fecha, reserva.hora, reserva.ocupantes], function(err) {
+    db.run('INSERT INTO Reservations (user_id, reserve_date, reserve_hour, guests, status) VALUES (?,?,?,?,?)',
+        [userId, reserva.fecha, reserva.hora, reserva.ocupantes, 1], function(err) {
             if (err) {
                 return res.status(500).json({ error: 'Error al consultar la base de datos' });
             }

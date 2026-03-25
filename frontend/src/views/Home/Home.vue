@@ -1,13 +1,13 @@
 <script setup>
-import AppHeader from './Components/Header.vue';
-import AppFooter from './Components/Footer.vue';
+import AppHeader from '../../Components/cabeceraYpiePrincipal/Header.vue';
+import AppFooter from '../../Components/cabeceraYpiePrincipal/Header.vue';
 import './Home.css';
 import { Button, Card, Row, Col, Typography } from 'ant-design-vue';
 import { h } from 'vue'
 </script>
 
 <template><!--TODO: tamaño textos-->
-  <AppHeader />
+  <AppHeader />>
   <main>
     <div id="eslogan">
       <div id="contenidoEslogan">
@@ -75,12 +75,6 @@ import { h } from 'vue'
         </a-col>
       </a-row>
     </div>
-
-    <section id="preFooter">
-      <a-typography-title :level="3">¿Listo para vivir la experiencia?</a-typography-title>
-      <a-typography-paragraph>Abierto todos los días de 13:00 a 23:00</a-typography-paragraph>
-      <a-button type="primary" size="large">Ver Menú Completo</a-button>
-    </section>
   </main>
   <AppFooter />
 </template>

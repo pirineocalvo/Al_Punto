@@ -1,0 +1,6 @@
+#preFooter{
+    padding: 30px;
+    background-color: var(--color-menu-fondo);
+    align-items: center;     
+    text-align: center;
+}

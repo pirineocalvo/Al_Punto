@@ -34,8 +34,8 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import AppHeader from '../Components/Header.vue'
-import AppFooter from '../Components/Footer.vue'
+import AppHeader from '../../../Components/cabeceraYpiePrincipal/Header.vue';
+import AppFooter from '../../../Components/cabeceraYpiePrincipal/Footer.vue';
 import PlateCard from './Components/PlateCard.vue'
 import { getMenu } from '../../../Services/api'
 import './Menu.css'
