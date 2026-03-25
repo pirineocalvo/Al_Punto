@@ -17,28 +17,19 @@ const datosForm = ref({
     hora: null
 });
 
-
 onMounted(async () => {
     await cargarMes(fechasCalendario.value.year(), fechasCalendario.value.month() + 1);
 })
 
-// para cuando se seleccione una fecha en el calendario
 async function onSelect(date) {
     const fecha = date.format('YYYY-MM-DD');
-    //mesas disponibles del dia y las horas
     mesasDia.value = await todasLasMesasLibresPorDia(fecha, null);
-
     fechaSeleccionada.value = fecha;
 }
 
-// si cambia el mes o algo del calendario
 async function onPanelChange(value) {
     fechasCalendario.value = value;
-
-    const year = fechasCalendario.value.year();
-    const month = fechasCalendario.value.month() + 1;
-
-    await cargarMes(year, month);
+    await cargarMes(value.year(), value.month() + 1);
 }
 
 async function cargarMes(year, month) {
@@ -51,13 +42,14 @@ async function cargarMes(year, month) {
 
 function disabledDate(current) {
     const fecha = current.format('YYYY-MM-DD');
-
     return (diasBloqueados.value[fecha] === true || current.isBefore(dayjs(), 'day'));
 }
 
 async function alCambiarOcupantes() {
-    const fecha = fechasCalendario.value.format('YYYY-MM-DD');
-
+    const fecha = fechaSeleccionada.value;
+    datosForm.value.mesa = null;
+    datosForm.value.hora = null;
+    horario.value = [];
     mesasDia.value = await todasLasMesasLibresPorDia(fecha, datosForm.value.ocupantes);
 }
 
@@ -67,72 +59,80 @@ function filtrarHorario() {
 }
 
 async function guardarReserva() {
-    const dato = {
-        ...datosForm.value,
-        fecha: fechaSeleccionada.value
-    };
-    console.log('funcion guardarReserva');
+    if (!dayjs(fechaSeleccionada.value).isBefore(dayjs(), 'day')) {
+        const dato = {
+            ...datosForm.value,
+            fecha: fechaSeleccionada.value
+        };
+        const r = await addReservation(dato);
+        await cargarMes(fechasCalendario.value.year(), fechasCalendario.value.month() + 1);
+        datosForm.value = { ocupantes: null, mesa: null, hora: null };
 
-    const r = await addReservation(dato);
+        console.log(r);
+    }
 
-    await cargarMes(fechasCalendario.value.year(), fechasCalendario.value.month() + 1);
-    datosForm.value = {
-        ocupantes: null,
-        mesa: null,
-        hora: null
-    };
-    console.log(r);
 
 }
 </script>
+
 <template>
-    <section>
-        <AppHeader />
-        <a-typograhy-title :level="2">Reservas</a-typograhy-title>
-        <div class="contenedorCalendairo">
-            <a-card class="cardCalendario">
-                <a-calendar :model:value="fechasCalendario" @panelChange="onPanelChange" @select="onSelect"
-                    :disabledDate="disabledDate" />
-            </a-card>
+    <AppHeader />
 
-            <a-card :title="'Fecha: ' + fechaSeleccionada" :bordered="false" class="cardFormulario">
-                <a-form layout="vertical" @submit.prevent="guardarReserva">
-                    <a-form-item label="Número de ocupantes">
-                        <a-select v-model:value="datosForm.ocupantes" placeholder="Selecciona ocupantes"
-                            @change="alCambiarOcupantes" :disabled="!fechaSeleccionada" size="large">
-                            <a-select-option :value="1">1</a-select-option>
-                            <a-select-option :value="2">2</a-select-option>
-                            <a-select-option :value="3">3</a-select-option>
-                            <a-select-option :value="4">4</a-select-option>
-                            <a-select-option :value="5">5</a-select-option>
-                            <a-select-option :value="6">6</a-select-option>
-                        </a-select>
-                    </a-form-item>
+    <main class="reservas-main">
+        <a-typography-title :level="2" class="reservas-titulo">Reservas</a-typography-title>
 
-                    <a-form-item v-show="datosForm.ocupantes" label="Mesas disponibles">
-                        <a-select v-model:value="datosForm.mesa" placeholder="Seleccione una mesa"
-                            @change="filtrarHorario" size="large">
-                            <a-select-option v-for="mesa in mesasDia" :key="mesa.id" :value="mesa.id">
-                                {{ mesa.name }}
-                            </a-select-option>
-                        </a-select>
-                    </a-form-item>
+        <a-row class="reservas-row">
+            <a-col :xs="24" :lg="16">
+                <a-card class="cardCalendario">
+                    <a-calendar class="mi-calendario" :model:value="fechasCalendario" @panelChange="onPanelChange" @select="onSelect"
+                        :disabledDate="disabledDate" />
+                </a-card>
+            </a-col>
 
-                    <a-form-item v-show="datosForm.mesa" label="Horas disponibles">
-                        <a-select v-model:value="datosForm.hora" placeholder="Seleccione una hora" size="large">
-                            <a-select-option v-for="hora in horario" :key="hora" :value="hora">
-                                {{ hora }}
-                            </a-select-option>
-                        </a-select>
-                    </a-form-item>
+            <a-col :xs="24" :lg="8">
+                <a-card :title="fechaSeleccionada ? 'Fecha: ' + fechaSeleccionada : 'Selecciona una fecha'"
+                    class="cardFormulario">
+                    <a-form layout="vertical" @submit.prevent="guardarReserva">
 
-                    <a-button html-type="submit" class="btnPrincipal btn-reserva" size="large"
-                        :disabled="!datosForm.ocupantes || !datosForm.mesa || !datosForm.hora">
-                        Realizar reserva
-                    </a-button>
-                </a-form>
-            </a-card>
-        </div>
-        <AppFooter />
-    </section>
+                        <a-form-item label="Número de ocupantes">
+                            <a-select v-model:value="datosForm.ocupantes" placeholder="Selecciona ocupantes"
+                                @change="alCambiarOcupantes" :disabled="!fechaSeleccionada" size="large">
+                                <a-select-option v-for="n in 6" :key="n" :value="n">
+                                    {{ n }} {{ n === 1 ? 'persona' : 'personas' }}
+                                </a-select-option>
+                            </a-select>
+                        </a-form-item>
+
+                        <a-form-item v-if="datosForm.ocupantes" label="Mesa disponible">
+                            <a-select v-model:value="datosForm.mesa" placeholder="Seleccione una mesa"
+                                @change="filtrarHorario" size="large">
+                                <a-select-option v-for="mesa in mesasDia" :key="mesa.id" :value="mesa.id">
+                                    {{ mesa.name }}
+                                </a-select-option>
+                            </a-select>
+                        </a-form-item>
+
+                        <a-form-item v-if="datosForm.mesa" label="Hora disponible">
+                            <a-select v-model:value="datosForm.hora" placeholder="Seleccione una hora" size="large">
+                                <a-select-option v-for="hora in horario" :key="hora" :value="hora">
+                                    {{ hora }}
+                                </a-select-option>
+                            </a-select>
+                        </a-form-item>
+
+                        <a-form-item>
+                            <a-button html-type="submit" class="btnPrincipal" size="large" block
+                                :disabled="!datosForm.ocupantes || !datosForm.mesa || !datosForm.hora">
+                                Realizar reserva
+                            </a-button>
+                        </a-form-item>
+
+                    </a-form>
+                </a-card>
+            </a-col>
+
+        </a-row>
+    </main>
+
+    <AppFooter />
 </template>

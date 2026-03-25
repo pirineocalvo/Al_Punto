@@ -95,3 +95,25 @@ h1 {
   border-color: var(--color-borde-boton-hover);
   color: var(--color-borde-boton-hover);
 }
+
+.mi-calendario.ant-picker-calendar.ant-picker-calendar-full 
+    .ant-picker-cell-in-view.ant-picker-cell-selected 
+    .ant-picker-calendar-date,
+.mi-calendario.ant-picker-calendar.ant-picker-calendar-full 
+    .ant-picker-cell-in-view.ant-picker-cell-selected 
+    .ant-picker-calendar-date-today {
+    background: #D97742 !important;
+}
+/* Botones radio (Mes/Año) cuando están activos */
+.mi-calendario .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
+    color: #D97742 !important;
+    border-color: #D97742 !important;
+}
+
+/* Color del número del día seleccionado */
+.mi-calendario .ant-picker-calendar.ant-picker-calendar-full .ant-picker-cell-selected .ant-picker-calendar-date .ant-picker-calendar-date-value,
+.mi-calendario .ant-picker-calendar.ant-picker-calendar-full .ant-picker-cell-selected:hover .ant-picker-calendar-date .ant-picker-calendar-date-value,
+.mi-calendario .ant-picker-calendar.ant-picker-calendar-full .ant-picker-cell-selected .ant-picker-calendar-date-today .ant-picker-calendar-date-value,
+.mi-calendario .ant-picker-calendar.ant-picker-calendar-full .ant-picker-cell-selected:hover .ant-picker-calendar-date-today .ant-picker-calendar-date-value {
+    color: white !important;
+}
