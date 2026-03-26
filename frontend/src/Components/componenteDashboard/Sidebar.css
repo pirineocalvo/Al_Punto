@@ -1,0 +1,62 @@
+.sidebarCustom {
+    background: var(--color-menu-fondo) !important;
+    border-right: 1px solid rgba(58, 46, 42, 0.12) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.sidebarCustom :deep(.ant-layout-sider-children) {
+    background: var(--color-fondo) !important;
+}
+
+.sidebarMenu {
+    background: transparent !important;
+    border-right: none !important;
+}
+
+.sidebarMenu :deep(.ant-menu-item),
+.sidebarMenu :deep(.ant-menu-submenu-title) {
+    color: var(--color-menu-fondo) !important;
+    border-radius: 8px !important;
+    margin-inline: 8px !important;
+}
+
+.sidebarMenu :deep(.ant-menu-item:hover),
+.sidebarMenu :deep(.ant-menu-submenu-title:hover) {
+    background: var(--color-boton-secundario-hover) !important;
+    color: var(  --color-menu-texto) !important;
+}
+
+.sidebarMenu :deep(.ant-menu-item:hover .anticon),
+.sidebarMenu :deep(.ant-menu-submenu-title:hover .anticon) {
+    color: var(  --color-subMenu-fondo-hover) !important;
+}
+
+.sidebarMenu :deep(.ant-menu-item:active),
+.sidebarMenu :deep(.ant-menu-submenu-title:active) {
+    background: var(--color-boton-secundario-active) !important;
+}
+
+.sidebarMenu :deep(.ant-menu-item-selected) {
+    background: var(--color-boton-secundario-active) !important;
+    color: var(--color-principal) !important;
+}
+
+.sidebarMenu :deep(.ant-menu-item-selected .anticon) {
+    color: var(--color-principal) !important;
+}
+
+.sidebarMenu :deep(.ant-menu-item-selected::after) {
+    display: none !important;
+}
+
+.sidebarMenu :deep(.ant-menu-sub) {
+    background: var(--color-fondo) !important;
+}
+
+.sidebarMenu :deep(.ant-menu-submenu-selected > .ant-menu-submenu-title) {
+    color: var(--color-principal) !important;
+}
+
+.sidebarMenu :deep(.ant-menu-submenu-selected > .ant-menu-submenu-title .anticon) {
+    color: var(--color-principal) !important;
+}
