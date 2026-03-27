@@ -6,8 +6,7 @@ import Logout from '../views/Logout/Logout.vue'
 import Menu from '../views/Home/Menu/Menu.vue'
 import Reservation from '@/views/Reservation/Reservation.vue'
 import Dashboard from '../views/Dashboard/Dashboard.vue'
-//import AddTicket from '../views/Dashboard/AddTicket.vue'
-//import MisTickets from '../views/Dashboard/MisTickets.vue'
+import MisTickets from '@/views/Dashboard/Tickets/ListarTickets/MisTickets.vue'
 const routes = [
   { path: '/', component: Home },
   { path: '/login', component: Login },
@@ -16,8 +15,7 @@ const routes = [
   { path: '/menu', component: Menu },
   { path: '/reservas', component: Reservation },
   { path: '/zonaPersonal', component: Dashboard },
-  //{ path: '/addTicket', component: AddTicket },
-  //{ path: '/misTickets', component: MisTickets },
+  { path: '/misTickets', component: MisTickets },
 ] 
 
 const router = createRouter({
