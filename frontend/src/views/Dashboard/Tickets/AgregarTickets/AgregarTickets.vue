@@ -7,7 +7,7 @@ import { uploadTickets, userInfo } from '../../../../Services/api'
 /* import DashboardHeader from '../Components/DashboardHeader.vue'
 import DashboardFooter from '../Components/DashboardFooter.vue' */
 import Sidebar from '../../../../Components/componenteDashboard/Sidebar.vue'
-import './MisTickets.css'
+import './AgregarTickets.css'
 
 const router = useRouter()
 const user = ref(null)

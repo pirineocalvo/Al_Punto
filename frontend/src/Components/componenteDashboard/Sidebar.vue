@@ -48,7 +48,7 @@ const router = useRouter()
                 <a-menu-item key="3" @click="router.push('/misTickets')">
                     Mis Tickets
                 </a-menu-item>
-                <a-menu-item key="4" @click="router.push('/addTicket')">
+                <a-menu-item key="4" @click="router.push('/agregarTickets')">
                     Subir Ticket
                 </a-menu-item>
             </a-sub-menu>
