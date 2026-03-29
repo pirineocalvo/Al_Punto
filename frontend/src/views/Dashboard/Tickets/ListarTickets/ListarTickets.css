@@ -1,0 +1,8 @@
+.content-wrapper {
+    width: 100%;
+    margin: 0; /* o simplemente quítalo */
+}
+
+.dashboard-content {
+    display: block !important;
+}

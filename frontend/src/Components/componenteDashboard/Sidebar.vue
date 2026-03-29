@@ -45,7 +45,7 @@ const router = useRouter()
                 </template>
                 <template #title>Tickets</template>
 
-                <a-menu-item key="3" @click="router.push('/misTickets')">
+                <a-menu-item key="3" @click="router.push('/listarTickets')">
                     Mis Tickets
                 </a-menu-item>
                 <a-menu-item key="4" @click="router.push('/agregarTickets')">

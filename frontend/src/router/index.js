@@ -8,6 +8,7 @@ import Reservation from '@/views/Reservation/Reservation.vue'
 import Dashboard from '../views/Dashboard/Dashboard.vue'
 //import MisTickets from '@/views/Dashboard/Tickets/ListarTickets/MisTickets.vue'
 import AgregarTickets from '@/views/Dashboard/Tickets/AgregarTickets/AgregarTickets.vue'
+import ListarTickets from '@/views/Dashboard/Tickets/ListarTickets/ListarTickets.vue'
 const routes = [
   { path: '/', component: Home },
   { path: '/login', component: Login },
@@ -17,6 +18,7 @@ const routes = [
   { path: '/reservas', component: Reservation },
   { path: '/zonaPersonal', component: Dashboard },
   { path: '/agregarTickets', component: AgregarTickets },
+  { path: '/listarTickets', component: ListarTickets },
 ] 
 
 const router = createRouter({
