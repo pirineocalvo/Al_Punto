@@ -24,6 +24,8 @@ onMounted(async () => {
 async function onSelect(date) {
     const fecha = date.format('YYYY-MM-DD');
     mesasDia.value = await todasLasMesasLibresPorDia(fecha, null);
+    console.log(mesasDia.value);
+    
     fechaSeleccionada.value = fecha;
 }
 

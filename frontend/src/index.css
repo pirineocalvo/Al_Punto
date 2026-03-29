@@ -24,6 +24,7 @@
   --color-borde-boton: var(--color-principal);
   --color-borde-boton-hover: #97522d;
 
+  --color-select-seleccionado: #d977428c;
   --color-enlace: ;
 
   --color-menu-fondo: #3A2E2A ;
@@ -102,18 +103,54 @@ h1 {
 .mi-calendario.ant-picker-calendar.ant-picker-calendar-full 
     .ant-picker-cell-in-view.ant-picker-cell-selected 
     .ant-picker-calendar-date-today {
-    background: #D97742 !important;
+    background: var(--color-fondo) !important;
 }
-/* Botones radio (Mes/Año) cuando están activos */
 .mi-calendario .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
-    color: #D97742 !important;
-    border-color: #D97742 !important;
+    color: var(--color-principal) !important;
+    border-color: var(--color-principal) !important;
 }
 
-/* Color del número del día seleccionado */
-.mi-calendario .ant-picker-calendar.ant-picker-calendar-full .ant-picker-cell-selected .ant-picker-calendar-date .ant-picker-calendar-date-value,
-.mi-calendario .ant-picker-calendar.ant-picker-calendar-full .ant-picker-cell-selected:hover .ant-picker-calendar-date .ant-picker-calendar-date-value,
-.mi-calendario .ant-picker-calendar.ant-picker-calendar-full .ant-picker-cell-selected .ant-picker-calendar-date-today .ant-picker-calendar-date-value,
-.mi-calendario .ant-picker-calendar.ant-picker-calendar-full .ant-picker-cell-selected:hover .ant-picker-calendar-date-today .ant-picker-calendar-date-value {
-    color: white !important;
+:where(.css-dev-only-do-not-override-1p3hq3p).ant-picker-calendar.ant-picker-calendar-full
+  .ant-picker-cell-selected .ant-picker-calendar-date .ant-picker-calendar-date-value,
+:where(.css-dev-only-do-not-override-1p3hq3p).ant-picker-calendar.ant-picker-calendar-full
+  .ant-picker-cell-selected:hover .ant-picker-calendar-date .ant-picker-calendar-date-value,
+:where(.css-dev-only-do-not-override-1p3hq3p).ant-picker-calendar.ant-picker-calendar-full
+  .ant-picker-cell-selected .ant-picker-calendar-date-today .ant-picker-calendar-date-value,
+:where(.css-dev-only-do-not-override-1p3hq3p).ant-picker-calendar.ant-picker-calendar-full
+  .ant-picker-cell-selected:hover .ant-picker-calendar-date-today .ant-picker-calendar-date-value {
+  color: var(--color-principal);
+}
+
+:where(.css-dev-only-do-not-override-1p3hq3p).ant-picker-calendar.ant-picker-calendar-full
+  .ant-picker-calendar-date-today {
+  border-color: var(--color-principal);
+}
+
+.mi-calendario .ant-picker-calendar-header {
+  border-color: var(--color-principal) !important;
+}
+
+.mi-calendario .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
+  border-color: var(--color-principal) !important;
+}
+.mi-calendario .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled)::before {
+  background-color: var(--color-principal) !important;
+}
+
+.mi-calendario .ant-radio-button-wrapper:hover {
+  color: var(--color-select-seleccionado) !important;
+}
+
+.mi-calendario .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+  background-color: var(--color-select-seleccionado) !important; 
+}
+
+.mi-calendario .ant-select-item-option-active:not(.ant-select-item-option-disabled) {
+  background-color: var(--color-select-seleccionado) !important;
+}
+
+.mi-calendario .ant-select:not(.ant-select-disabled):hover .ant-select-selector,
+.mi-calendario .ant-select-focused:not(.ant-select-disabled) .ant-select-selector {
+  border-color: var(--color-principal) !important;
+  
 }

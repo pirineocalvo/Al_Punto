@@ -220,15 +220,7 @@ router.get('/disponibilidadMesasDiaConcreto', (req, res) => {
                                 name: mesa.name,
                                 n_ocupantes: mesa.n_ocupantes,
                                 fecha,
-                                horasDisponibles,
-                                reservaBase: {
-                                    user_id: userId,
-                                    reserve_date: fecha,
-                                    guests: null,
-                                    reserve_hour: null,
-                                    status: 1,
-                                    attended: 0
-                                }
+                                horasDisponibles
                             };
                         })
                         .filter((mesa) => mesa.horasDisponibles.length > 0);
