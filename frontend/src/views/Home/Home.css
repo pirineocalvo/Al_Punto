@@ -1,25 +1,40 @@
-#eslogan{
-    background-image: url("../../../public/images/imagenPrincipalMenu.png");
+#eslogan {
     margin-top: 80px;
-    height:700px;
-
+    height: 700px;
+    position: relative;
     display: flex;
-    justify-content: center;  
-    align-items: center;      
+    justify-content: center;
+    align-items: center;
 }
 
-#contenidoEslogan{
-    width:50%;
+#eslogan::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url('/images/imagenPrincipalMenu.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    filter: blur(6px);
+    z-index: 0;
+}
+
+#contenidoEslogan {
+    position: relative;
+    z-index: 1;
+}
+
+#contenidoEslogan {
+    width: 50%;
     text-align: center;
-    background-color: antiquewhite;
 }
 
-#sobreNosotros{
+#sobreNosotros {
     padding: 80px 20px;
     text-align: center;
 }
 
-.subTitulo{
+.subTitulo {
     font-size: 1.2rem;
     margin-bottom: 10px;
     letter-spacing: 2px;
@@ -28,23 +43,23 @@
     margin-bottom: 20px;
 }
 
-#sobreNosotros p{
+#sobreNosotros p {
     max-width: 700px;
     margin: 0 auto 15px auto;
     line-height: 1.6;
     color: #444;
 }
 
-#sobreNosotros .cta-button{
+#sobreNosotros .cta-button {
     margin-top: 20px;
 }
 
-#platosDestacado{
+#platosDestacado {
     padding: 80px 20px;
 }
 
-#contenedorTarjetas{
-   margin-bottom:30px;
+#contenedorTarjetas {
+    margin-bottom: 30px;
 }
 
 .tarjeta.ant-card {
@@ -53,54 +68,53 @@
     overflow: hidden;
     text-align: center;
 
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     transition: transform 1s ease;
 }
 
-.tarjeta .ant-card-body{
+.tarjeta .ant-card-body {
     padding: 0;
 }
 
-.tarjeta:hover{
+.tarjeta:hover {
     transform: translateY(-15px);
 }
 
-.imagenTarjeta img{
+.imagenTarjeta img {
     width: 100%;
     height: 300px;
     object-fit: cover;
 }
 
-.infoTarjeta{
+.infoTarjeta {
     padding: 40px;
     text-align: center;
 }
 
-.infoTarjeta h2{
+.infoTarjeta h2 {
     margin-bottom: 10px;
 }
 
-.infoTarjeta p{
+.infoTarjeta p {
     font-size: 0.9rem;
     color: #555;
     margin-bottom: 15px;
 }
 
-.colTarjeta{
+.colTarjeta {
     display: flex;
     justify-content: center;
 }
 
-.precioPlato{
+.precioPlato {
     font-weight: bold;
     color: #a67c52;
     font-size: 1.1rem;
 }
 
-.ant-row{
+.ant-row {
     display: flex;
     justify-content: center;
-    gap: 30px; 
+    gap: 30px;
     flex-wrap: wrap;
 }
-

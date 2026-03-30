@@ -2,8 +2,8 @@
 import AppHeader from '../../Components/cabeceraYpiePrincipal/Header.vue';
 import AppFooter from '../../Components/cabeceraYpiePrincipal/Footer.vue';
 import './Home.css';
-import { Button, Card, Row, Col, Typography } from 'ant-design-vue';
-import { h } from 'vue'
+import {} from 'ant-design-vue';
+
 </script>
 
 <template>
@@ -15,7 +15,7 @@ import { h } from 'vue'
                 <a-typography-paragraph>
                     Experiencia gastronómica de primer nivel en un ambiente refinado y acogedor.
                 </a-typography-paragraph>
-                <a-button type="primary" size="large">
+                <a-button class="btnPrincipal" type="primary" size="large">
                     Reserva Tu Mesa
                 </a-button>
             </div>
@@ -29,7 +29,7 @@ import { h } from 'vue'
             <a-typography-paragraph>Desde 1995, hemos estado sirviendo los platos más
                 exquisitos...</a-typography-paragraph>
             <a-typography-paragraph>Cada plato cuenta una historia...</a-typography-paragraph>
-            <a-button type="default">Conoce Más</a-button>
+            <a-button class="btnPrincipal" type="default">Conoce Más</a-button>
         </div>
 
         <div id="contenedorTarjetas">
