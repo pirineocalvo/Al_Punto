@@ -25,15 +25,20 @@
   --color-borde-boton-hover: #97522d;
 
   --color-select-seleccionado: #d977428c;
-  --color-enlace: ;
+
+
+--color-enlace: #B85F34;
+--color-enlace-hover: var(--color-principal);
+--color-enlace-active: #97522D;
+--color-enlace-visited: #8C5A46;
 
   --color-menu-fondo: #3A2E2A ;
   --color-subMenu-fondo:var(--color-menu-fondo);
   --color-subMenu-fondo-hover: #6e5851;
   --color-menu-texto: #FFECD1;
 
-  --color-footer-fondo: ;
-  --color-footer-texto: ;
+  --color-footer-fondo: var(--color-menu-fondo) ;
+  --color-footer-texto: var(--color-menu-texto);
 
   --color-precio: ;
   --color-oferta: ;
@@ -154,3 +159,41 @@ h1 {
   border-color: var(--color-principal) !important;
   
 }
+
+:where(.css-dev-only-do-not-override-1p3hq3p).ant-typography .ant-typography-expand, :where(.css-dev-only-do-not-override-1p3hq3p).ant-typography .ant-typography-edit, :where(.css-dev-only-do-not-override-1p3hq3p).ant-typography .ant-typography-copy {
+    color: var(--color-enlace);
+}
+
+.ant-typography .ant-typography-expand:hover,
+.ant-typography .ant-typography-edit:hover,
+.ant-typography .ant-typography-copy:hover {
+  color: var(--color-enlace-hover);
+}
+
+.ant-typography .ant-typography-expand:active,
+.ant-typography .ant-typography-edit:active,
+.ant-typography .ant-typography-copy:active {
+  color: var(--color-enlace-active);
+}
+
+.ant-typography .ant-typography-expand,
+.ant-typography .ant-typography-edit,
+.ant-typography .ant-typography-copy,
+.ant-typography .ant-typography-copy-success {
+  color: var(--color-enlace);
+}
+
+.ant-typography .ant-typography-expand:hover,
+.ant-typography .ant-typography-edit:hover,
+.ant-typography .ant-typography-copy:hover,
+.ant-typography .ant-typography-copy-success:hover {
+  color: var(--color-enlace-hover);
+}
+
+.ant-typography .ant-typography-expand:active,
+.ant-typography .ant-typography-edit:active,
+.ant-typography .ant-typography-copy:active,
+.ant-typography .ant-typography-copy-success:active {
+  color: var(--color-enlace-active);
+}
+
