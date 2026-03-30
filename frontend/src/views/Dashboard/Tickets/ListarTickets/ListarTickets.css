@@ -1,8 +1,67 @@
+.dashboard-main-layout {
+    display: flex;
+}
+
 .content-wrapper {
     width: 100%;
-    margin: 0; /* o simplemente quítalo */
+    max-width: none;
 }
 
 .dashboard-content {
-    display: block !important;
+    flex: 1;
+    min-width: 0; 
+}
+
+.empty-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 40px;
+}
+
+.ticket-card {
+    width: 100%;
+}
+
+.ticket-img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.tickets-grid {
+    display: flex;
+    gap: 24px;
+}
+
+.ticket-item {
+    width: 100%;
+}
+
+.ticket-image-container {
+    width: 100%;
+}
+
+.ticket-img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.ticket-content {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: all 0.4s ease;
+    transform: translateY(10px);
+}
+
+.ticket-card:hover .ticket-content {
+    max-height: 500px; 
+    opacity: 1;
+    transform: translateY(0);
+    margin-top: 10px;
 }
