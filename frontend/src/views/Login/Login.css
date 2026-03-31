@@ -1,11 +1,15 @@
-.contenedorLogin{
-    width: 30%;
-    margin: 6% auto;
-    background-color: white;
-    padding: 40px;
-}
 .separarBtn{
     display: flex;
     justify-content: center;
     gap: 30px;
+}
+.contenedorLogin {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.cardLogin {
+    width: 600px;
 }
