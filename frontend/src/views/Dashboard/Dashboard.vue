@@ -6,6 +6,8 @@ import { misReservas, userInfo } from '../../Services/api'
 import { Bar } from '@antv/g2plot'
 import { UserOutlined, TrophyOutlined, FileTextOutlined } from '@ant-design/icons-vue'
 import './Dashboard.css'
+import HeaderDashboard from '@/Components/componenteDashboard/HeaderDashboard.vue'
+import Footer from '@/Components/cabeceraYpiePrincipal/Footer.vue'
 
 const user = ref(null)
 const reserveInfo = ref([])
@@ -39,14 +41,12 @@ const fetchReserve = async () => {
     }
 }
 
-/* 📊 DATOS CON PROTECCIÓN (evita 0) */
 const chartData = computed(() => [
     { name: 'Reservas', value: reserveInfo.value.length || 1 },
     { name: 'Tickets', value: user.value?.ticket_count || 1 },
     { name: 'Puntos', value: user.value?.points || 1 }
 ])
 
-/* 📊 GRÁFICO LOGARÍTMICO */
 const renderChart = async () => {
     await nextTick()
 
@@ -55,7 +55,6 @@ const renderChart = async () => {
     if (chartInstance) {
         chartInstance.destroy()
     }
-
     chartInstance = new Bar(chartRef.value, {
         data: chartData.value,
         xField: 'value',
@@ -73,14 +72,11 @@ const renderChart = async () => {
         barStyle: {
             radius: [6, 6, 6, 6]
         },
-
-        /* 🔥 CLAVE: ESCALA LOGARÍTMICA */
         xAxis: {
             type: 'log',
             base: 10
         }
     })
-
     chartInstance.render()
 }
 
@@ -89,27 +85,20 @@ const toggleSidebar = () => { collapsed.value = !collapsed.value }
 
 <template>
 <a-layout class="dashboard-container">
+    <HeaderDashboard :user="user"/>
     <a-layout class="dashboard-main-layout">
-
         <Sidebar :collapsed="collapsed" />
-
         <a-layout-content class="dashboard-content">
             <div class="content-wrapper">
-
-                <!-- HEADER -->
                 <div class="header-section">
                     <a-typography-title class="dashboard-titulo">
                         Bienvenido {{ user?.first_name || 'Usuario' }}
                     </a-typography-title>
-
                     <a-typography-paragraph class="dashboard-subtitulo">
                         Resumen general de tu actividad
                     </a-typography-paragraph>
                 </div>
-
-                <!-- STATS -->
                 <div class="stats-row">
-
                     <a-card class="stat-card">
                         <div class="stat-header">
                             <FileTextOutlined class="stat-icon blue"/>
@@ -141,16 +130,13 @@ const toggleSidebar = () => { collapsed.value = !collapsed.value }
                     </a-card>
 
                 </div>
-
-                <!-- GRÁFICO -->
                 <a-card class="chart-card">
-                    <template #title>Comparativa (Escala Logarítmica)</template>
                     <div ref="chartRef" class="chart-container"></div>
                 </a-card>
-
             </div>
         </a-layout-content>
-
+        
     </a-layout>
+    <Footer/>
 </a-layout>
 </template>
