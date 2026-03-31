@@ -264,7 +264,6 @@ nav {
     opacity: 1 !important;
 }
 
-/* Quitar el subrayado nativo de Ant */
 .ant-menu-horizontal > .ant-menu-item-selected,
 .ant-menu-horizontal > .ant-menu-item:hover,
 .ant-menu-horizontal > .ant-menu-submenu-selected,
