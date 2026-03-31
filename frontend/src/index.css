@@ -295,3 +295,7 @@ nav {
     background: var(--color-menu-fondo);
     pointer-events: auto;
 }
+:where(.css-dev-only-do-not-override-1p3hq3p).ant-menu .ant-menu-submenu, :where(.css-dev-only-do-not-override-1p3hq3p).ant-menu .ant-menu-submenu-inline
+{
+  padding-inline: 0;
+}
