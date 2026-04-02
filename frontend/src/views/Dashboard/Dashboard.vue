@@ -9,35 +9,35 @@ import './Dashboard.css'
 import HeaderDashboard from '@/Components/componenteDashboard/HeaderDashboard.vue'
 import Footer from '@/Components/cabeceraYpiePrincipal/Footer.vue'
 
-const user = ref(null)
-const reserveInfo = ref([])
-const collapsed = ref(false)
-const router = useRouter()
+const user = ref(null);
+const reserveInfo = ref([]);
+const collapsed = ref(false);
+const router = useRouter();
 
-const chartRef = ref(null)
-let chartInstance = null
+const chartRef = ref(null);
+let chartInstance = null;
 
 onMounted(async () => {
-    await fetchUser()
-    await fetchReserve()
-    renderChart()
-})
+    await fetchUser();
+    await fetchReserve();
+    renderChart();
+});
 
 const fetchUser = async () => {
-    const token = localStorage.getItem('loginUserToken')
+    const token = localStorage.getItem('loginUserToken');
     if (!token) { router.push('/login'); return }
     try {
-        user.value = await userInfo()
+        user.value = await userInfo();
     } catch (err) {
-        router.push('/login')
+        router.push('/login');
     }
-}
+};
 
 const fetchReserve = async () => {
     try {
-        reserveInfo.value = await misReservas()
+        reserveInfo.value = await misReservas();
     } catch (err) {
-        console.error(err)
+        console.error(err);
     }
 }
 
@@ -48,12 +48,12 @@ const chartData = computed(() => [
 ])
 
 const renderChart = async () => {
-    await nextTick()
+    await nextTick();
 
-    if (!chartRef.value) return
+    if (!chartRef.value) return;
 
     if (chartInstance) {
-        chartInstance.destroy()
+        chartInstance.destroy();
     }
     chartInstance = new Bar(chartRef.value, {
         data: chartData.value,
@@ -77,10 +77,8 @@ const renderChart = async () => {
             base: 10
         }
     })
-    chartInstance.render()
+    chartInstance.render();
 }
-
-const toggleSidebar = () => { collapsed.value = !collapsed.value }
 </script>
 
 <template>

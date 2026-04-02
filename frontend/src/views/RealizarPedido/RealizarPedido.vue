@@ -3,6 +3,7 @@ import Header from '../../Components/cabeceraYpiePrincipal/Header.vue';
 import Footer from '../../Components/cabeceraYpiePrincipal/Footer.vue';
 import { ref } from 'vue';
 import { QuestionCircleOutlined } from '@ant-design/icons-vue';
+import './RealizarPedido.css'
 
 const productosElegidos = ref([]);
 const productos = [
@@ -176,57 +177,65 @@ const productos = [
         description: 'Postre caliente con corazón fundido de chocolate.',
         price: 6.25
     }
-]
+];
 </script>
 
 <template>
     <Header></Header>
-    <a-row>
-        <a-col :span="16">
-            <a-row>
-                <a-col v-for="producto in productos">
 
-                    <a-card :title="producto.name">
-                        <a-image :width="220"
-                            src="https://tse4.mm.bing.net/th/id/OIP.9A0sfVV2UB78rwCu64yhRwHaEK?rs=1&pid=ImgDetMain&o=7&rm=3" />
-                        <p>
-                            Precio: {{ producto.price }}€
-                            <a-popover :title="producto.name">
-                                <template #content>
-                                    <p>{{ producto.description }}</p>
-                                </template>
-                                <question-circle-outlined />
-                            </a-popover>
-                        </p>
-
-                        <a-button class="btnPrincipal">Realizar pedido</a-button>
-                    </a-card>
-
-                </a-col>
-            </a-row>
-
-        </a-col>
-        <a-col :span="6">
-            <a-list :data-source="items" bordered size="large">
-                <template #renderItem="{ item }">
-                    <a-list-item>
-                        <a-list-item-meta :description="`Cantidad del producto: ${item.name}`">
-                            <template #title>
-                                Producto {{ item.price }}
+    <div class="altoPag">
+        <a-row class="contenedorPedidos">
+            <a-col :xs="20" :lg="16">
+                <a-row>
+                    <a-col v-for="producto in productos" :key="producto.name">
+                        <a-card hoverable class="cardProducto">
+                            <template #cover>
+                                <img src="https://i.pinimg.com/originals/ce/e3/e4/cee3e4cebaf12a51e9fc4018f9471e38.png"
+                                    :alt="producto.name" class="imgMenuCompra" />
                             </template>
-                            <a-popconfirm title="Are you sure？">
-                                <template #icon><question-circle-outlined style="color: red" /></template>
-                                <a-input-number id="inputNumber" v-model:value="value" :min="1" :max="10" />
-                                <a href="#">Delete</a>
-                            </a-popconfirm>
-                        </a-list-item-meta>
-                    </a-list-item>
-                </template>
-            </a-list>
-            <a-form>
-                <a-button class="btnPrincipal">Realizar pedido</a-button>
-            </a-form>
-        </a-col>
-    </a-row>
-    <Footer></Footer>
+
+                            <a-card-meta :title="producto.name" />
+
+                            <div class="hoverPanel">
+                                <a-divider />
+                                <a-tag v-if="producto.tag" color="success">{{ producto.tag }}</a-tag>
+
+                                <p class="descripcionProducto">{{ producto.description }}</p>
+
+                                <div class="footerProducto">
+                                    <a-statistic :value="producto.price" precision="2" suffix="€"
+                                        :value-style="{ fontSize: '16px' }" />
+                                    <a-button type="primary" size="small" ghost>Pedir</a-button>
+                                </div>
+                            </div>
+                        </a-card>
+                    </a-col>
+                </a-row>
+            </a-col>
+
+            <a-col :xs="20" :lg="6">
+                <a-list :data-source="items" bordered size="large">
+                    <template #renderItem="{ item }">
+                        <a-list-item>
+                            <a-list-item-meta :description="`Cantidad del producto: ${item.name}`">
+                                <template #title>
+                                    Producto {{ item.price }}
+                                </template>
+                                <a-popconfirm title="Are you sure？">
+                                    <template #icon><question-circle-outlined style="color: red" /></template>
+                                    <a-input-number id="inputNumber" v-model:value="value" :min="1" :max="10" />
+                                    <a href="#">Delete</a>
+                                </a-popconfirm>
+                            </a-list-item-meta>
+                        </a-list-item>
+                    </template>
+                </a-list>
+                <a-form>
+                    <a-button class="btnPrincipal">Realizar pedido</a-button>
+                </a-form>
+            </a-col>
+        </a-row>
+
+        <Footer></Footer>
+    </div>
 </template>

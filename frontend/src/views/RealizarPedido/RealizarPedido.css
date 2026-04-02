@@ -1,0 +1,43 @@
+.cardProducto .hoverPanel {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+}
+
+.cardProducto:hover .hoverPanel {
+    max-height: 200px;
+}
+
+.imgMenuCompra {
+    height: 130px;
+    object-fit: cover;
+}
+
+.altoPag {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.contenedorPedidos {
+    flex: 1;
+    margin: 120px 0;
+}
+
+.cardProducto {
+    width: 190px;
+    overflow: hidden;
+}
+
+.descripcionProducto {
+    font-size: 12px;
+    color: #888;
+    margin: 6px 0 8px;
+    line-height: 1.5;
+}
+
+.footerProducto {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
