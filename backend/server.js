@@ -7,6 +7,7 @@ const menuRoutes = require('./routes/menuRoutes');
 const reserveRoutes = require('./routes/reserveRoutes.js');
 const ticketsRoutes = require('./routes/ticketsRoutes.js');
 const reseniasRoutes = require('./routes/reseniasRoutes.js');
+const mesasRoutes = require('./routes/mesasRoutes.js');
 const app = express();
 
 app.use(cors());
@@ -16,6 +17,7 @@ app.use('/api/menu', menuRoutes);
 app.use('/api/reservas', reserveRoutes);
 app.use('/api/tickets', ticketsRoutes);
 app.use('/api/resenias', reseniasRoutes);
+app.use('/api/mesas', mesasRoutes);
 app.use('/uploads', express.static('uploads'));
 const PORT = process.env.PORT;
 
