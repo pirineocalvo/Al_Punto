@@ -1,1 +1,287 @@
-const a3_0x1e649f=a3_0x11f9;function a3_0x11f9(_0x27ed79,_0x4163d3){_0x27ed79=_0x27ed79-0x83;const _0x43caf3=a3_0x43ca();let _0x11f992=_0x43caf3[_0x27ed79];if(a3_0x11f9['pHSbjd']===undefined){var _0x1da818=function(_0x5d5023){const _0x6cca9='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/=';let _0x1c3ef3='',_0x2365e2='';for(let _0x22f203=0x0,_0x3fd0ed,_0x518660,_0x10d860=0x0;_0x518660=_0x5d5023['charAt'](_0x10d860++);~_0x518660&&(_0x3fd0ed=_0x22f203%0x4?_0x3fd0ed*0x40+_0x518660:_0x518660,_0x22f203++%0x4)?_0x1c3ef3+=String['fromCharCode'](0xff&_0x3fd0ed>>(-0x2*_0x22f203&0x6)):0x0){_0x518660=_0x6cca9['indexOf'](_0x518660);}for(let _0x5b908b=0x0,_0x18dd27=_0x1c3ef3['length'];_0x5b908b<_0x18dd27;_0x5b908b++){_0x2365e2+='%'+('00'+_0x1c3ef3['charCodeAt'](_0x5b908b)['toString'](0x10))['slice'](-0x2);}return decodeURIComponent(_0x2365e2);};a3_0x11f9['ggjndi']=_0x1da818,a3_0x11f9['TYNFRS']={},a3_0x11f9['pHSbjd']=!![];}const _0x11f19d=_0x43caf3[0x0],_0x1ffa9c=_0x27ed79+_0x11f19d,_0x4878f5=a3_0x11f9['TYNFRS'][_0x1ffa9c];return!_0x4878f5?(_0x11f992=a3_0x11f9['ggjndi'](_0x11f992),a3_0x11f9['TYNFRS'][_0x1ffa9c]=_0x11f992):_0x11f992=_0x4878f5,_0x11f992;}(function(_0x1a1a31,_0x59fe8d){const _0x5d2d21=a3_0x11f9,_0x13b2e9=_0x1a1a31();while(!![]){try{const _0x4e2ef4=parseInt(_0x5d2d21(0xd7))/0x1+parseInt(_0x5d2d21(0xed))/0x2+parseInt(_0x5d2d21(0xc3))/0x3+-parseInt(_0x5d2d21(0xf0))/0x4+-parseInt(_0x5d2d21(0xca))/0x5*(-parseInt(_0x5d2d21(0x87))/0x6)+-parseInt(_0x5d2d21(0xae))/0x7+-parseInt(_0x5d2d21(0xb0))/0x8*(parseInt(_0x5d2d21(0xec))/0x9);if(_0x4e2ef4===_0x59fe8d)break;else _0x13b2e9['push'](_0x13b2e9['shift']());}catch(_0x1e616d){_0x13b2e9['push'](_0x13b2e9['shift']());}}}(a3_0x43ca,0xd4a72));const express=require('express'),router=express['Router'](),{decrypt}=require(a3_0x1e649f(0x92)),db=require('../utils/db'),HORARIOS=['13:30:00','14:00:00','14:30:00',a3_0x1e649f(0xcc),a3_0x1e649f(0x9d),a3_0x1e649f(0x9a),a3_0x1e649f(0xee),a3_0x1e649f(0xd8),a3_0x1e649f(0x97),a3_0x1e649f(0xc4),a3_0x1e649f(0xe1)],authMiddleware=(_0x1fd039,_0x25e518,_0xe0023)=>{const _0x4e9c1b=a3_0x1e649f,_0x36a269={'Iacuo':_0x4e9c1b(0xc1),'sPvPl':_0x4e9c1b(0xb9),'ldTzj':function(_0x58b978){return _0x58b978();}},_0x3e34bb=_0x1fd039[_0x4e9c1b(0x8b)][_0x4e9c1b(0xe2)];if(!_0x3e34bb||!_0x3e34bb[_0x4e9c1b(0xa9)](_0x36a269['Iacuo']))return _0x25e518[_0x4e9c1b(0xc0)](0x191)[_0x4e9c1b(0xef)]({'error':'Token\x20no\x20proporcionado\x20o\x20formato\x20inválido'});const _0x58ca34=_0x3e34bb[_0x4e9c1b(0xeb)]('\x20')[0x1],_0x4e7ea9=decrypt(_0x58ca34);if(!_0x4e7ea9)return _0x25e518[_0x4e9c1b(0xc0)](0x191)[_0x4e9c1b(0xef)]({'error':_0x36a269[_0x4e9c1b(0xdc)]});_0x1fd039[_0x4e9c1b(0xdd)]=_0x4e7ea9,_0x36a269[_0x4e9c1b(0xf2)](_0xe0023);},adminMiddleware=(_0x5b3d2d,_0x19facc,_0x2eb13c)=>{const _0x4bd1f7=a3_0x1e649f,_0x3e750f={'fayHv':_0x4bd1f7(0xdf),'migcV':function(_0x678ab9,_0x421552){return _0x678ab9<=_0x421552;},'ZVcpu':function(_0x262a86){return _0x262a86();},'EHUWc':_0x4bd1f7(0xd6)};db[_0x4bd1f7(0xce)](_0x3e750f[_0x4bd1f7(0xbe)],[_0x5b3d2d['userId']],(_0x5ab7b9,_0x3bb343)=>{const _0x5dfa21=_0x4bd1f7;if(_0x5ab7b9)return _0x19facc[_0x5dfa21(0xc0)](0x1f4)[_0x5dfa21(0xef)]({'error':_0x3e750f[_0x5dfa21(0x8e)]});if(!_0x3bb343||_0x3e750f['migcV'](_0x3bb343['access_level'],0x3))return _0x19facc[_0x5dfa21(0xc0)](0x193)[_0x5dfa21(0xef)]({'error':_0x5dfa21(0xb4)});_0x3e750f[_0x5dfa21(0xe9)](_0x2eb13c);});};router[a3_0x1e649f(0xce)](a3_0x1e649f(0x86),authMiddleware,(_0x357bb8,_0x2c4c93)=>{const _0x56a175=a3_0x1e649f,_0x56c6ad={'wVbsl':_0x56a175(0x93),'GXfjp':'Error\x20al\x20consultar\x20las\x20mesas','xreYl':function(_0x5be8ad,_0x3228c8){return _0x5be8ad(_0x3228c8);},'TElup':function(_0x1d79dc,_0x5d1a47){return _0x1d79dc||_0x5d1a47;},'MGXrz':_0x56a175(0xa8)},{year:_0x238099,month:_0x30f3fd}=_0x357bb8[_0x56a175(0xc8)];if(_0x56c6ad['TElup'](!_0x238099,!_0x30f3fd))return _0x2c4c93[_0x56a175(0xc0)](0x190)['json']({'error':_0x56a175(0xa7)});db[_0x56a175(0xa1)](_0x56c6ad[_0x56a175(0xc5)],[],(_0x589117,_0xa5462e)=>{const _0x582cd6=_0x56a175;if(_0x589117)return _0x2c4c93['status'](0x1f4)[_0x582cd6(0xef)]({'error':_0x56c6ad['GXfjp']});if(!_0xa5462e[_0x582cd6(0x9e)])return _0x2c4c93[_0x582cd6(0xef)]({});db[_0x582cd6(0xa1)](_0x582cd6(0x88),[_0x56c6ad[_0x582cd6(0xa4)](String,_0x238099),_0x56c6ad[_0x582cd6(0xa4)](String,_0x30f3fd)[_0x582cd6(0xcb)](0x2,'0')],(_0xeb2cd0,_0x14ca55)=>{const _0x4d6063=_0x582cd6;if(_0xeb2cd0)return _0x2c4c93['status'](0x1f4)[_0x4d6063(0xef)]({'error':_0x56c6ad[_0x4d6063(0xde)]});const _0x191f2b={},_0x460bf3=_0xa5462e[_0x4d6063(0xea)](_0x2fb82e=>_0x2fb82e['id']);for(const _0x584190 of _0x14ca55){const _0x1c528a=_0x584190[_0x4d6063(0xf3)],_0x30dc09=_0x584190[_0x4d6063(0xc6)],_0x9e1bdb=_0x584190[_0x4d6063(0xba)];if(!HORARIOS['includes'](_0x9e1bdb))continue;if(!_0x191f2b[_0x1c528a])_0x191f2b[_0x1c528a]={};if(!_0x191f2b[_0x1c528a][_0x30dc09])_0x191f2b[_0x1c528a][_0x30dc09]=[];!_0x191f2b[_0x1c528a][_0x30dc09][_0x4d6063(0xe5)](_0x9e1bdb)&&_0x191f2b[_0x1c528a][_0x30dc09][_0x4d6063(0xf4)](_0x9e1bdb);}const _0x4a86a5={};for(const _0xa6265a of Object[_0x4d6063(0xbc)](_0x191f2b)){_0x4a86a5[_0xa6265a]=_0x460bf3['every'](_0x5204ea=>{const _0x2a41f7=_0x4d6063,_0x439a6e=_0x191f2b[_0xa6265a][_0x5204ea]||[];return HORARIOS[_0x2a41f7(0x8d)](_0x3ffa04=>_0x439a6e[_0x2a41f7(0xe5)](_0x3ffa04));});}_0x2c4c93[_0x4d6063(0xef)](_0x4a86a5);});});}),router[a3_0x1e649f(0xce)](a3_0x1e649f(0x85),authMiddleware,(_0xb48c0a,_0x48d419)=>{const _0x52067a=a3_0x1e649f,_0x1e0b99={'ZTJzU':_0x52067a(0x93),'LBBQR':_0x52067a(0xaa),'cygiz':function(_0x447995,_0x168ac4){return _0x447995+_0x168ac4;},'RNDzM':function(_0xdff356,_0x1ad2a5){return _0xdff356(_0x1ad2a5);},'zStbR':_0x52067a(0x8c),'GDzDU':function(_0x270fd1,_0x41a315){return _0x270fd1(_0x41a315);}},{fecha:_0x466f3a,ocupantes:_0x14b86a}=_0xb48c0a[_0x52067a(0xc8)];if(!_0x466f3a)return _0x48d419[_0x52067a(0xc0)](0x190)[_0x52067a(0xef)]({'error':_0x1e0b99['LBBQR']});let _0x1e545a=_0x52067a(0xd5);const _0xbccb09=[];if(_0x14b86a){const _0x5eac35=_0x1e0b99[_0x52067a(0xab)](_0x1e0b99[_0x52067a(0xbb)](Number,_0x14b86a),0x2);_0x1e545a+=_0x1e0b99[_0x52067a(0x94)],_0xbccb09[_0x52067a(0xf4)](_0x1e0b99['GDzDU'](Number,_0x14b86a),_0x5eac35);}db[_0x52067a(0xa1)](_0x1e545a,_0xbccb09,(_0xa8f539,_0x5230f3)=>{const _0x36fdf8=_0x52067a,_0x5ad09f={'KBDNi':_0x1e0b99[_0x36fdf8(0xbf)]};if(_0xa8f539)return _0x48d419['status'](0x1f4)['json']({'error':_0x36fdf8(0xac)});db[_0x36fdf8(0xa1)](_0x36fdf8(0xb6),[_0x466f3a],(_0x1908dd,_0x5f3967)=>{const _0x18cb50=_0x36fdf8;if(_0x1908dd)return _0x48d419[_0x18cb50(0xc0)](0x1f4)[_0x18cb50(0xef)]({'error':_0x5ad09f[_0x18cb50(0xd1)]});const _0x49d098={};for(const _0x459242 of _0x5f3967){if(!HORARIOS['includes'](_0x459242[_0x18cb50(0xba)]))continue;if(!_0x49d098[_0x459242['id_mesa']])_0x49d098[_0x459242['id_mesa']]=[];!_0x49d098[_0x459242[_0x18cb50(0xc6)]][_0x18cb50(0xe5)](_0x459242['reserve_hour'])&&_0x49d098[_0x459242[_0x18cb50(0xc6)]][_0x18cb50(0xf4)](_0x459242[_0x18cb50(0xba)]);}const _0x518918=_0x5230f3[_0x18cb50(0xea)](_0x225e50=>({'id':_0x225e50['id'],'name':_0x225e50[_0x18cb50(0xb8)],'n_ocupantes':_0x225e50['n_ocupantes'],'horasDisponibles':HORARIOS[_0x18cb50(0xe7)](_0x37c0c3=>!(_0x49d098[_0x225e50['id']]||[])['includes'](_0x37c0c3))}))['filter'](_0x3b4df3=>_0x3b4df3[_0x18cb50(0x91)][_0x18cb50(0x9e)]>0x0);_0x48d419[_0x18cb50(0xef)](_0x518918);});});}),router[a3_0x1e649f(0xad)](a3_0x1e649f(0xe6),authMiddleware,(_0x1ee4d5,_0x30a9ca)=>{const _0x2f58f9=a3_0x1e649f,_0x49867b={'UGhne':'Error\x20al\x20vincular\x20la\x20mesa','CDyEk':_0x2f58f9(0xdf),'kPskC':'Mesa\x20no\x20encontrada\x20o\x20inactiva','oigRm':_0x2f58f9(0xd9),'lgdMu':_0x2f58f9(0x8a),'pSYkK':'Faltan\x20idReserva\x20o\x20idMesa','DPMhE':'SELECT\x20id,\x20reserve_date,\x20reserve_hour\x20FROM\x20Reservations\x20WHERE\x20id\x20=\x20?\x20AND\x20user_id\x20=\x20?'},{idReserva:_0x5ca289,idMesa:_0x403903}=_0x1ee4d5['body'];if(!_0x5ca289||!_0x403903)return _0x30a9ca[_0x2f58f9(0xc0)](0x190)[_0x2f58f9(0xef)]({'error':_0x49867b[_0x2f58f9(0xb7)]});db[_0x2f58f9(0xce)](_0x49867b[_0x2f58f9(0x90)],[_0x5ca289,_0x1ee4d5[_0x2f58f9(0xdd)]],(_0x523606,_0x2e7562)=>{const _0x323d6b=_0x2f58f9,_0x15e374={'JgEWw':_0x49867b[_0x323d6b(0xe0)],'ZPHpK':_0x323d6b(0xaf),'fnNaP':_0x49867b['oigRm']};if(_0x523606)return _0x30a9ca['status'](0x1f4)['json']({'error':_0x49867b[_0x323d6b(0xe0)]});if(!_0x2e7562)return _0x30a9ca['status'](0x194)[_0x323d6b(0xef)]({'error':_0x49867b[_0x323d6b(0xd0)]});db[_0x323d6b(0xce)](_0x323d6b(0xda),[_0x403903],(_0x2eaf04,_0x225c5a)=>{const _0x4f9d12=_0x323d6b,_0x14f3ba={'KYFjX':_0x49867b[_0x4f9d12(0xc9)],'LtRpn':_0x4f9d12(0x84)};if(_0x2eaf04)return _0x30a9ca['status'](0x1f4)[_0x4f9d12(0xef)]({'error':_0x49867b[_0x4f9d12(0xe0)]});if(!_0x225c5a)return _0x30a9ca['status'](0x194)[_0x4f9d12(0xef)]({'error':_0x49867b['kPskC']});db[_0x4f9d12(0xce)](_0x4f9d12(0xdb),[_0x403903,_0x2e7562['reserve_date'],_0x2e7562[_0x4f9d12(0xba)]],(_0x129efd,_0x5836ff)=>{const _0x31d89e=_0x4f9d12;if(_0x129efd)return _0x30a9ca[_0x31d89e(0xc0)](0x1f4)[_0x31d89e(0xef)]({'error':_0x15e374['JgEWw']});if(_0x5836ff)return _0x30a9ca[_0x31d89e(0xc0)](0x199)[_0x31d89e(0xef)]({'error':_0x15e374[_0x31d89e(0xcf)]});db[_0x31d89e(0x98)](_0x15e374[_0x31d89e(0xd4)],[_0x5ca289,_0x403903],function(_0x3d17a4){const _0x5d3ada=_0x31d89e;if(_0x3d17a4)return _0x30a9ca[_0x5d3ada(0xc0)](0x1f4)[_0x5d3ada(0xef)]({'error':_0x14f3ba[_0x5d3ada(0xbd)]});_0x30a9ca[_0x5d3ada(0xef)]({'message':_0x14f3ba[_0x5d3ada(0xa2)],'id':this[_0x5d3ada(0x9c)]});});});});});}),router[a3_0x1e649f(0xce)](a3_0x1e649f(0xe4),authMiddleware,adminMiddleware,(_0x4cb0a4,_0x44318b)=>{const _0x3c90ea=a3_0x1e649f,_0x41b865={'QfWwh':_0x3c90ea(0xd3)};db['all'](_0x41b865[_0x3c90ea(0xe3)],[],(_0x8b7930,_0x27fc06)=>{const _0x1f15e6=_0x3c90ea;if(_0x8b7930)return _0x44318b[_0x1f15e6(0xc0)](0x1f4)['json']({'error':_0x1f15e6(0xac)});_0x44318b[_0x1f15e6(0xef)](_0x27fc06);});}),router['post'](a3_0x1e649f(0x83),authMiddleware,adminMiddleware,(_0x1742ba,_0x3e0429)=>{const _0x1cc005=a3_0x1e649f,_0x5c858c={'ECkiz':_0x1cc005(0x9b),'Vdnoi':_0x1cc005(0xd2),'zlFiA':function(_0x483f21,_0x41dbcd){return _0x483f21||_0x41dbcd;},'wTEWP':_0x1cc005(0xb1),'yjzQP':function(_0x311ca0,_0x28ea78){return _0x311ca0(_0x28ea78);}},{name:_0x44b0fb,n_ocupantes:_0x790978}=_0x1742ba[_0x1cc005(0x9f)];if(_0x5c858c['zlFiA'](!_0x44b0fb,!_0x790978))return _0x3e0429[_0x1cc005(0xc0)](0x190)[_0x1cc005(0xef)]({'error':_0x1cc005(0xf1)});db['run'](_0x5c858c['wTEWP'],[_0x44b0fb,_0x5c858c['yjzQP'](Number,_0x790978)],function(_0x3e1f32){const _0x177b9f=_0x1cc005;if(_0x3e1f32)return _0x3e0429['status'](0x1f4)['json']({'error':_0x5c858c[_0x177b9f(0xe8)]});_0x3e0429['json']({'message':_0x5c858c['Vdnoi'],'id':this[_0x177b9f(0x9c)]});});}),router[a3_0x1e649f(0xcd)](a3_0x1e649f(0xa5),authMiddleware,adminMiddleware,(_0x10b223,_0x2a14fd)=>{const _0x5af4f5=a3_0x1e649f,_0x142052={'htqfH':_0x5af4f5(0x8f),'DLNEg':_0x5af4f5(0xb2),'IYhFg':_0x5af4f5(0x99),'IoRTa':function(_0x58446a,_0xe1d919){return _0x58446a(_0xe1d919);}},{name:_0x409a27,n_ocupantes:_0x108eec,activo:_0x3ee8b6}=_0x10b223['body'],{id:_0x532456}=_0x10b223[_0x5af4f5(0xc2)];db[_0x5af4f5(0x98)](_0x5af4f5(0xa0),[_0x409a27,_0x142052[_0x5af4f5(0x96)](Number,_0x108eec),_0x3ee8b6?0x1:0x0,_0x532456],function(_0x2ff4e1){const _0xe072d6=_0x5af4f5;if(_0x2ff4e1)return _0x2a14fd['status'](0x1f4)[_0xe072d6(0xef)]({'error':_0x142052[_0xe072d6(0xc7)]});if(this['changes']===0x0)return _0x2a14fd[_0xe072d6(0xc0)](0x194)[_0xe072d6(0xef)]({'error':_0x142052[_0xe072d6(0xb3)]});_0x2a14fd[_0xe072d6(0xef)]({'message':_0x142052['IYhFg']});});}),router[a3_0x1e649f(0xa3)](a3_0x1e649f(0xa5),authMiddleware,adminMiddleware,(_0x31ae5a,_0x1a6010)=>{const _0x4eb109=a3_0x1e649f,_0xcf5e15={'VMeAA':function(_0x7727e3,_0x186c56){return _0x7727e3===_0x186c56;},'Rhwnb':_0x4eb109(0x89),'kgGvm':'UPDATE\x20Mesas\x20SET\x20activo\x20=\x200\x20WHERE\x20id\x20=\x20?'},{id:_0x5a3ee7}=_0x31ae5a[_0x4eb109(0xc2)];db[_0x4eb109(0x98)](_0xcf5e15[_0x4eb109(0xf6)],[_0x5a3ee7],function(_0x34d8e1){const _0x495333=_0x4eb109;if(_0x34d8e1)return _0x1a6010[_0x495333(0xc0)](0x1f4)['json']({'error':_0x495333(0xf5)});if(_0xcf5e15[_0x495333(0x95)](this[_0x495333(0xb5)],0x0))return _0x1a6010['status'](0x194)[_0x495333(0xef)]({'error':_0x495333(0xb2)});_0x1a6010[_0x495333(0xef)]({'message':_0xcf5e15[_0x495333(0xa6)]});});}),module['exports']=router;function a3_0x43ca(){const _0x2d77be=['CgfKu3rHCNq','mtu6mda6mda','Chv0','z2v0','wLbiCeS','BgDKtxu','s0jetMK','twvZysbJCMvHzgeGy29YCMvJDgfTzw50zq','u0vmrunuicOGrLjptsbnzxnHCYbpuKrfuIbcwsbHy3rPDM8GrevtqYWGAwqGqvnd','zM5oyva','u0vmrunuigLKlcbUyw1LlcbUx29JDxbHBNrLCYbguK9nie1LC2fZifDirvjfigfJDgL2BYa9ide','u0vmrunuigfJy2vZC19SzxzLBcbguK9nifvZzxjZifDirvjfigLKid0GpW','ntu1mZG5t0jYChvq','mJe6mda6mda','su5trvjuieLove8GtwvZyxnFCMvZzxj2ywrHCYaOAwrFCMvZzxj2yxmSigLKx21LC2ePifzbtfvfuYaOpYWGpYK','u0vmrunuigLKiezst00GtwvZyxmGv0HfuKuGAwqGpsa/ieforcbHy3rPDM8GpsaX','cIaGicaGicaGicaGicaGicaGicaGu0vmrunuig1YlMLKcIaGicaGicaGicaGicaGicaGicaGrLjptsbnzxnHC19YzxnLCNzHzgfZig1YcIaGicaGicaGicaGicaGicaGicaGsK9jtIbszxnLCNzHDgLVBNmGCIbptIbTCI5Pzf9YzxnLCNzHCYa9ihiUAwqkicaGicaGicaGicaGicaGicaGicbxsevsrsbTCI5Pzf9TzxnHid0GpWOGicaGicaGicaGicaGicaGicaGicaGqu5eihiUCMvZzxj2zv9KyxrLid0GpWOGicaGicaGicaGicaGicaGicaGicaGqu5eihiUCMvZzxj2zv9OB3vYid0GpWOGicaGicaGicaGicaGicaGicaGicaGqu5eicHYlNn0yxr1CYbjuYbovuXmie9sihiUC3rHDhvZice9icDJyw5JzwWNkqOGicaGicaGicaGicaGicaG','C1b2ugW','DxnLCKLK','D1zIC2W','rxjYB3iGzguGyMfZzsbKzsbKyxrVCW','q0r5rwS','mJi6mZa6mda','yxv0Ag9YAxPHDgLVBG','uwzxD2G','l2fKBwLUl3rVzgfZ','Aw5JBhvKzxm','l3jLC2vYDMfY','zMLSDgvY','runRAxO','wLzJChu','BwfW','C3bSAxq','ndmXodjWwKzzq2O','mJCXmtq1mNHoq2rLEG','mJa6mZa6mda','ANnVBG','mJq3ndGXmKjPwhr5DW','rMfSDgfUig5HBwuGBYbUx29JDxbHBNrLCW','BgruEMO','CMvZzxj2zv9KyxrL','ChvZAa','rxjYB3iGywWGzgvZywn0AxzHCIbSysbTzxnH','A2DhDM0','l2fKBwLUl2nYzwfY','twvZysb2Aw5JDwXHzgeGy29YCMvJDgfTzw50zq','l2rPC3bVBMLIAwXPzgfKlwrPyq','l2rPC3bVBMLIAwXPzgfKlw1LCW','mtjiuwHuwhe','cIaGicaGicaGicaGifnftevdvcbYlNjLC2vYDMvFzgf0zsWGCI5YzxnLCNzLx2HVDxiSig1YlMLKx21LC2ekicaGicaGicaGicaGrLjptsbszxnLCNzHDgLVBNmGCGOGicaGicaGicaGicbkt0Loie1LC2fZx3jLC2vYDMfKyxmGBxiGt04GBxiUAwrFCMvZzxj2yxmGpsbYlMLKcIaGicaGicaGicaGifDirvjfihn0CMz0Aw1LkcCLwsCSihiUCMvZzxj2zv9KyxrLksa9id8kicaGicaGicaGicaGicbbtKqGC3rYzNrPBwuOjYvTjYWGCI5YzxnLCNzLx2rHDguPid0GpWOGicaGicaGicaGicaGieforcaOCI5ZDgf0DxmGsvmGtLvmtcbpuIbYlNn0yxr1CYaHpsaNy2fUy2vSjYKkicaGicaGica','twvZysbKzxnHy3rPDMfKysbJB3jYzwn0yw1LBNrL','uMvZzxj2ysbUBYbLBMnVBNrYywrHig8GBM8GCgvYDgvUzwnLigfSihvZDwfYAw8','AgvHzgvYCW','ieforcbUx29JDxbHBNrLCYa+psa/ieforcbUx29JDxbHBNrLCYa8psa/','zxzLCNK','zMf5shy','rxjYB3iGywWGywn0DwfSAxPHCIbSysbTzxnH','rfbnAeu','Ag9YyxneAxnWB25PyMXLCW','lI4VDxrPBhmVy3j5ChrV','rxjYB3iGywWGy29UC3vSDgfYigXHCYbYzxnLCNzHCW','ELn0yLi','vK1Lque','sw9svge','mJe6mZa6mda','CNvU','twvZysbHy3r1ywXPEMfKysbJB3jYzwn0yw1LBNrL','mJa6mda6mda','rxjYB3iGywWGy3jLyxiGBgeGBwvZyq','BgfZDeLe','mtu6mZa6mda','BgvUz3rO','yM9KEq','vvbeqvrfie1LC2fZifnfvcbUyw1Lid0GpYWGBL9Vy3vWyw50zxmGpsa/lcbHy3rPDM8Gpsa/ifDirvjfigLKid0GpW','ywXS','thrsCg4','zgvSzxrL','EhjLwwW','l2fKBwLUlZPPza','uMH3BMi','rMfSDgfUigXVCYbWyxldOw1LDhjVCYb5zwfYihKGBw9UDgG','u0vmrunuigLKiezst00GtwvZyxmGv0HfuKuGywn0AxzVid0Gmq','C3rHCNrZv2L0Aa','rMfSDgeGzwWGCgfYW6fTzxrYBYbMzwnOyq','y3LNAxO','rxjYB3iGywWGy29UC3vSDgfYigXHCYbTzxnHCW','Cg9ZDa','mtaZnZiXnJzpAKfNuha','rxnHig1LC2eGEweGzxn0W6eGCMvZzxj2ywrHihbHCMeGzxnHigzLy2HHihKGAg9Yys4Gug9YigzHDM9YigvSAwDLig90CMeU','mJi0ohvdEwvzCW','su5trvjuieLove8GtwvZyxmGkg5HBwuSig5FB2n1CgfUDgvZlcbHy3rPDM8PifzbtfvfuYaOpYWGpYWGmsK','twvZysbUBYbLBMnVBNrYywrH','reXorwC','qwnJzxnVigrLBMvNywrVoIbZzsbYzxf1AwvYzsbUAxzLBcbtDgfMzI9bzg1PBG','y2HHBMDLCW','cIaGicaGicaGicaGifnftevdvcbYlNjLC2vYDMvFAg91CIWGBxiUAwrFBwvZyqOGicaGicaGicaGicbguK9nifjLC2vYDMf0Aw9UCYbYcIaGicaGicaGicaGiePpsu4GtwvZyxnFCMvZzxj2ywrHCYbTCIbptIbTCI5Pzf9YzxnLCNzHCYa9ihiUAwqkicaGicaGicaGicaGv0HfuKuGCI5YzxnLCNzLx2rHDguGpsa/cIaGicaGicaGicaGicaGqu5eicHYlNn0yxr1CYbjuYbovuXmie9sihiUC3rHDhvZice9icDJyw5JzwWNkqOGicaGicaGia','CfnzA0S','BMfTzq','vg9Rzw4GAw52W6fSAwrV','CMvZzxj2zv9OB3vY','uK5eEK0','A2v5CW','s1LgALG','ruHvv2m','wLrkELu','C3rHDhvZ','qMvHCMvYia','CgfYyw1Z','ndKZnJm4meToCxnZtq','mJi6mda6mda','tuDyCNO','AwrFBwvZyq','AhrXzKG','CxvLCNK','vuDOBMu','mtKWnZGYnw1ku0fMra'];a3_0x43ca=function(){return _0x2d77be;};return a3_0x43ca();}
+const express=require('express'),router=express['Router'](),{
+decrypt
+}
+=require('../utils/crypto'),db=require('../utils/db'),HORARIOS=['13:30:00','14:00:00','14:30:00','15:00:00','15:30:00','20:00:00','20:30:00','21:00:00','21:30:00','22:00:00','22:30:00'],authMiddleware=(a,b,c)=>{
+const d=a['headers']['authorization'];
+if(!d||!d['startsWith']('Bearer\x20'))return b['status'](0x191)['json']({
+'error':'Token\x20no\x20proporcionado\x20o\x20formato\x20inválido'
+}
+);
+const e=d['split']('\x20')[0x1],f=decrypt(e);
+if(!f)return b['status'](0x191)['json']({
+'error':'Token\x20inválido'
+}
+);
+a['userId']=f,c();
+
+}
+,adminMiddleware=(a,b,c)=>{
+db['get']('SELECT\x20access_level\x20FROM\x20Users\x20WHERE\x20id\x20=\x20?',[a['userId']],(d,e)=>{
+if(d)return b['status'](0x1f4)['json']({
+'error':'Error\x20de\x20base\x20de\x20datos'
+}
+);
+if(!e||e['access_level']<=0x3)return b['status'](0x193)['json']({
+'error':'Acceso\x20denegado:\x20se\x20requiere\x20nivel\x20Staff/Admin'
+}
+);
+c();
+
+}
+);
+
+}
+;
+router['get']('/disponibilidad-mes',authMiddleware,(a,b)=>{
+const {
+year:c,month:d
+}
+=a['query'];
+if(!c||!d)return b['status'](0x190)['json']({
+'error':'Faltan\x20los\x20parámetros\x20year\x20y\x20month'
+}
+);
+db['all']('SELECT\x20id\x20FROM\x20Mesas\x20WHERE\x20activo\x20=\x201',[],(e,f)=>{
+if(e)return b['status'](0x1f4)['json']({
+'error':'Error\x20al\x20consultar\x20las\x20mesas'
+}
+);
+if(!f['length'])return b['json']({
+
+}
+);
+db['all']('\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20SELECT\x20r.reserve_date,\x20r.reserve_hour,\x20mr.id_mesa\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20FROM\x20Reservations\x20r\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20JOIN\x20Mesas_reservadas\x20mr\x20ON\x20mr.id_reservas\x20=\x20r.id\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20WHERE\x20strftime(\x27%Y\x27,\x20r.reserve_date)\x20=\x20?\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20AND\x20strftime(\x27%m\x27,\x20r.reserve_date)\x20=\x20?\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20AND\x20(r.status\x20IS\x20NULL\x20OR\x20r.status\x20!=\x20\x27cancel\x27)\x0a\x20\x20\x20\x20\x20\x20\x20\x20',[String(c),String(d)['padStart'](0x2,'0')],(g,h)=>{
+if(g)return b['status'](0x1f4)['json']({
+'error':'Error\x20al\x20consultar\x20las\x20reservas'
+}
+);
+const i={
+
+}
+,j=f['map'](l=>l['id']);
+for(const l of h){
+const m=l['reserve_date'],n=l['id_mesa'],o=l['reserve_hour'];
+if(!HORARIOS['includes'](o))continue;
+if(!i[m])i[m]={
+
+}
+;
+if(!i[m][n])i[m][n]=[];
+!i[m][n]['includes'](o)&&i[m][n]['push'](o);
+
+}
+const k={
+
+}
+;
+for(const p of Object['keys'](i)){
+k[p]=j['every'](q=>{
+const r=i[p][q]||[];
+return HORARIOS['every'](s=>r['includes'](s));
+
+}
+);
+
+}
+b['json'](k);
+
+}
+);
+
+}
+);
+
+}
+),router['get']('/disponibilidad-dia',authMiddleware,(a,b)=>{
+const {
+fecha:c,ocupantes:d
+}
+=a['query'];
+if(!c)return b['status'](0x190)['json']({
+'error':'Falta\x20el\x20parámetro\x20fecha'
+}
+);
+let e='SELECT\x20id,\x20name,\x20n_ocupantes\x20FROM\x20Mesas\x20WHERE\x20activo\x20=\x201';
+const f=[];
+if(d){
+const g=Number(d)+0x2;
+e+='\x20AND\x20n_ocupantes\x20>=\x20?\x20AND\x20n_ocupantes\x20<=\x20?',f['push'](Number(d),g);
+
+}
+db['all'](e,f,(h,i)=>{
+if(h)return b['status'](0x1f4)['json']({
+'error':'Error\x20al\x20consultar\x20las\x20mesas'
+}
+);
+db['all']('\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20SELECT\x20r.reserve_hour,\x20mr.id_mesa\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20FROM\x20Reservations\x20r\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20JOIN\x20Mesas_reservadas\x20mr\x20ON\x20mr.id_reservas\x20=\x20r.id\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20WHERE\x20r.reserve_date\x20=\x20?\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20AND\x20(r.status\x20IS\x20NULL\x20OR\x20r.status\x20!=\x20\x27cancel\x27)\x0a\x20\x20\x20\x20\x20\x20\x20\x20',[c],(j,k)=>{
+if(j)return b['status'](0x1f4)['json']({
+'error':'Error\x20al\x20consultar\x20las\x20reservas'
+}
+);
+const l={
+
+}
+;
+for(const n of k){
+if(!HORARIOS['includes'](n['reserve_hour']))continue;
+if(!l[n['id_mesa']])l[n['id_mesa']]=[];
+!l[n['id_mesa']]['includes'](n['reserve_hour'])&&l[n['id_mesa']]['push'](n['reserve_hour']);
+
+}
+const m=i['map'](o=>({
+'id':o['id'],'name':o['name'],'n_ocupantes':o['n_ocupantes'],'horasDisponibles':HORARIOS['filter'](p=>!(l[o['id']]||[])['includes'](p))
+}
+))['filter'](o=>o['horasDisponibles']['length']>0x0);
+b['json'](m);
+
+}
+);
+
+}
+);
+
+}
+),router['post']('/reservar',authMiddleware,(a,b)=>{
+const {
+idReserva:c,idMesa:d
+}
+=a['body'];
+if(!c||!d)return b['status'](0x190)['json']({
+'error':'Faltan\x20idReserva\x20o\x20idMesa'
+}
+);
+db['get']('SELECT\x20id,\x20reserve_date,\x20reserve_hour\x20FROM\x20Reservations\x20WHERE\x20id\x20=\x20?\x20AND\x20user_id\x20=\x20?',[c,a['userId']],(e,f)=>{
+if(e)return b['status'](0x1f4)['json']({
+'error':'Error\x20de\x20base\x20de\x20datos'
+}
+);
+if(!f)return b['status'](0x194)['json']({
+'error':'Reserva\x20no\x20encontrada\x20o\x20no\x20pertenece\x20al\x20usuario'
+}
+);
+db['get']('SELECT\x20id\x20FROM\x20Mesas\x20WHERE\x20id\x20=\x20?\x20AND\x20activo\x20=\x201',[d],(g,h)=>{
+if(g)return b['status'](0x1f4)['json']({
+'error':'Error\x20de\x20base\x20de\x20datos'
+}
+);
+if(!h)return b['status'](0x194)['json']({
+'error':'Mesa\x20no\x20encontrada\x20o\x20inactiva'
+}
+);
+db['get']('\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20SELECT\x20mr.id\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20FROM\x20Mesas_reservadas\x20mr\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20JOIN\x20Reservations\x20r\x20ON\x20mr.id_reservas\x20=\x20r.id\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20WHERE\x20mr.id_mesa\x20=\x20?\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20AND\x20r.reserve_date\x20=\x20?\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20AND\x20r.reserve_hour\x20=\x20?\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20AND\x20(r.status\x20IS\x20NULL\x20OR\x20r.status\x20!=\x20\x27cancel\x27)\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20',[d,f['reserve_date'],f['reserve_hour']],(i,j)=>{
+if(i)return b['status'](0x1f4)['json']({
+'error':'Error\x20de\x20base\x20de\x20datos'
+}
+);
+if(j)return b['status'](0x199)['json']({
+'error':'Esa\x20mesa\x20ya\x20está\x20reservada\x20para\x20esa\x20fecha\x20y\x20hora.\x20Por\x20favor\x20elige\x20otra.'
+}
+);
+db['run']('INSERT\x20INTO\x20Mesas_reservadas\x20(id_reservas,\x20id_mesa)\x20VALUES\x20(?,\x20?)',[c,d],function(k){
+if(k)return b['status'](0x1f4)['json']({
+'error':'Error\x20al\x20vincular\x20la\x20mesa'
+}
+);
+b['json']({
+'message':'Mesa\x20vinculada\x20correctamente','id':this['lastID']
+}
+);
+
+}
+);
+
+}
+);
+
+}
+);
+
+}
+);
+
+}
+),router['get']('/admin/todas',authMiddleware,adminMiddleware,(a,b)=>{
+db['all']('SELECT\x20*\x20FROM\x20Mesas\x20ORDER\x20BY\x20activo\x20DESC,\x20id\x20ASC',[],(c,d)=>{
+if(c)return b['status'](0x1f4)['json']({
+'error':'Error\x20al\x20consultar\x20las\x20mesas'
+}
+);
+b['json'](d);
+
+}
+);
+
+}
+),router['post']('/admin/crear',authMiddleware,adminMiddleware,(a,b)=>{
+const {
+name:c,n_ocupantes:d
+}
+=a['body'];
+if(!c||!d)return b['status'](0x190)['json']({
+'error':'Faltan\x20name\x20o\x20n_ocupantes'
+}
+);
+db['run']('INSERT\x20INTO\x20Mesas\x20(name,\x20n_ocupantes,\x20activo)\x20VALUES\x20(?,\x20?,\x201)',[c,Number(d)],function(e){
+if(e)return b['status'](0x1f4)['json']({
+'error':'Error\x20al\x20crear\x20la\x20mesa'
+}
+);
+b['json']({
+'message':'Mesa\x20creada\x20correctamente','id':this['lastID']
+}
+);
+
+}
+);
+
+}
+),router['put']('/admin/:id',authMiddleware,adminMiddleware,(a,b)=>{
+const {
+name:c,n_ocupantes:d,activo:e
+}
+=a['body'],{
+id:f
+}
+=a['params'];
+db['run']('UPDATE\x20Mesas\x20SET\x20name\x20=\x20?,\x20n_ocupantes\x20=\x20?,\x20activo\x20=\x20?\x20WHERE\x20id\x20=\x20?',[c,Number(d),e?0x1:0x0,f],function(g){
+if(g)return b['status'](0x1f4)['json']({
+'error':'Error\x20al\x20actualizar\x20la\x20mesa'
+}
+);
+if(this['changes']===0x0)return b['status'](0x194)['json']({
+'error':'Mesa\x20no\x20encontrada'
+}
+);
+b['json']({
+'message':'Mesa\x20actualizada\x20correctamente'
+}
+);
+
+}
+);
+
+}
+),router['delete']('/admin/:id',authMiddleware,adminMiddleware,(a,b)=>{
+const {
+id:c
+}
+=a['params'];
+db['run']('UPDATE\x20Mesas\x20SET\x20activo\x20=\x200\x20WHERE\x20id\x20=\x20?',[c],function(d){
+if(d)return b['status'](0x1f4)['json']({
+'error':'Error\x20al\x20desactivar\x20la\x20mesa'
+}
+);
+if(this['changes']===0x0)return b['status'](0x194)['json']({
+'error':'Mesa\x20no\x20encontrada'
+}
+);
+b['json']({
+'message':'Mesa\x20desactivada\x20correctamente'
+}
+);
+
+}
+);
+
+}
+),module['exports']=router;
