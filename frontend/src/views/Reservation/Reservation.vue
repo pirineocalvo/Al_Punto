@@ -103,7 +103,7 @@ async function guardarReserva() {
                         </a-form-item>
 
                         <a-form-item v-if="datosForm.ocupantes" label="Mesa disponible">
-                            <a-select v-model:value="datosForm.mesa" placeholder="Seleccione una mesa"@change="filtrarHorario" size="large">
+                            <a-select v-model:value="datosForm.mesa" placeholder="Seleccione una mesa" @change="filtrarHorario" size="large">
                                 <a-select-option v-for="mesa in mesasDia" :key="mesa.id" :value="mesa.id">
                                     {{ mesa.name }}
                                 </a-select-option>
