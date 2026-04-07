@@ -1,0 +1,15 @@
+.datosTituloAcordeon {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+.dashboard-content {
+    padding: 32px;
+    display: flex;
+    justify-content: center;
+    background-color: var(--bg-primary);
+}
+.dashboard-main-layout {
+    min-height: calc(100vh - 70px);
+}

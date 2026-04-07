@@ -282,7 +282,6 @@ const totalPedido = computed(() => {
     }, 0);
 });
 
-const precision = ref(2);
 
 </script>
 
@@ -291,28 +290,41 @@ const precision = ref(2);
 
     <div class="altoPag">
         <a-row class="contenedorPedidos">
-            <a-col :xs="20" :lg="16">
+            <a-col :xs="24" :lg="17">
                 <a-row>
-                    <a-col v-for="producto in productos" :key="producto.name">
-                        <a-card hoverable class="cardProducto">
-                            <template #cover>
-                                <img src="https://i.pinimg.com/originals/ce/e3/e4/cee3e4cebaf12a51e9fc4018f9471e38.png"
-                                    :alt="producto.name" class="imgMenuCompra" />
-                            </template>
+                    <a-col v-for="producto in productos" :key="producto.name" :xs="20" :md="18" :lg="19">
+                        <a-card class="productoCard" size="small" :bodyStyle="{ padding: '14px 16px' }">
+                            <div class="productoRow">
+                                <a-image :width="72" :preview="false"
+                                    src="https://i.pinimg.com/originals/ce/e3/e4/cee3e4cebaf12a51e9fc4018f9471e38.png"
+                                    :alt="producto.name" class="productoImage" />
 
-                            <a-card-meta :title="producto.name" />
+                                <div class="productoInfo">
+                                    <a-space :size="[8, 8]" wrap class="productoHeader">
+                                        <a-typography-text strong>
+                                            {{ producto.name }}
+                                        </a-typography-text>
 
-                            <div class="hoverPanel">
-                                <a-divider />
-                                <a-tag v-if="producto.tag" color="success">{{ producto.tag }}</a-tag>
+                                        <a-tag v-if="producto.tag" color="processing">
+                                            {{ producto.tag }}
+                                        </a-tag>
+                                    </a-space>
 
-                                <p class="descripcionProducto">{{ producto.description }}</p>
-                                <!-- <p class="descripcionProducto">{{ producto.ingredients }}</p> -->
-                                <div class="footerProducto">
-                                    <a-statistic :value="producto.price" :precision="precision" suffix="€"
-                                        :value-style="{ fontSize: '16px' }" />
-                                    <a-button type="primary" size="small" ghost
-                                        @click="addCarritoProducto(producto)">Pedir</a-button>
+                                    <a-typography-paragraph :ellipsis="{ rows: 1 }" class="productoDescription">
+                                        {{ producto.description }}
+                                    </a-typography-paragraph>
+
+                                    <a-typography-text type="secondary" class="productoSecondary">
+                                        {{ producto.ingredients }}
+                                    </a-typography-text>
+                                </div>
+
+                                <div class="productoActions">
+                                    <a-typography-text strong class="productoPrice">
+                                        {{ producto.price.toFixed(2) }} €
+                                    </a-typography-text>
+
+                                    <a-button type="primary" size="small" ghost @click="addCarritoProducto(producto)">+ Añadir</a-button>
                                 </div>
                             </div>
                         </a-card>
@@ -322,66 +334,63 @@ const precision = ref(2);
 
             <a-col :xs="20" :lg="6">
                 <a-card title="Tu pedido" class="pedidoCard">
-    <a-list :data-source="productosElegidos" item-layout="horizontal" class="listaPedido">
-        <template #renderItem="{ item }">
-            <a-list-item class="itemPedido">
-                <template #actions>
-                    <a-popconfirm title="¿Eliminar este producto?" ok-text="Sí" cancel-text="No"
-                        @confirm="eliminarProductoCarrito(item)">
-                        <template #icon>
-                            <QuestionCircleOutlined style="color: red" />
+                    <a-list :data-source="productosElegidos" item-layout="horizontal" class="listaPedido">
+                        <template #renderItem="{ item }">
+                            <a-list-item class="itemPedido">
+                                <template #actions>
+                                    <a-popconfirm title="¿Eliminar este producto?" ok-text="Sí" cancel-text="No"
+                                        @confirm="eliminarProductoCarrito(item)">
+                                        <template #icon>
+                                            <QuestionCircleOutlined style="color: red" />
+                                        </template>
+
+                                        <a-button type="text" danger size="small">
+                                            Eliminar
+                                        </a-button>
+                                    </a-popconfirm>
+                                </template>
+
+                                <a-list-item-meta>
+                                    <template #title>
+                                        <span class="nombreProducto">{{ item.name }}</span>
+                                    </template>
+
+                                    <template #description>
+                                        <div class="detallePedido">
+                                            <a-tag color="blue" v-if="item.edicion == false">
+                                                Cantidad: {{ item.cantidad }}
+                                                <a-button type="text" size="small"
+                                                    @click="activarEdicionCantidad(item.name)">
+                                                    <EditOutlined />
+                                                </a-button>
+                                            </a-tag>
+
+                                            <a-tag color="blue" v-else>
+                                                Cantidad:
+                                                <a-input-number id="inputNumber" v-model:value="item.cantidad"
+                                                    @pressEnter="guardarCambios(item)" min="0" />
+                                                <a-button type="primary" size="small" @click="guardarCambios(item)">
+                                                    <CheckOutlined />
+                                                </a-button>
+                                            </a-tag>
+
+                                            <a-tag color="green">
+                                                {{ item.precioTotal.toFixed(2) }} €
+                                            </a-tag>
+                                        </div>
+                                    </template>
+                                </a-list-item-meta>
+                            </a-list-item>
                         </template>
+                    </a-list>
 
-                        <a-button type="text" danger size="small">
-                            Eliminar
-                        </a-button>
-                    </a-popconfirm>
-                </template>
+                    <a-divider />
 
-                <a-list-item-meta>
-                    <template #title>
-                        <span class="nombreProducto">{{ item.name }}</span>
-                    </template>
-
-                    <template #description>
-                        <div class="detallePedido">
-                            <a-tag color="blue" v-if="item.edicion == false">
-                                Cantidad: {{ item.cantidad }}
-                                <a-button type="text" size="small" @click="activarEdicionCantidad(item.name)">
-                                    <EditOutlined />
-                                </a-button>
-                            </a-tag>
-
-                            <a-tag color="blue" v-else>
-                                Cantidad:
-                                <a-input-number
-                                    id="inputNumber"
-                                    v-model:value="item.cantidad"
-                                    @pressEnter="guardarCambios(item)"
-                                    min="0"
-                                />
-                                <a-button type="primary" size="small" @click="guardarCambios(item)">
-                                    <CheckOutlined />
-                                </a-button>
-                            </a-tag>
-
-                            <a-tag color="green">
-                                {{ item.precioTotal.toFixed(2) }} €
-                            </a-tag>
-                        </div>
-                    </template>
-                </a-list-item-meta>
-            </a-list-item>
-        </template>
-    </a-list>
-
-    <a-divider style="margin: 12px 0" />
-
-    <div class="totalPedido">
-        <span>Total</span>
-        <strong>{{ totalPedido.toFixed(2) }} €</strong>
-    </div>
-</a-card>
+                    <div class="totalPedido">
+                        <span>Total</span>
+                        <strong>{{ totalPedido.toFixed(2) }} €</strong>
+                    </div>
+                </a-card>
                 <a-form>
                     <a-button class="btnPrincipal">Realizar pedido</a-button>
                 </a-form>
