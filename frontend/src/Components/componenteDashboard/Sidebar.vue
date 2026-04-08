@@ -38,7 +38,12 @@ const router = useRouter()
                 </template>
                 Historial
             </a-menu-item>
-
+            <a-menu-item key="6" @click="router.push('/realizarPedido')">
+                <template #icon>
+                    <InfoCircleOutlined />
+                </template>
+                Realizar un pedido
+            </a-menu-item>
             <a-sub-menu key="sub1">
                 <template #icon>
                     <SettingOutlined />
