@@ -1,10 +1,10 @@
 <script setup>
-import Footer from '../../Components/cabeceraYpiePrincipal/Footer.vue';
-import HeaderDashboard from '../../Components/componenteDashboard/HeaderDashboard.vue'
-import Sidebar from '../../Components/componenteDashboard/Sidebar.vue'
+import Footer from '../../../Components/cabeceraYpiePrincipal/Footer.vue';
+import HeaderDashboard from '../../../Components/componenteDashboard/HeaderDashboard.vue'
+import Sidebar from '../../../Components/componenteDashboard/Sidebar.vue'
 import { ref, computed,onMounted } from 'vue';
 import { QuestionCircleOutlined, EditOutlined, CheckOutlined } from '@ant-design/icons-vue';
-import {getMenu, guardarCarritoCompraClientes } from '../../Services/api';
+import {getMenu, guardarCarritoCompraClientes } from '../../../Services/api';
 import './RealizarPedido.css';
 
 const menu = ref([]);
@@ -218,7 +218,7 @@ async function guardarCarrito() {
                     <a-button class="btnPrincipal" @click="guardarCarrito()">Realizar pedido</a-button>
                 </a-form>
             </a-col>
-        </a-row>    
+        </a-row>        
         </div>
         
 

@@ -8,8 +8,8 @@ import Reservation from '@/views/Reservation/Reservation.vue'
 import Dashboard from '../views/Dashboard/Dashboard.vue'
 import AgregarTickets from '@/views/Dashboard/Tickets/AgregarTickets/AgregarTickets.vue'
 import ListarTickets from '@/views/Dashboard/Tickets/ListarTickets/ListarTickets.vue'
-import RealizarPedido from '@/views/RealizarPedido/RealizarPedido.vue'
 import Historial from '@/views/Dashboard/historial/Historial.vue'
+import RealizarPedido from '../views/Dashboard/RealizarPedido/RealizarPedido.vue'
 const routes = [
   { path: '/', component: Home },
   { path: '/login', component: Login },
