@@ -394,6 +394,23 @@ export const guardarCarritoCompraClientes = async (data = {}) => {
   }
 };
 
+export const cancelarPedido = async (id) => {
+  try {
+    const token = getAuthToken()
+    const config = {
+      headers: { authorization: `Bearer ${token}` },
+    }
+
+    const response = await axios.delete(`${API_URL}/api/orders/cancelar/${id}`, config)
+    return response.data
+  } catch (error) {
+    if (error.response?.status === 401) {
+      logoutUser()
+    }
+    console.error('Error cancelando pedido:', error)
+    throw error
+  }
+}
 
 /* 
 ################# STORAGE FUNCTIONS ########################

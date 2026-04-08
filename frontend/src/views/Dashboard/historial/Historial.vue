@@ -3,7 +3,7 @@ import './Historial.css'
 import { ref, onMounted } from 'vue'
 import HeaderDashboard from '../../../Components/componenteDashboard/HeaderDashboard.vue'
 import Sidebar from '../../../Components/componenteDashboard/Sidebar.vue'
-import { getMenu } from '../../../Services/api'
+import { getProductosCompradosCliente, cancelarPedido } from '../../../Services/api'
 
 const user = ref(null);
 const collapsed = ref(false);
@@ -11,18 +11,16 @@ const collapsed = ref(false);
 const tabActiva = ref('reservas');
 const acordeonActivo = ref(null);
 
+const listaPedidos = ref([]);
+onMounted(async () => {
+    listaPedidos.value = await getProductosCompradosCliente();
+    console.log(listaPedidos.value);
+    
+})
 
-
-
-
-const pedidos = [
-    { key: '1', titulo: 'Pedido #1042 — 05/04/2025', total: '32.50 €', estado: 'Entregado' },
-    { key: '2', titulo: 'Pedido #1041 — 01/04/2025', total: '18.00 €', estado: 'Entregado' },
-    { key: '3', titulo: 'Pedido #1038 — 28/03/2025', total: '45.75 €', estado: 'Cancelado' },
-]
-
-function eliminarPedido(pedido) {
-    console.log('Eliminar:', pedido)
+async function eliminarPedido(pedido) {
+    await cancelarPedido(pedido.id);
+    listaPedidos.value = await getProductosCompradosCliente();
 }
 </script>
 
@@ -65,18 +63,20 @@ function eliminarPedido(pedido) {
 
                 <a-tab-pane key="pedidos" tab="Pedidos">
                     <a-collapse v-model:activeKey="acordeonActivo" accordion>
-                        <a-collapse-panel v-for="pedido in pedidos" :key="pedido.key">
+                        <a-collapse-panel v-for="pedido in listaPedidos" :key="pedido.key">
                             <template #header>
                                 <div class="datosTituloAcordeon">
-                                    <span>{{ pedido.titulo }}</span>
-                                    <a-button size="small" type="primary" ghost @click.stop="eliminarPedido(pedido)">
-                                        Eliminar pedido
+                                    <span>{{ pedido.created_at }}</span>
+                                    <a-button size="small" type="primary" ghost @click.stop="eliminarPedido(pedido)" v-if="pedido.is_picked_up == 0 && pedido.status == 'pendiente'">
+                                        Cancelar pedido
                                     </a-button>
+                                    <p v-else-if="pedido.status == 'cancelado'">El pedido fue cancelado</p>
                                 </div>
                             </template>
 
-                            <p>Total: {{ pedido.total }}</p>
-                            <p>Estado: {{ pedido.estado }}</p>
+                            <p v-for="producto in pedido.items">
+                                <span>Producto:</span> {{ producto.product_name }}; <span>Cantidad:</span> {{ producto.quantity }}; <span>Precio unidad:</span> {{ producto.price_at_time }}
+                            </p>
                         </a-collapse-panel>
                     </a-collapse>
                 </a-tab-pane>
