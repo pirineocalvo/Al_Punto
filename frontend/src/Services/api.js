@@ -326,6 +326,24 @@ export const getProductosCompradosCliente = async () =>{
 };
 
 
+export const guardarCarritoCompraClientes = async (data = {}) =>{
+  try {
+    const token = getAuthToken();
+    const config = {
+      headers: { authorization: `Bearer ${token}` },
+    };
+    const response = await axios.post(`${API_URL}/api/orders/create`,data, config);
+    return response.data;
+  } catch (error) {
+    if (error?.response?.status === 401) {
+      logoutUser();
+    }
+    console.error('Error subiendo pedidos:', error);
+    throw error;
+  }
+};
+
+
 /* 
 ################# STORAGE FUNCTIONS ########################
 */

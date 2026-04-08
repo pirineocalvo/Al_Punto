@@ -1,217 +1,21 @@
 <script setup>
-import Header from '../../Components/cabeceraYpiePrincipal/Header.vue';
 import Footer from '../../Components/cabeceraYpiePrincipal/Footer.vue';
-import { ref, computed } from 'vue';
+import HeaderDashboard from '../../Components/componenteDashboard/HeaderDashboard.vue'
+import Sidebar from '../../Components/componenteDashboard/Sidebar.vue'
+import { ref, computed,onMounted } from 'vue';
 import { QuestionCircleOutlined, EditOutlined, CheckOutlined } from '@ant-design/icons-vue';
-import './RealizarPedido.css'
+import {getMenu, guardarCarritoCompraClientes } from '../../Services/api';
+import './RealizarPedido.css';
+
+const menu = ref([]);
+onMounted(async () => {
+    menu.value = await getMenu();
+    console.log(menu.value)
+})
+
 
 const productosElegidos = ref([]);
-const productos = [
-    {
-        name: 'Hamburguesa Clásica',
-        description: 'Nuestra burger más vendida con ingredientes frescos.',
-        price: 12.5,
-        ingredients: 'Pan brioche, carne de vacuno, lechuga, tomate, queso cheddar, salsa especial'
-    },
-    {
-        name: 'Pizza Margherita',
-        description: 'Sabor tradicional italiano cocinado en horno de piedra.',
-        price: 10,
-        ingredients: 'Masa artesanal, tomate, mozzarella, albahaca, aceite de oliva'
-    },
-    {
-        name: 'Ensalada César',
-        description: 'Fresca y ligera, ideal para comenzar.',
-        price: 9.25,
-        ingredients: 'Lechuga romana, pollo, picatostes, queso parmesano, salsa César'
-    },
-    {
-        name: 'Tarta de Queso',
-        description: 'Casera y muy cremosa.',
-        price: 6.5,
-        ingredients: 'Queso crema, huevos, azúcar, galleta, mantequilla'
-    },
-    {
-        name: 'Hamburguesa BBQ',
-        description: 'Carne jugosa con bacon crujiente, cebolla caramelizada y salsa barbacoa.',
-        price: 13.75,
-        ingredients: 'Pan brioche, carne de vacuno, bacon, cebolla caramelizada, queso cheddar, salsa barbacoa'
-    },
-    {
-        name: 'Pizza Cuatro Quesos',
-        description: 'Mezcla intensa de quesos fundidos sobre masa fina artesanal.',
-        price: 11.5,
-        ingredients: 'Masa artesanal, mozzarella, gorgonzola, parmesano, queso de cabra, tomate'
-    },
-    {
-        name: 'Pizza Pepperoni',
-        description: 'Clásica pizza con pepperoni y mozzarella derretida.',
-        price: 12,
-        ingredients: 'Masa artesanal, tomate, mozzarella, pepperoni, orégano'
-    },
-    {
-        name: 'Wrap de Pollo',
-        description: 'Tortilla rellena de pollo marinado, lechuga y salsa especial.',
-        price: 8.95,
-        ingredients: 'Tortilla de trigo, pollo marinado, lechuga, tomate, queso, salsa especial'
-    },
-    {
-        name: 'Wrap Vegetal',
-        description: 'Opción ligera con verduras frescas, aguacate y hummus.',
-        price: 8.5,
-        ingredients: 'Tortilla de trigo, aguacate, hummus, lechuga, tomate, zanahoria'
-    },
-    {
-        name: 'Pasta Carbonara',
-        description: 'Espaguetis cremosos con bacon, parmesano y pimienta negra.',
-        price: 11.95,
-        ingredients: 'Espaguetis, bacon, yema de huevo, queso parmesano, pimienta negra'
-    },
-    {
-        name: 'Pasta Boloñesa',
-        description: 'Pasta al dente con salsa casera de carne y tomate.',
-        price: 10.95,
-        ingredients: 'Espaguetis, carne picada, tomate, cebolla, zanahoria, ajo'
-    },
-    {
-        name: 'Lasaña de Carne',
-        description: 'Capas de pasta con carne, bechamel y queso gratinado.',
-        price: 12.25,
-        ingredients: 'Pasta para lasaña, carne picada, tomate, bechamel, queso gratinado'
-    },
-    {
-        name: 'Lasaña Vegetal',
-        description: 'Versión casera con verduras salteadas y salsa suave.',
-        price: 11.75,
-        ingredients: 'Pasta para lasaña, calabacín, berenjena, tomate, bechamel, queso'
-    },
-    {
-        name: 'Croquetas Caseras',
-        description: 'Crujientes por fuera y cremosas por dentro, elaboradas al momento.',
-        price: 7.5,
-        ingredients: 'Bechamel, jamón, pan rallado, huevo, aceite'
-    },
-    {
-        name: 'Patatas Bravas',
-        description: 'Patatas doradas con salsa brava ligeramente picante.',
-        price: 6.75,
-        ingredients: 'Patatas, salsa brava, aceite, pimentón'
-    },
-    {
-        name: 'Patatas con Queso y Bacon',
-        description: 'Patatas fritas cubiertas con queso fundido y bacon crujiente.',
-        price: 7.95,
-        ingredients: 'Patatas, queso cheddar, bacon, salsa ranch'
-    },
-    {
-        name: 'Nachos Supreme',
-        description: 'Nachos con queso, guacamole, jalapeños y carne picada.',
-        price: 9.5,
-        ingredients: 'Nachos, queso fundido, guacamole, jalapeños, carne picada, crema agria'
-    },
-    {
-        name: 'Sandwich Mixto',
-        description: 'Jamón y queso fundido en pan tostado.',
-        price: 5.5,
-        ingredients: 'Pan de molde, jamón york, queso, mantequilla'
-    },
-    {
-        name: 'Sandwich Club',
-        description: 'Pollo, bacon, lechuga, tomate y mayonesa en triple pan.',
-        price: 8.75,
-        ingredients: 'Pan de molde, pollo, bacon, lechuga, tomate, mayonesa'
-    },
-    {
-        name: 'Bocadillo de Calamares',
-        description: 'Pan crujiente con calamares rebozados y alioli suave.',
-        price: 7.95,
-        ingredients: 'Pan, calamares rebozados, alioli, limón'
-    },
-    {
-        name: 'Bocadillo de Jamón',
-        description: 'Jamón serrano en pan recién horneado con tomate rallado.',
-        price: 6.95,
-        ingredients: 'Pan, jamón serrano, tomate rallado, aceite de oliva'
-    },
-    {
-        name: 'Sopa de Tomate',
-        description: 'Sopa suave y reconfortante elaborada con tomate natural.',
-        price: 5.9,
-        ingredients: 'Tomate, cebolla, ajo, caldo vegetal, aceite de oliva'
-    },
-    {
-        name: 'Crema de Verduras',
-        description: 'Crema ligera y sabrosa con verduras de temporada.',
-        price: 5.75,
-        ingredients: 'Calabacín, zanahoria, puerro, patata, caldo vegetal'
-    },
-    {
-        name: 'Arroz con Pollo',
-        description: 'Arroz meloso con pollo especiado y verduras frescas.',
-        price: 10.5,
-        ingredients: 'Arroz, pollo, pimiento, cebolla, ajo, especias'
-    },
-    {
-        name: 'Paella Mixta',
-        description: 'Arroz tradicional con marisco, pollo y verduras.',
-        price: 14.5,
-        ingredients: 'Arroz, pollo, gambas, mejillones, pimiento, judías verdes'
-    },
-    {
-        name: 'Pollo Asado',
-        description: 'Pollo tierno al horno con especias y guarnición.',
-        price: 12.95,
-        ingredients: 'Pollo, patatas, ajo, romero, aceite de oliva, especias'
-    },
-    {
-        name: 'Costillas BBQ',
-        description: 'Costillas tiernas glaseadas con salsa barbacoa casera.',
-        price: 15.75,
-        ingredients: 'Costillas de cerdo, salsa barbacoa, miel, especias'
-    },
-    {
-        name: 'Salmón a la Plancha',
-        description: 'Lomo de salmón con verduras salteadas y toque de limón.',
-        price: 16.25,
-        ingredients: 'Salmón, calabacín, zanahoria, limón, aceite de oliva'
-    },
-    {
-        name: 'Merluza Rebozada',
-        description: 'Filete crujiente acompañado de ensalada fresca.',
-        price: 13.25,
-        ingredients: 'Merluza, harina, huevo, pan rallado, lechuga, tomate'
-    },
-    {
-        name: 'Tacos de Ternera',
-        description: 'Tortillas rellenas de ternera especiada, cebolla y salsa.',
-        price: 9.95,
-        ingredients: 'Tortillas de maíz, ternera, cebolla, pimiento, salsa mexicana'
-    },
-    {
-        name: 'Tacos Veganos',
-        description: 'Tacos con soja sazonada, verduras y crema de aguacate.',
-        price: 9.5,
-        ingredients: 'Tortillas de maíz, soja texturizada, lechuga, tomate, aguacate'
-    },
-    {
-        name: 'Brownie de Chocolate',
-        description: 'Bizcocho intenso de chocolate con interior jugoso.',
-        price: 5.25,
-        ingredients: 'Chocolate negro, mantequilla, azúcar, huevos, harina'
-    },
-    {
-        name: 'Helado de Vainilla',
-        description: 'Helado cremoso y suave elaborado con auténtica vainilla.',
-        price: 4.5,
-        ingredients: 'Leche, nata, azúcar, vainilla'
-    },
-    {
-        name: 'Coulant de Chocolate',
-        description: 'Postre caliente con corazón fundido de chocolate.',
-        price: 6.25,
-        ingredients: 'Chocolate negro, mantequilla, azúcar, huevos, harina'
-    }
-];
+
 
 function addCarritoProducto(nuevoProducto) {
     const existente = productosElegidos.value.find(pro => pro.name === nuevoProducto.name);
@@ -282,17 +86,36 @@ const totalPedido = computed(() => {
     }, 0);
 });
 
+async function guardarCarrito() {
+    if(productosElegidos.value.length == 0){
 
+    }else{
+        const datosAguardar = {
+            items: productosElegidos.value.map(producto => ({
+                product_id: producto.id,
+                quantity: producto.cantidad,
+                price_at_time: producto.price
+            })),
+            total_price: totalPedido.value
+        };
+
+        await guardarCarritoCompraClientes(datosAguardar);   
+        productosElegidos.value = [];
+    }
+}
 </script>
 
 <template>
-    <Header></Header>
+    <HeaderDashboard></HeaderDashboard>
 
-    <div class="altoPag">
-        <a-row class="contenedorPedidos">
+    <div >
+        
+        <div class="altoPag"> 
+            <Sidebar></Sidebar>
+            <a-row class="contenedorPedidos">
             <a-col :xs="24" :lg="17">
                 <a-row>
-                    <a-col v-for="producto in productos" :key="producto.name" :xs="20" :md="18" :lg="19">
+                    <a-col v-for="producto in menu" :key="producto.name" :xs="20" :md="18" :lg="19">
                         <a-card class="productoCard" size="small" :bodyStyle="{ padding: '14px 16px' }">
                             <div class="productoRow">
                                 <a-image :width="72" :preview="false"
@@ -392,10 +215,12 @@ const totalPedido = computed(() => {
                     </div>
                 </a-card>
                 <a-form>
-                    <a-button class="btnPrincipal">Realizar pedido</a-button>
+                    <a-button class="btnPrincipal" @click="guardarCarrito()">Realizar pedido</a-button>
                 </a-form>
             </a-col>
-        </a-row>
+        </a-row>    
+        </div>
+        
 
         <Footer></Footer>
     </div>
