@@ -5,6 +5,8 @@ import { message } from 'ant-design-vue'
 import { getMyTickets, userInfo } from '../../../../Services/api'
 import Sidebar from '../../../../Components/componenteDashboard/Sidebar.vue'
 import './ListarTickets.css'
+import HeaderDashboard from '@/Components/componenteDashboard/HeaderDashboard.vue'
+import Footer from '@/Components/cabeceraYpiePrincipal/Footer.vue'
 
 const router = useRouter()
 
@@ -98,6 +100,7 @@ const separarFechaHora = (fecha) => {
 
 <template>
     <a-layout class="dashboard-container">
+        <HeaderDashboard :user="user" />
         <a-layout class="dashboard-main-layout">
             <Sidebar :collapsed="collapsed" />
 
@@ -188,5 +191,6 @@ const separarFechaHora = (fecha) => {
                 </a-spin>
             </a-layout-content>
         </a-layout>
+        <Footer />
     </a-layout>
 </template>

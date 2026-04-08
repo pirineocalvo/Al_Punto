@@ -18,10 +18,10 @@ const router = useRouter();
 const chartRef = ref(null);
 let chartInstance = null;
 
-// 🔥 QR
+
 const qr = ref('')
 
-// 🔐 generar código
+
 const generarCodigoQR = (userId) => {
     const secret = 'mi_clave_secreta_123'
     return btoa(`${userId}:${secret}`)
@@ -30,7 +30,7 @@ const generarCodigoQR = (userId) => {
 onMounted(async () => {
     await fetchUser();
     await fetchReserve();
-    await generarQR(); // 🔥
+    await generarQR();
     renderChart();
 });
 
@@ -52,7 +52,7 @@ const fetchReserve = async () => {
     }
 }
 
-// 🔥 generar imagen QR
+// TO DO: pantalla verificada tras escanear (cuando despleguemos)
 const generarQR = async () => {
     if (!user.value) return
 
@@ -99,73 +99,73 @@ const renderChart = async () => {
 </script>
 
 <template>
-<a-layout class="dashboard-container">
-    <HeaderDashboard :user="user"/>
-    <a-layout class="dashboard-main-layout">
-        <Sidebar :collapsed="collapsed" />
+    <a-layout class="dashboard-container">
+        <HeaderDashboard :user="user" />
+        <a-layout class="dashboard-main-layout">
+            <Sidebar :collapsed="collapsed" />
 
-        <a-layout-content class="dashboard-content">
-            <div class="content-wrapper">
+            <a-layout-content class="dashboard-content">
+                <div class="content-wrapper">
 
-                <div class="header-section">
-                    <a-typography-title class="dashboard-titulo">
-                        Bienvenido {{ user?.first_name || 'Usuario' }}
-                    </a-typography-title>
-                    <a-card class="qr-card">
-                    <h3>Tu tarjeta de fidelización</h3>
-                    <p>Enséñalo al llegar al local</p>
+                    <div class="header-section">
+                        <a-typography-title class="dashboard-titulo">
+                            Bienvenido {{ user?.first_name || 'Usuario' }}
+                        </a-typography-title>
+                        <a-card class="qr-card">
+                            <h3>Tu tarjeta de fidelización</h3>
+                            <p>Enséñalo al llegar al local</p>
 
-                    <img v-if="qr" :src="qr" alt="QR usuario" />
+                            <img v-if="qr" :src="qr" alt="QR usuario" />
 
-                    <p><strong>{{ user?.first_name }}</strong></p>
-                </a-card>
+                            <p><strong>{{ user?.first_name }}</strong></p>
+                        </a-card>
 
-                    <a-typography-paragraph class="dashboard-subtitulo">
-                        Resumen general de tu actividad
-                    </a-typography-paragraph>
+                        <a-typography-paragraph class="dashboard-subtitulo">
+                            Resumen general de tu actividad
+                        </a-typography-paragraph>
+                    </div>
+
+                    <div class="stats-row">
+                        <a-card class="stat-card">
+                            <div class="stat-header">
+                                <FileTextOutlined class="stat-icon blue" />
+                                <span>Reservas</span>
+                            </div>
+                            <div class="stat-number">
+                                {{ reserveInfo.length }}
+                            </div>
+                        </a-card>
+
+                        <a-card class="stat-card">
+                            <div class="stat-header">
+                                <UserOutlined class="stat-icon green" />
+                                <span>Tickets</span>
+                            </div>
+                            <div class="stat-number">
+                                {{ user?.ticket_count || 0 }}
+                            </div>
+                        </a-card>
+
+                        <a-card class="stat-card">
+                            <div class="stat-header">
+                                <TrophyOutlined class="stat-icon yellow" />
+                                <span>Puntos</span>
+                            </div>
+                            <div class="stat-number">
+                                {{ user?.points || 0 }}
+                            </div>
+                        </a-card>
+                    </div>
+
+
+
+                    <a-card class="chart-card">
+                        <div ref="chartRef" class="chart-container"></div>
+                    </a-card>
+
                 </div>
-
-                <div class="stats-row">
-                    <a-card class="stat-card">
-                        <div class="stat-header">
-                            <FileTextOutlined class="stat-icon blue"/>
-                            <span>Reservas</span>
-                        </div>
-                        <div class="stat-number">
-                            {{ reserveInfo.length }}
-                        </div>
-                    </a-card>
-
-                    <a-card class="stat-card">
-                        <div class="stat-header">
-                            <UserOutlined class="stat-icon green"/>
-                            <span>Tickets</span>
-                        </div>
-                        <div class="stat-number">
-                            {{ user?.ticket_count || 0 }}
-                        </div>
-                    </a-card>
-
-                    <a-card class="stat-card">
-                        <div class="stat-header">
-                            <TrophyOutlined class="stat-icon yellow"/>
-                            <span>Puntos</span>
-                        </div>
-                        <div class="stat-number">
-                            {{ user?.points || 0 }}
-                        </div>
-                    </a-card>
-                </div>
-
-                
-
-                <a-card class="chart-card">
-                    <div ref="chartRef" class="chart-container"></div>
-                </a-card>
-
-            </div>
-        </a-layout-content>
+            </a-layout-content>
+        </a-layout>
+        <Footer />
     </a-layout>
-    <Footer/>
-</a-layout>
 </template>

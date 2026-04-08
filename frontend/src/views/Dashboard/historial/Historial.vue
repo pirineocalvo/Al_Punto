@@ -1,7 +1,8 @@
 <script setup>
 import './Historial.css'
 import { ref, onMounted } from 'vue'
-import HeaderDashboard from '../../../Components/componenteDashboard/HeaderDashboard.vue'
+import HeaderDashboard from '@/Components/componenteDashboard/HeaderDashboard.vue'
+import Footer from '@/Components/cabeceraYpiePrincipal/Footer.vue'
 import Sidebar from '../../../Components/componenteDashboard/Sidebar.vue'
 import { getProductosCompradosCliente, cancelarPedido } from '../../../Services/api'
 
@@ -82,5 +83,6 @@ async function eliminarPedido(pedido) {
                 </a-tab-pane>
             </a-tabs>
         </a-layout>
+        <Footer />
     </a-layout>
 </template>
