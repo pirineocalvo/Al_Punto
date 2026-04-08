@@ -1,12 +1,18 @@
 <script setup>
 import './Historial.css';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import HeaderDashboard from '../../../Components/componenteDashboard/HeaderDashboard.vue';
 import Sidebar from '../../../Components/componenteDashboard/Sidebar.vue';
-// ── Una variable por cada componente que la necesite ──
-const tabActiva = ref('reservas');   // controla qué tab está abierta
+import { getProductosCompradosCliente } from '../../../Services/api'
+const tabActiva = ref('reservas');   
 const acordeonActivo = ref(null);         // controla qué panel del acordeón está abierto (null = ninguno)
 
+const productosClientes = ref([]);
+onMounted(async () => {
+    productosClientes.value = await getProductosCompradosCliente();
+    console.log(productosClientes.value);
+    
+})
 const pedidos = [
     { key: '1', titulo: 'Pedido #1042 — 05/04/2025', total: '32.50 €', estado: 'Entregado' },
     { key: '2', titulo: 'Pedido #1041 — 01/04/2025', total: '18.00 €', estado: 'Entregado' },
@@ -19,11 +25,11 @@ function eliminarPedido(pedido) {
 </script>
 
 <template>
-    <a-layout class="dashboard-container">
+    <a-layout>
         <HeaderDashboard :user="user" />
-        <a-layout class="dashboard-main-layout">
+        <a-layout class="dashboardMainLayout" >
             <Sidebar :collapsed="collapsed" />
-            <a-tabs v-model:activeKey="tabActiva">
+            <a-tabs v-model:activeKey="tabActiva" style="flex:1; padding: 32px;">
 
                 <a-tab-pane key="reservas" tab="Reservas">
                     <a-card class="productoCard" size="small" :bodyStyle="{ padding: '14px 16px' }">
@@ -35,11 +41,8 @@ function eliminarPedido(pedido) {
                             <div class="productoInfo">
                                 <a-space :size="[8, 8]" wrap class="productoHeader">
                                     <a-typography-text strong>
-
                                     </a-typography-text>
-
                                     <a-tag color="processing">
-
                                     </a-tag>
                                 </a-space>
 
@@ -63,12 +66,11 @@ function eliminarPedido(pedido) {
                                 <div class="datosTituloAcordeon">
                                     <span>{{ pedido.titulo }}</span>
                                     <a-button size="small" type="primary" ghost @click.stop="eliminarPedido(pedido)">
-                                        Repetir pedido
+                                        Eliminar pedido
                                     </a-button>
                                 </div>
                             </template>
 
-                            <!-- ── Contenido del panel ── -->
                             <p>Total: {{ pedido.total }}</p>
                             <p>Estado: {{ pedido.estado }}</p>
 

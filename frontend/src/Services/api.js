@@ -303,6 +303,29 @@ export const getMyTickets = async () => {
     throw error;
   }
 };
+
+/*
+################## COMPRAS ##################
+*/
+
+export const getProductosCompradosCliente = async () =>{
+  try {
+    const token = getAuthToken();
+    const config = {
+      headers: { authorization: `Bearer ${token}` },
+    };
+    const response = await axios.get(`${API_URL}/api/orders/mis-pedidos`, config);
+    return response.data;
+  } catch (error) {
+    if (error?.response?.status === 401) {
+      logoutUser();
+    }
+    console.error('Error getting pedidos:', error);
+    throw error;
+  }
+};
+
+
 /* 
 ################# STORAGE FUNCTIONS ########################
 */

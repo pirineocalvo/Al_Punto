@@ -32,11 +32,11 @@ const router = useRouter()
                 Mi Perfil
             </a-menu-item>
 
-            <a-menu-item key="5" @click="router.push('/misReservas')">
+            <a-menu-item key="5" @click="router.push('/historial')">
                 <template #icon>
                     <InfoCircleOutlined />
                 </template>
-                Mis Reservas
+                Historial
             </a-menu-item>
 
             <a-sub-menu key="sub1">
