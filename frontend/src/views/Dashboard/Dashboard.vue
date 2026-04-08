@@ -5,6 +5,7 @@ import Sidebar from '../../Components/componenteDashboard/Sidebar.vue'
 import { misReservas, userInfo } from '../../Services/api'
 import { Bar } from '@antv/g2plot'
 import { UserOutlined, TrophyOutlined, FileTextOutlined } from '@ant-design/icons-vue'
+import QRCode from 'qrcode' // 🔥 NUEVO
 import './Dashboard.css'
 import HeaderDashboard from '@/Components/componenteDashboard/HeaderDashboard.vue'
 import Footer from '@/Components/cabeceraYpiePrincipal/Footer.vue'
@@ -17,9 +18,19 @@ const router = useRouter();
 const chartRef = ref(null);
 let chartInstance = null;
 
+// 🔥 QR
+const qr = ref('')
+
+// 🔐 generar código
+const generarCodigoQR = (userId) => {
+    const secret = 'mi_clave_secreta_123'
+    return btoa(`${userId}:${secret}`)
+}
+
 onMounted(async () => {
     await fetchUser();
     await fetchReserve();
+    await generarQR(); // 🔥
     renderChart();
 });
 
@@ -41,6 +52,16 @@ const fetchReserve = async () => {
     }
 }
 
+// 🔥 generar imagen QR
+const generarQR = async () => {
+    if (!user.value) return
+
+    const code = generarCodigoQR(user.value.id)
+    const url = `https://tudominio.com/checkin?code=${code}`
+
+    qr.value = await QRCode.toDataURL(url)
+}
+
 const chartData = computed(() => [
     { name: 'Reservas', value: reserveInfo.value.length || 1 },
     { name: 'Tickets', value: user.value?.ticket_count || 1 },
@@ -59,16 +80,12 @@ const renderChart = async () => {
         data: chartData.value,
         xField: 'value',
         yField: 'name',
-
         seriesField: 'name',
         legend: false,
-
         color: ['#1677ff', '#52c41a', '#faad14'],
-
         label: {
             position: 'right'
         },
-
         barStyle: {
             radius: [6, 6, 6, 6]
         },
@@ -86,16 +103,28 @@ const renderChart = async () => {
     <HeaderDashboard :user="user"/>
     <a-layout class="dashboard-main-layout">
         <Sidebar :collapsed="collapsed" />
+
         <a-layout-content class="dashboard-content">
             <div class="content-wrapper">
+
                 <div class="header-section">
                     <a-typography-title class="dashboard-titulo">
                         Bienvenido {{ user?.first_name || 'Usuario' }}
                     </a-typography-title>
+                    <a-card class="qr-card">
+                    <h3>Tu tarjeta de fidelización</h3>
+                    <p>Enséñalo al llegar al local</p>
+
+                    <img v-if="qr" :src="qr" alt="QR usuario" />
+
+                    <p><strong>{{ user?.first_name }}</strong></p>
+                </a-card>
+
                     <a-typography-paragraph class="dashboard-subtitulo">
                         Resumen general de tu actividad
                     </a-typography-paragraph>
                 </div>
+
                 <div class="stats-row">
                     <a-card class="stat-card">
                         <div class="stat-header">
@@ -126,14 +155,16 @@ const renderChart = async () => {
                             {{ user?.points || 0 }}
                         </div>
                     </a-card>
-
                 </div>
+
+                
+
                 <a-card class="chart-card">
                     <div ref="chartRef" class="chart-container"></div>
                 </a-card>
+
             </div>
         </a-layout-content>
-        
     </a-layout>
     <Footer/>
 </a-layout>
