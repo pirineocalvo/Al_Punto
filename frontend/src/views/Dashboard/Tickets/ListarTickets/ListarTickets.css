@@ -60,7 +60,7 @@
 }
 
 .ticket-card:hover .ticket-content {
-    max-height: 500px; 
+    max-height: 2000px;
     opacity: 1;
     transform: translateY(0);
     margin-top: 10px;

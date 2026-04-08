@@ -4,8 +4,8 @@ import { useRouter } from 'vue-router'
 import { UploadOutlined } from '@ant-design/icons-vue'
 import { message } from 'ant-design-vue'
 import { uploadTickets, userInfo } from '../../../../Services/api'
-/* import DashboardHeader from '../Components/DashboardHeader.vue'
-import DashboardFooter from '../Components/DashboardFooter.vue' */
+import HeaderDashboard from '@/Components/componenteDashboard/HeaderDashboard.vue'
+import Footer from '@/Components/cabeceraYpiePrincipal/Footer.vue'
 import Sidebar from '../../../../Components/componenteDashboard/Sidebar.vue'
 import './AgregarTickets.css'
 
@@ -104,7 +104,7 @@ const resetear = () => {
 
 <template>
     <a-layout class="dashboard-container">
-        <!--         <DashboardHeader :user="user" @toggle="collapsed = !collapsed" /> -->
+        <HeaderDashboard :user="user"/>
 
         <a-layout class="dashboard-main-layout">
             <Sidebar :collapsed="collapsed" />
@@ -197,8 +197,9 @@ const resetear = () => {
 
                     </div>
                 </a-spin>
-                <!-- <DashboardFooter /> -->
+                
             </a-layout-content>
         </a-layout>
     </a-layout>
+    <Footer/>
 </template>
