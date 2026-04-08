@@ -128,21 +128,31 @@ export const addReservation = async (reservation) => {
       headers: { authorization: `Bearer ${token}` },
     };
 
-    
     const response = await axios.post(`${API_URL}/api/reservas/addreserve`, reservation, config);
-    reservation ={
-      ...reservation,
-      idReserva:response.data.id  
-    }
-    console.log(reservation);
-    
-    const responseMesasReservadas = await axios.post(`${API_URL}/api/mesasReservadas/guardarMesaReservada`, reservation, config);
-      return responseMesasReservadas.data; 
+    // Devuelve { message, reservationId } — usar reservationId en vincularMesaReserva()
+    return response.data;
   } catch (error) {
     if (error.response.status === 401) {
       logoutUser();
     }
-    console.error('Error getting data:', error);
+    console.error('Error creating reservation:', error);
+    throw error;
+  }
+};
+
+export const vincularMesaReserva = async ({ idReserva, idMesa }) => {
+  try {
+    const token = getAuthToken();
+    const config = {
+      headers: { authorization: `Bearer ${token}` },
+    };
+    const response = await axios.post(`${API_URL}/api/mesas/reservar`, { idReserva, idMesa }, config);
+    return response.data;
+  } catch (error) {
+    if (error.response.status === 401) {
+      logoutUser();
+    }
+    console.error('Error linking table to reservation:', error);
     throw error;
   }
 };
@@ -153,17 +163,33 @@ export const misReservas = async () => {
     const config = {
       headers: { authorization: `Bearer ${token}` },
     };
-    const response = await axios.get(`${API_URL}/api/reservas/userReserve/`, config);
+    const response = await axios.get(`${API_URL}/api/reservas/userReserve`, config);
     return response.data;
   } catch (error) {
     if (error.response.status === 401) {
       logoutUser();
     }
-    console.error('Error getting data:', error);
+    console.error('Error getting reservations:', error);
     throw error;
   }
-}
+};
 
+export const cancelarReserva = async (id) => {
+  try {
+    const token = getAuthToken();
+    const config = {
+      headers: { authorization: `Bearer ${token}` },
+    };
+    const response = await axios.delete(`${API_URL}/api/reservas/cancelar/${id}`, config);
+    return response.data;
+  } catch (error) {
+    if (error.response.status === 401) {
+      logoutUser();
+    }
+    console.error('Error cancelling reservation:', error);
+    throw error;
+  }
+};
 
 export const todasLasReservas = async () => {
   try {
@@ -179,84 +205,56 @@ export const todasLasReservas = async () => {
     }
     throw error;
   }
-}
+};
 
 /*
 ################# MESAS ENDPOINTS ########################
 */
-
-
-export const todasLasMesas = async () => {
-  try {
-    const token = getAuthToken();
-    const config = {
-      headers: { authorization: `Bearer ${token}` },
-    };
-    const response = await axios.get(`${API_URL}/api/mesas/allTable`, config);
-    return response.data;
-  } catch (error) {
-    if (error.response.status === 401) {
-      logoutUser();
-    }
-    throw error;
-  }
-}
-
-
-/*
-################# MESAS RESERVADAS ENDPOINTS ########################
-*/
-
-
-export const todasLasMesasReservadas = async () => {
-  try {
-    const token = getAuthToken();
-    const config = {
-      headers: { authorization: `Bearer ${token}` },
-    };
-    const response = await axios.get(`${API_URL}/api/mesasReservadas/allMesasReservadas`, config);
-    return response.data;
-  } catch (error) {
-    if (error.response.status === 401) {
-      logoutUser();
-    }
-    throw error;
-  }
-}
 
 export const getDisponibilidadMes = async (year, month) => {
   try {
     const token = getAuthToken();
     const config = {
       headers: { authorization: `Bearer ${token}` },
-      params: { year, month }
+      params: { year, month },
     };
-
-    const response = await axios.get(
-      `${API_URL}/api/mesasReservadas/disponibilidadMes`,
-      config
-    );
-
+    const response = await axios.get(`${API_URL}/api/mesas/disponibilidad-mes`, config);
     return response.data;
   } catch (error) {
-    if (error.response?.status === 401) {
+    if (error.response.status === 401) {
       logoutUser();
     }
-    console.error('Error getting disponibilidad mes:', error);
+    console.error('Error getting month availability:', error);
     throw error;
   }
 };
-
 
 export const todasLasMesasLibresPorDia = async (fecha, ocupantes) => {
   try {
     const token = getAuthToken();
     const config = {
       headers: { authorization: `Bearer ${token}` },
-      params:{fecha, ocupantes}
+      params: { fecha, ocupantes },
     };
+    const response = await axios.get(`${API_URL}/api/mesas/disponibilidad-dia`, config);
+    return response.data;
+  } catch (error) {
+    if (error.response.status === 401) {
+      logoutUser();
+    }
+    console.error('Error getting day availability:', error);
+    throw error;
+  }
+};
 
-    const response = await axios.get(`${API_URL}/api/mesasReservadas/disponibilidadMesasDiaConcreto`, config);
+// Admin: todas las mesas (activas e inactivas)
+export const todasLasMesas = async () => {
+  try {
+    const token = getAuthToken();
+    const config = {
+      headers: { authorization: `Bearer ${token}` },
+    };
+    const response = await axios.get(`${API_URL}/api/mesas/admin/todas`, config);
     return response.data;
   } catch (error) {
     if (error.response.status === 401) {
@@ -264,7 +262,61 @@ export const todasLasMesasLibresPorDia = async (fecha, ocupantes) => {
     }
     throw error;
   }
-}
+};
+
+// Admin: crear mesa
+export const crearMesa = async (data = {}) => {
+  try {
+    const token = getAuthToken();
+    const config = {
+      headers: { authorization: `Bearer ${token}` },
+    };
+    const response = await axios.post(`${API_URL}/api/mesas/admin/crear`, data, config);
+    return response.data;
+  } catch (error) {
+    if (error.response.status === 401) {
+      logoutUser();
+    }
+    console.error('Error creating table:', error);
+    throw error;
+  }
+};
+
+// Admin: actualizar mesa
+export const actualizarMesa = async (id, data = {}) => {
+  try {
+    const token = getAuthToken();
+    const config = {
+      headers: { authorization: `Bearer ${token}` },
+    };
+    const response = await axios.put(`${API_URL}/api/mesas/admin/${id}`, data, config);
+    return response.data;
+  } catch (error) {
+    if (error.response.status === 401) {
+      logoutUser();
+    }
+    console.error('Error updating table:', error);
+    throw error;
+  }
+};
+
+// Admin: baja lógica de mesa (activo = 0, no elimina)
+export const desactivarMesa = async (id) => {
+  try {
+    const token = getAuthToken();
+    const config = {
+      headers: { authorization: `Bearer ${token}` },
+    };
+    const response = await axios.delete(`${API_URL}/api/mesas/admin/${id}`, config);
+    return response.data;
+  } catch (error) {
+    if (error.response.status === 401) {
+      logoutUser();
+    }
+    console.error('Error deactivating table:', error);
+    throw error;
+  }
+};
 
 /*
 ################## SUBIR TICKETS ##################
@@ -279,7 +331,7 @@ export const uploadTickets = async (ticket) => {
     const response = await axios.post(`${API_URL}/api/tickets/upload`, ticket, config);
     return response.data;
   } catch (error) {
-    if (error?.response?.status === 401) {
+    if (error.response.status === 401) {
       logoutUser();
     }
     console.error('Error uploading ticket:', error);
@@ -296,7 +348,7 @@ export const getMyTickets = async () => {
     const response = await axios.get(`${API_URL}/api/tickets/mytickets`, config);
     return response.data;
   } catch (error) {
-    if (error?.response?.status === 401) {
+    if (error.response.status === 401) {
       logoutUser();
     }
     console.error('Error getting tickets:', error);
@@ -308,7 +360,7 @@ export const getMyTickets = async () => {
 ################## COMPRAS ##################
 */
 
-export const getProductosCompradosCliente = async () =>{
+export const getProductosCompradosCliente = async () => {
   try {
     const token = getAuthToken();
     const config = {
@@ -317,7 +369,7 @@ export const getProductosCompradosCliente = async () =>{
     const response = await axios.get(`${API_URL}/api/orders/mis-pedidos`, config);
     return response.data;
   } catch (error) {
-    if (error?.response?.status === 401) {
+    if (error.response.status === 401) {
       logoutUser();
     }
     console.error('Error getting pedidos:', error);
@@ -325,17 +377,16 @@ export const getProductosCompradosCliente = async () =>{
   }
 };
 
-
-export const guardarCarritoCompraClientes = async (data = {}) =>{
+export const guardarCarritoCompraClientes = async (data = {}) => {
   try {
     const token = getAuthToken();
     const config = {
       headers: { authorization: `Bearer ${token}` },
     };
-    const response = await axios.post(`${API_URL}/api/orders/create`,data, config);
+    const response = await axios.post(`${API_URL}/api/orders/create`, data, config);
     return response.data;
   } catch (error) {
-    if (error?.response?.status === 401) {
+    if (error.response.status === 401) {
       logoutUser();
     }
     console.error('Error subiendo pedidos:', error);
