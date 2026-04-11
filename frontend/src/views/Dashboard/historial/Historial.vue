@@ -1,10 +1,10 @@
 <script setup>
-import './Historial.css'
-import { ref, onMounted } from 'vue'
-import HeaderDashboard from '@/Components/componenteDashboard/HeaderDashboard.vue'
-import Footer from '@/Components/cabeceraYpiePrincipal/Footer.vue'
-import Sidebar from '../../../Components/componenteDashboard/Sidebar.vue'
-import { getProductosCompradosCliente, cancelarPedido } from '../../../Services/api'
+import './Historial.css';
+import { ref, onMounted, computed } from 'vue';
+import HeaderDashboard from '@/Components/componenteDashboard/HeaderDashboard.vue';
+import Footer from '@/Components/cabeceraYpiePrincipal/Footer.vue';
+import Sidebar from '../../../Components/componenteDashboard/Sidebar.vue';
+import { getProductosCompradosCliente, cancelarPedido, misReservas } from '../../../Services/api';
 
 const user = ref(null);
 const collapsed = ref(false);
@@ -12,17 +12,39 @@ const collapsed = ref(false);
 const tabActiva = ref('reservas');
 const acordeonActivo = ref(null);
 
+const listaReservas = ref([]);
 const listaPedidos = ref([]);
+
 onMounted(async () => {
     listaPedidos.value = await getProductosCompradosCliente();
-    console.log(listaPedidos.value);
-    
-})
+    listaReservas.value = await misReservas();
+    console.log(listaReservas.value);
+});
 
 async function eliminarPedido(pedido) {
     await cancelarPedido(pedido.id);
     listaPedidos.value = await getProductosCompradosCliente();
 }
+
+const columns = [
+    {
+        title: 'Fecha',
+        dataIndex: 'reserve_date',
+        sorter: (a, b) =>
+            String(a.reserve_date ?? '').localeCompare(String(b.reserve_date ?? '')),
+    },
+    {
+        title: 'Hora',
+        dataIndex: 'reserve_hour',
+        sorter: (a, b) =>
+            String(a.reserve_hour ?? '').localeCompare(String(b.reserve_hour ?? '')),
+    },
+    {
+        title: 'Asistentes',
+        dataIndex: 'guests',
+        sorter: (a, b) => Number(a.guests ?? -1) - Number(b.guests ?? -1),
+    },
+];
 </script>
 
 <template>
@@ -34,55 +56,44 @@ async function eliminarPedido(pedido) {
 
             <a-tabs v-model:activeKey="tabActiva" style="flex:1; padding: 32px;">
                 <a-tab-pane key="reservas" tab="Reservas">
-                    <a-card class="productoCard" size="small" :bodyStyle="{ padding: '14px 16px' }">
-                        <div class="productoRow">
-                            <a-image :width="72" :preview="false"
-                                src="https://i.pinimg.com/originals/ce/e3/e4/cee3e4cebaf12a51e9fc4018f9471e38.png"
-                                alt="Patata" class="productoImage" />
-
-                            <div class="productoInfo">
-                                <a-space :size="[8, 8]" wrap class="productoHeader">
-                                    <a-typography-text strong>
-                                        Patatas
-                                    </a-typography-text>
-
-                                    <a-tag color="processing">
-                                        Disponible
-                                    </a-tag>
-                                </a-space>
-
-                                <a-typography-paragraph :content="'Patatas compradas por el cliente'"
-                                    :ellipsis="{ rows: 1 }" class="productoDescription" />
-
-                                <a-typography-text type="secondary" class="productoSecondary">
-                                    Producto de ejemplo
-                                </a-typography-text>
-                            </div>
-                        </div>
-                    </a-card>
+                    <a-table
+                        :columns="columns"
+                        :data-source="listaReservas"
+                        :row-key="record => record.id"
+                        :pagination="{ pageSize: 10 }"
+                    />
                 </a-tab-pane>
 
                 <a-tab-pane key="pedidos" tab="Pedidos">
                     <a-collapse v-model:activeKey="acordeonActivo" accordion>
-                        <a-collapse-panel v-for="pedido in listaPedidos" :key="pedido.key">
+                        <a-collapse-panel v-for="pedido in listaPedidos" :key="pedido.id">
                             <template #header>
                                 <div class="datosTituloAcordeon">
                                     <span>{{ pedido.created_at }}</span>
-                                    <a-button size="small" type="primary" ghost @click.stop="eliminarPedido(pedido)" v-if="pedido.is_picked_up == 0 && pedido.status == 'pendiente'">
+                                    <a-button
+                                        size="small"
+                                        type="primary"
+                                        ghost
+                                        @click.stop="eliminarPedido(pedido)"
+                                        v-if="pedido.is_picked_up == 0 && pedido.status == 'pendiente'"
+                                    >
                                         Cancelar pedido
                                     </a-button>
                                     <p v-else-if="pedido.status == 'cancelado'">El pedido fue cancelado</p>
                                 </div>
                             </template>
 
-                            <p v-for="producto in pedido.items">
-                                <span>Producto:</span> {{ producto.product_name }}; <span>Cantidad:</span> {{ producto.quantity }}; <span>Precio unidad:</span> {{ producto.price_at_time }}
+                            <p v-for="producto in pedido.items" :key="producto.id ?? producto.product_name">
+                                <span>Producto:</span> {{ producto.product_name }};
+                                <span>Cantidad:</span> {{ producto.quantity }};
+                                <span>Precio unidad:</span> {{ producto.price_at_time }}
                             </p>
                         </a-collapse-panel>
                     </a-collapse>
                 </a-tab-pane>
             </a-tabs>
         </a-layout>
+
         <Footer />
     </a-layout>
 </template>
