@@ -58,49 +58,6 @@ h1 {
   color: var(--text-primary);
 }
 
-.ant-btn.btnPrincipal {
-  background: var(--color-boton-principal);
-  border-color: var(--color-boton-principal);
-  color: var(--color-boton-principal-texto);
-  border-radius: 8px;
-  height: 40px;
-  padding: 0 18px;
-}
-
-.ant-btn.btnPrincipal:hover,
-.ant-btn.btnPrincipal:focus {
-  background: var(--color-boton-principal-hover);
-  border-color: var(--color-boton-principal-hover);
-  color: var(--color-boton-principal-texto);
-}
-
-.ant-btn.btnPrincipal:active {
-  background: var(--color-boton-principal-active);
-  border-color: var(--color-boton-principal-active);
-  color: var(--color-boton-principal-texto);
-}
-
-.ant-btn.btnSecundario {
-  background: var(--color-boton-secundario);
-  border: 1px solid var(--color-borde-boton);
-  color: var(--color-boton-secundario-texto);
-  border-radius: 8px;
-  height: 40px;
-  padding: 0 18px;
-}
-
-.ant-btn.btnSecundario:hover,
-.ant-btn.btnSecundario:focus {
-  background: var(--color-boton-secundario-hover);
-  border-color: var(--color-borde-boton-hover);
-  color: var(--color-borde-boton-hover);
-}
-
-.ant-btn.btnSecundario:active {
-  background: var(--color-boton-secundario-active);
-  border-color: var(--color-borde-boton-hover);
-  color: var(--color-borde-boton-hover);
-}
 
 .mi-calendario.ant-picker-calendar.ant-picker-calendar-full 
     .ant-picker-cell-in-view.ant-picker-cell-selected 
@@ -113,22 +70,6 @@ h1 {
 .mi-calendario .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
     color: var(--color-principal) !important;
     border-color: var(--color-principal) !important;
-}
-
-:where(.css-dev-only-do-not-override-1p3hq3p).ant-picker-calendar.ant-picker-calendar-full
-  .ant-picker-cell-selected .ant-picker-calendar-date .ant-picker-calendar-date-value,
-:where(.css-dev-only-do-not-override-1p3hq3p).ant-picker-calendar.ant-picker-calendar-full
-  .ant-picker-cell-selected:hover .ant-picker-calendar-date .ant-picker-calendar-date-value,
-:where(.css-dev-only-do-not-override-1p3hq3p).ant-picker-calendar.ant-picker-calendar-full
-  .ant-picker-cell-selected .ant-picker-calendar-date-today .ant-picker-calendar-date-value,
-:where(.css-dev-only-do-not-override-1p3hq3p).ant-picker-calendar.ant-picker-calendar-full
-  .ant-picker-cell-selected:hover .ant-picker-calendar-date-today .ant-picker-calendar-date-value {
-  color: var(--color-principal);
-}
-
-:where(.css-dev-only-do-not-override-1p3hq3p).ant-picker-calendar.ant-picker-calendar-full
-  .ant-picker-calendar-date-today {
-  border-color: var(--color-principal);
 }
 
 .mi-calendario .ant-picker-calendar-header {
@@ -158,43 +99,6 @@ h1 {
 .mi-calendario .ant-select-focused:not(.ant-select-disabled) .ant-select-selector {
   border-color: var(--color-principal) !important;
   
-}
-
-:where(.css-dev-only-do-not-override-1p3hq3p).ant-typography .ant-typography-expand, :where(.css-dev-only-do-not-override-1p3hq3p).ant-typography .ant-typography-edit, :where(.css-dev-only-do-not-override-1p3hq3p).ant-typography .ant-typography-copy {
-    color: var(--color-enlace);
-}
-
-.ant-typography .ant-typography-expand:hover,
-.ant-typography .ant-typography-edit:hover,
-.ant-typography .ant-typography-copy:hover {
-  color: var(--color-enlace-hover);
-}
-
-.ant-typography .ant-typography-expand:active,
-.ant-typography .ant-typography-edit:active,
-.ant-typography .ant-typography-copy:active {
-  color: var(--color-enlace-active);
-}
-
-.ant-typography .ant-typography-expand,
-.ant-typography .ant-typography-edit,
-.ant-typography .ant-typography-copy,
-.ant-typography .ant-typography-copy-success {
-  color: var(--color-enlace);
-}
-
-.ant-typography .ant-typography-expand:hover,
-.ant-typography .ant-typography-edit:hover,
-.ant-typography .ant-typography-copy:hover,
-.ant-typography .ant-typography-copy-success:hover {
-  color: var(--color-enlace-hover);
-}
-
-.ant-typography .ant-typography-expand:active,
-.ant-typography .ant-typography-edit:active,
-.ant-typography .ant-typography-copy:active,
-.ant-typography .ant-typography-copy-success:active {
-  color: var(--color-enlace-active);
 }
 
 
@@ -289,12 +193,4 @@ nav {
 .ant-menu-submenu-popup .ant-menu-item:hover {
     background-color: var(--color-subMenu-fondo-hover) !important;
     color: var(--color-menu-texto) !important;
-}
-:where(.css-dev-only-do-not-override-1p3hq3p).ant-drawer .ant-drawer-content{
-    background: var(--color-menu-fondo);
-    pointer-events: auto;
-}
-:where(.css-dev-only-do-not-override-1p3hq3p).ant-menu .ant-menu-submenu, :where(.css-dev-only-do-not-override-1p3hq3p).ant-menu .ant-menu-submenu-inline
-{
-  padding-inline: 0;
 }

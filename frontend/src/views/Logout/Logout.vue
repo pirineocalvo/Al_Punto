@@ -1,21 +1,3 @@
-<template>
-    <section class="contenedorLogin">
-        <div class="logoutBox">
-            <h2>¿Estás seguro de que quieres cerrar sesión?</h2>
-
-            <div class="separarBtn">
-                <a-button class="btnPrincipal" type="primary" @click="logout">
-                    Sí
-                </a-button>
-
-                <a-button class="btnSecundario" @click="volver">
-                    No
-                </a-button>
-            </div>
-        </div>
-    </section>
-</template>
-
 <script setup>
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
@@ -39,3 +21,20 @@ function volver() {
     router.push('/')
 }
 </script>
+<template>
+    <section class="contenedorLogin">
+        <div class="logoutBox">
+            <h2>¿Estás seguro de que quieres cerrar sesión?</h2>
+
+            <div class="separarBtn">
+                <a-button type="primary" @click="logout">
+                    Sí
+                </a-button>
+
+                <a-button @click="volver">
+                    No
+                </a-button>
+            </div>
+        </div>
+    </section>
+</template>

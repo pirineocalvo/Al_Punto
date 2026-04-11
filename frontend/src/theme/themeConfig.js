@@ -1,75 +1,145 @@
 import { theme } from "ant-design-vue";
 
-/**
- * Ant Design Theme Configuration
- * This file contains all the design tokens used by Ant Design components.
- * You can modify these variables to change the look and feel of your application.
- */
-
 export const themeTokens = {
-  // Common tokens for both light and dark themes
-  common: {
-    borderRadius: 8,
-    fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-  },
-  
-  // Dark Theme Tokens
-  dark: {
+
+  // ─── MODO CLARO ──────────────────────────────────────────────────────────────
+  light: {
+    algorithm: theme.defaultAlgorithm,
+
     token: {
-      colorPrimary: "#f4a25a", // Warm orange
+      // Colores base
+      colorPrimary: "#D97742",  
       colorSuccess: "#3A9E6F",
       colorWarning: "#E8A020",
       colorError: "#D94F3D",
       colorInfo: "#15616D",
-      colorBgBase: "#121212", // Very dark grey/black
-      colorTextBase: "#F5F5F5", // Light grey
+
+      // Fondo
+      colorBgBase: "#FFF5EC",
+
+      // Texto
+      colorTextBase: "#3A2E2A",
+
+      // Borde
+      colorBorder: "#E8C9A0",
+      colorBorderSecondary: "#F0DCC0",
+
+      // Links
+      colorLink: "#B85F34",
+      colorLinkHover: "#D97742",
+      colorLinkActive: "#97522D",
+
+      // Tipografía
+      fontFamily: "'Outfit', 'Inter', system-ui, -apple-system, sans-serif",
+      fontSize: 15,
+
+      // Radio de borde uniforme
+      borderRadius: 8,
+      borderRadiusLG: 12,
+      borderRadiusSM: 6,
+
+      // Sombra
+      boxShadow: "0 2px 12px rgba(100, 60, 20, 0.10)",
+      boxShadowSecondary: "0 4px 20px rgba(100, 60, 20, 0.14)",
+    },
+
+    components: {
+      // ── Button ──────────────────────────────────────────────────────────────
+      Button: {
+        borderRadius: 8,
+        controlHeight: 40,
+        paddingContentHorizontal: 18,
+      },
+
+      // ── Card ────────────────────────────────────────────────────────────────
+      Card: {
+        colorBgContainer: "#FFFFFF",
+        borderRadiusLG: 12,
+        boxShadow: "0 2px 12px rgba(100, 60, 20, 0.10)",
+      },
+
+      // ── Menu (el horizontal del header) ─────────────────────────────────────
+      Menu: {
+        itemHoverBg: "rgba(217, 119, 66, 0.10)",
+        itemSelectedBg: "rgba(217, 119, 66, 0.15)",
+        itemSelectedColor: "#D97742",
+        itemBorderRadius: 6,
+      },
+
+      // ── Input / Select / Form ────────────────────────────────────────────────
+      Input: {
+        colorBgContainer: "#FFFFFF",
+        colorBorder: "#E8C9A0",
+        hoverBorderColor: "#D97742",
+        activeBorderColor: "#D97742",
+        activeShadow: "0 0 0 3px rgba(217, 119, 66, 0.15)",
+      },
+
+      Select: {
+        colorBgContainer: "#FFFFFF",
+        colorBorder: "#E8C9A0",
+        optionSelectedBg: "rgba(217, 119, 66, 0.15)",
+        optionActiveBg: "rgba(217, 119, 66, 0.08)",
+      },
+
+      // ── Calendar ─────────────────────────────────────────────────────────────
+      Calendar: {
+        colorBgContainer: "#FFFFFF",
+      },
+
+      // ── Typography ───────────────────────────────────────────────────────────
+      Typography: {
+        colorLink: "#B85F34",
+        colorLinkHover: "#D97742",
+      },
+
+      // ── Drawer (menú móvil) ──────────────────────────────────────────────────
+      Drawer: {
+        colorBgElevated: "#3A2E2A",
+      },
+
+      // ── Table (si la usas en Dashboard) ─────────────────────────────────────
+      Table: {
+        colorBgContainer: "#FFFFFF",
+        headerBg: "#F5E6D6",
+        rowHoverBg: "rgba(217, 119, 66, 0.06)",
+        borderColor: "#E8C9A0",
+      },
+
+      // ── Layout ───────────────────────────────────────────────────────────────
+      Layout: {
+        headerBg: "#3A2E2A",
+        bodyBg: "#FFF5EC",
+        footerBg: "#3A2E2A",
+      },
+    },
+  },
+
+  // ─── MODO OSCURO ─────────────────────────────────────────────────────────────
+  dark: {
+    algorithm: theme.darkAlgorithm,
+    token: {
+      colorPrimary: "#f4a25a",
+      colorSuccess: "#3A9E6F",
+      colorWarning: "#E8A020",
+      colorError: "#D94F3D",
+      colorInfo: "#15616D",
+      colorBgBase: "#121212",
+      colorTextBase: "#F5F5F5",
       colorBorder: "#F0C99A",
       borderRadius: 8,
     },
-    algorithm: theme.darkAlgorithm,
     components: {
       Menu: {
         itemHoverBg: "rgba(244, 163, 14, 0.1)",
         itemSelectedBg: "rgba(244, 163, 14, 0.15)",
       },
-      Button: {
-        borderRadius: 8,
-      },
-      Card: {
-        colorBgContainer: "rgba(255, 250, 244, 0.1)",
-      }
-    },
-  },
-  
-  // Light Theme Tokens
-  light: {
-    token: {
-      colorPrimary: "#D97742", // Earthy orange
-      colorSuccess: "#3A9E6F",
-      colorWarning: "#E8A020",
-      colorError: "#D94F3D",
-      colorInfo: "#15616D",
-      colorBgBase: "#FFEDDC", // Creamy white
-      colorTextBase: "#3A2E2A", // Dark brown/grey
-      colorBorder: "#F0C99A",
-      borderRadius: 8,
-    },
-    algorithm: theme.defaultAlgorithm,
-    components: {
-      Menu: {
-        itemHoverBg: "rgba(217, 119, 66, 0.1)",
-        itemSelectedBg: "rgba(217, 119, 66, 0.15)",
-      },
-      Button: {
-        borderRadius: 8,
-      },
-      Card: {
-        colorBgContainer: "#F7D6BF",
-      }
+      Button: { borderRadius: 8 },
+      Card: { colorBgContainer: "rgba(255, 250, 244, 0.08)" },
     },
   },
 };
 
 export const getAntdTheme = (mode) => {
-  return themeTokens[mode] || themeTokens.dark;
+  return themeTokens[mode] || themeTokens.light;
 };

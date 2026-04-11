@@ -15,7 +15,7 @@ import {} from 'ant-design-vue';
                 <a-typography-paragraph>
                     Experiencia gastronómica de primer nivel en un ambiente refinado y acogedor.
                 </a-typography-paragraph>
-                <a-button class="btnPrincipal" type="primary" size="large">
+                <a-button type="primary" size="large">
                     Reserva Tu Mesa
                 </a-button>
             </div>
@@ -29,7 +29,7 @@ import {} from 'ant-design-vue';
             <a-typography-paragraph>Desde 1995, hemos estado sirviendo los platos más
                 exquisitos...</a-typography-paragraph>
             <a-typography-paragraph>Cada plato cuenta una historia...</a-typography-paragraph>
-            <a-button class="btnPrincipal" type="default">Conoce Más</a-button>
+            <a-button type="default">Conoce Más</a-button>
         </div>
 
         <div id="contenedorTarjetas">

@@ -1,62 +1,3 @@
-<template>
-    <section class="contenedorLogin">
-        <a-alert v-if="error" :message="error" type="error" show-icon style="margin-bottom: 16px" />
-
-        <a-form :model="formState" :rules="rules" @finish="registrarUsuario">
-            <a-form-item label="Nombre" name="firstName" :label-col="{ span: 7 }" :wrapper-col="{ span: 12 }">
-                <a-input v-model:value="formState.firstName" placeholder="Nombre">
-                    <template #prefix>
-                        <UserOutlined />
-                    </template>
-                </a-input>
-            </a-form-item>
-
-            <a-form-item label="Apellidos" name="lastName" :label-col="{ span: 7 }" :wrapper-col="{ span: 12 }">
-                <a-input v-model:value="formState.lastName" placeholder="Apellidos">
-                    <template #prefix>
-                        <UserOutlined />
-                    </template>
-                </a-input>
-            </a-form-item>
-
-            <a-form-item label="Teléfono" name="phone" :label-col="{ span: 7 }" :wrapper-col="{ span: 12 }">
-                <a-input v-model:value="formState.phone" placeholder="612345678">
-                    <template #prefix>
-                        <UserOutlined />
-                    </template>
-                </a-input>
-            </a-form-item>
-
-            <a-form-item label="Correo electrónico" name="email" :label-col="{ span: 7 }" :wrapper-col="{ span: 12 }">
-                <a-input v-model:value="formState.email" placeholder="Correo electrónico">
-                    <template #prefix>
-                        <UserOutlined />
-                    </template>
-                </a-input>
-            </a-form-item>
-
-            <a-form-item label="Contraseña" name="password" :label-col="{ span: 7 }" :wrapper-col="{ span: 12 }">
-                <a-input-password v-model:value="formState.password" placeholder="Contraseña">
-                    <template #prefix>
-                        <LockOutlined />
-                    </template>
-                </a-input-password>
-            </a-form-item>
-
-            <a-form-item :wrapper-col="{ span: 12, offset: 5 }">
-                <div class="separarBtn">
-                    <a-button class="btnPrincipal" type="primary" html-type="submit">
-                        Registrarse
-                    </a-button>
-                    <a-button class="btnSecundario" @click="volver">
-                        Volver
-                    </a-button>
-                </div>
-            </a-form-item>
-        </a-form>
-    </section>
-</template>
-
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
@@ -141,3 +82,61 @@ function volver() {
     router.back()
 }
 </script>
+<template>
+    <section class="contenedorLogin">
+        <a-alert v-if="error" :message="error" type="error" show-icon style="margin-bottom: 16px" />
+
+        <a-form :model="formState" :rules="rules" @finish="registrarUsuario">
+            <a-form-item label="Nombre" name="firstName" :label-col="{ span: 7 }" :wrapper-col="{ span: 12 }">
+                <a-input v-model:value="formState.firstName" placeholder="Nombre">
+                    <template #prefix>
+                        <UserOutlined />
+                    </template>
+                </a-input>
+            </a-form-item>
+
+            <a-form-item label="Apellidos" name="lastName" :label-col="{ span: 7 }" :wrapper-col="{ span: 12 }">
+                <a-input v-model:value="formState.lastName" placeholder="Apellidos">
+                    <template #prefix>
+                        <UserOutlined />
+                    </template>
+                </a-input>
+            </a-form-item>
+
+            <a-form-item label="Teléfono" name="phone" :label-col="{ span: 7 }" :wrapper-col="{ span: 12 }">
+                <a-input v-model:value="formState.phone" placeholder="612345678">
+                    <template #prefix>
+                        <UserOutlined />
+                    </template>
+                </a-input>
+            </a-form-item>
+
+            <a-form-item label="Correo electrónico" name="email" :label-col="{ span: 7 }" :wrapper-col="{ span: 12 }">
+                <a-input v-model:value="formState.email" placeholder="Correo electrónico">
+                    <template #prefix>
+                        <UserOutlined />
+                    </template>
+                </a-input>
+            </a-form-item>
+
+            <a-form-item label="Contraseña" name="password" :label-col="{ span: 7 }" :wrapper-col="{ span: 12 }">
+                <a-input-password v-model:value="formState.password" placeholder="Contraseña">
+                    <template #prefix>
+                        <LockOutlined />
+                    </template>
+                </a-input-password>
+            </a-form-item>
+
+            <a-form-item :wrapper-col="{ span: 12, offset: 5 }">
+                <div class="separarBtn">
+                    <a-button type="primary" html-type="submit">
+                        Registrarse
+                    </a-button>
+                    <a-button @click="volver">
+                        Volver
+                    </a-button>
+                </div>
+            </a-form-item>
+        </a-form>
+    </section>
+</template>

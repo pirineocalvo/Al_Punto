@@ -119,7 +119,7 @@ async function guardarReserva() {
                         </a-form-item>
 
                         <a-form-item>
-                            <a-button html-type="submit" class="btnPrincipal" size="large" block :disabled="!datosForm.ocupantes || !datosForm.mesa || !datosForm.hora">
+                            <a-button html-type="submit" size="large" block :disabled="!datosForm.ocupantes || !datosForm.mesa || !datosForm.hora">
                                 Realizar reserva
                             </a-button>
                         </a-form-item>

@@ -134,7 +134,7 @@ const resetear = () => {
                                     </a-col>
 
                                     <a-col :xs="24" :md="8">
-                                        <a-button class="btnPrincipal" size="large" block :disabled="!archivo" @click="subirTicket">
+                                        <a-button size="large" block :disabled="!archivo" @click="subirTicket">
                                             Subir Ticket
                                         </a-button>
                                     </a-col>
@@ -149,7 +149,7 @@ const resetear = () => {
                                     <a-typography-title :level="2">Ticket procesado</a-typography-title>
                                 </a-col>
                                 <a-col>
-                                    <a-button class="btnSecundario" @click="resetear">Subir otro ticket</a-button>
+                                    <a-button @click="resetear">Subir otro ticket</a-button>
                                 </a-col>
                             </a-row>
 

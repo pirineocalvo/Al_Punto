@@ -215,7 +215,7 @@ async function guardarCarrito() {
                     </div>
                 </a-card>
                 <a-form>
-                    <a-button class="btnPrincipal" @click="guardarCarrito()">Realizar pedido</a-button>
+                    <a-button @click="guardarCarrito()">Realizar pedido</a-button>
                 </a-form>
             </a-col>
         </a-row>        

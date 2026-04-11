@@ -65,8 +65,8 @@ const volver = () => {
 
                 <a-form-item :wrapper-col="{ span: 12, offset: 5 }">
                     <div class="separarBtn">
-                        <a-button class="btnPrincipal" type="primary" html-type="submit">Iniciar sesión</a-button>
-                        <a-button class="btnSecundario" @click="volver">Volver</a-button>
+                        <a-button type="primary" html-type="submit">Iniciar sesión</a-button>
+                        <a-button @click="volver">Volver</a-button>
                     </div>
                 </a-form-item>
             </a-form>
