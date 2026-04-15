@@ -1,15 +1,15 @@
 <script setup>
-import { useRouter } from 'vue-router'
-import { UserOutlined, LogoutOutlined } from '@ant-design/icons-vue'
+import { useRouter } from 'vue-router';
+import { UserOutlined, LogoutOutlined } from '@ant-design/icons-vue';
 import "./HeaderDashboard.css";
 
 const props = defineProps(["user"]);
 
-const router = useRouter()
+const router = useRouter();
 
 const logout = () => {
-    localStorage.removeItem('loginUserToken')
-    router.push('/login')
+    localStorage.removeItem('loginUserToken');
+    router.push('/logout');
 }
 </script>
 

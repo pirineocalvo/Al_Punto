@@ -71,7 +71,7 @@ export const themeTokens = {
         colorBgContainer: "#FFFFFF",
         colorBorder: "#E8C9A0",
         hoverBorderColor: "#D97742",
-        activeBorderColor: "#D97742",
+        activeBorderColor: "#bd6535",
         activeShadow: "0 0 0 3px rgba(217, 119, 66, 0.15)",
       },
 
@@ -98,11 +98,11 @@ export const themeTokens = {
         colorBgElevated: "#3A2E2A",
       },
 
-      // ── Table (si la usas en Dashboard) ─────────────────────────────────────
+      // ── Table ─────────────────────────────────────
       Table: {
         colorBgContainer: "#FFFFFF",
         headerBg: "#F5E6D6",
-        rowHoverBg: "rgba(217, 119, 66, 0.06)",
+        rowHoverBg: "rgba(209, 116, 65, 0.06)",
         borderColor: "#E8C9A0",
       },
 

@@ -79,64 +79,74 @@ async function registrarUsuario() {
 }
 
 function volver() {
-    router.back()
+    router.push('/');
 }
+
+function iniciarSesion (){
+    router.push('/login');
+};
 </script>
 <template>
     <section class="contenedorLogin">
         <a-alert v-if="error" :message="error" type="error" show-icon style="margin-bottom: 16px" />
+        <a-card>
+            <a-typography-title :level="2" style="text-align: center;">
+                Registrarse
+            </a-typography-title>
+            <a-form :model="formState" :rules="rules" @finish="registrarUsuario">
+                <a-form-item label="Nombre" name="firstName" :label-col="{ span: 7 }" :wrapper-col="{ span: 12 }">
+                    <a-input v-model:value="formState.firstName" placeholder="Nombre">
+                        <template #prefix>
+                            <UserOutlined />
+                        </template>
+                    </a-input>
+                </a-form-item>
 
-        <a-form :model="formState" :rules="rules" @finish="registrarUsuario">
-            <a-form-item label="Nombre" name="firstName" :label-col="{ span: 7 }" :wrapper-col="{ span: 12 }">
-                <a-input v-model:value="formState.firstName" placeholder="Nombre">
-                    <template #prefix>
-                        <UserOutlined />
-                    </template>
-                </a-input>
-            </a-form-item>
+                <a-form-item label="Apellidos" name="lastName" :label-col="{ span: 7 }" :wrapper-col="{ span: 12 }">
+                    <a-input v-model:value="formState.lastName" placeholder="Apellidos">
+                        <template #prefix>
+                            <UserOutlined />
+                        </template>
+                    </a-input>
+                </a-form-item>
 
-            <a-form-item label="Apellidos" name="lastName" :label-col="{ span: 7 }" :wrapper-col="{ span: 12 }">
-                <a-input v-model:value="formState.lastName" placeholder="Apellidos">
-                    <template #prefix>
-                        <UserOutlined />
-                    </template>
-                </a-input>
-            </a-form-item>
+                <a-form-item label="Teléfono" name="phone" :label-col="{ span: 7 }" :wrapper-col="{ span: 12 }">
+                    <a-input v-model:value="formState.phone" placeholder="612345678">
+                        <template #prefix>
+                            <UserOutlined />
+                        </template>
+                    </a-input>
+                </a-form-item>
 
-            <a-form-item label="Teléfono" name="phone" :label-col="{ span: 7 }" :wrapper-col="{ span: 12 }">
-                <a-input v-model:value="formState.phone" placeholder="612345678">
-                    <template #prefix>
-                        <UserOutlined />
-                    </template>
-                </a-input>
-            </a-form-item>
+                <a-form-item label="Correo electrónico" name="email" :label-col="{ span: 7 }"
+                    :wrapper-col="{ span: 12 }">
+                    <a-input v-model:value="formState.email" placeholder="Correo electrónico">
+                        <template #prefix>
+                            <UserOutlined />
+                        </template>
+                    </a-input>
+                </a-form-item>
 
-            <a-form-item label="Correo electrónico" name="email" :label-col="{ span: 7 }" :wrapper-col="{ span: 12 }">
-                <a-input v-model:value="formState.email" placeholder="Correo electrónico">
-                    <template #prefix>
-                        <UserOutlined />
-                    </template>
-                </a-input>
-            </a-form-item>
+                <a-form-item label="Contraseña" name="password" :label-col="{ span: 7 }" :wrapper-col="{ span: 12 }">
+                    <a-input-password v-model:value="formState.password" placeholder="Contraseña">
+                        <template #prefix>
+                            <LockOutlined />
+                        </template>
+                    </a-input-password>
+                </a-form-item>
 
-            <a-form-item label="Contraseña" name="password" :label-col="{ span: 7 }" :wrapper-col="{ span: 12 }">
-                <a-input-password v-model:value="formState.password" placeholder="Contraseña">
-                    <template #prefix>
-                        <LockOutlined />
-                    </template>
-                </a-input-password>
-            </a-form-item>
-
-            <a-form-item :wrapper-col="{ span: 12, offset: 5 }">
-                <div class="separarBtn">
-                    <a-button type="primary" html-type="submit">
-                        Registrarse
-                    </a-button>
-                    <a-button @click="volver">
-                        Volver
-                    </a-button>
-                </div>
-            </a-form-item>
-        </a-form>
+                <a-form-item :wrapper-col="{ span: 12, offset: 5 }">
+                    <div class="separarBtn">
+                        <a-button type="primary" html-type="submit">
+                            Registrarse
+                        </a-button>
+                        <a-button @click="volver">
+                            Volver
+                        </a-button>
+                    </div>
+                </a-form-item>
+                <a-typography-text>¿Ya eres miembro? <a-typography-link @click="iniciarSesion()">Iniciar sesión</a-typography-link> </a-typography-text>
+            </a-form>
+        </a-card>
     </section>
 </template>

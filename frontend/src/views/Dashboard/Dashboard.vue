@@ -82,7 +82,7 @@ const renderChart = async () => {
         yField: 'name',
         seriesField: 'name',
         legend: false,
-        color: ['#1677ff', '#52c41a', '#faad14'],
+        color: ['#D97742', '#B85F34', '#97522D'],
         label: {
             position: 'right'
         },
@@ -128,7 +128,7 @@ const renderChart = async () => {
                     <div class="stats-row">
                         <a-card class="stat-card">
                             <div class="stat-header">
-                                <FileTextOutlined class="stat-icon blue" />
+                                <FileTextOutlined class="stat-icon" />
                                 <span>Reservas</span>
                             </div>
                             <div class="stat-number">
@@ -138,7 +138,7 @@ const renderChart = async () => {
 
                         <a-card class="stat-card">
                             <div class="stat-header">
-                                <UserOutlined class="stat-icon green" />
+                                <UserOutlined class="stat-icon" />
                                 <span>Tickets</span>
                             </div>
                             <div class="stat-number">
@@ -148,7 +148,7 @@ const renderChart = async () => {
 
                         <a-card class="stat-card">
                             <div class="stat-header">
-                                <TrophyOutlined class="stat-icon yellow" />
+                                <TrophyOutlined class="stat-icon" />
                                 <span>Puntos</span>
                             </div>
                             <div class="stat-number">
