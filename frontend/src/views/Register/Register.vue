@@ -66,7 +66,8 @@ async function registrarUsuario() {
 
     try {
         const res = await registerUser(formState.value)
-
+        console.log(res);
+        
         if (res === true) {
             router.push('/login')
         } else {

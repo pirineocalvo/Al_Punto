@@ -12,6 +12,8 @@ const usuarioRegistrado = ref(localStorage.getItem('loginUserToken'));
 
 const pantallaPeque = ref(window.innerWidth < 768);
 
+const rutaActual = computed(() => route.path);
+
 const menuSinLog = [
     { ruta: '/', label: 'Inicio' },
     { ruta: '/menu', label: 'Menú' },

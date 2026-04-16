@@ -10,6 +10,7 @@ import AgregarTickets from '@/views/Dashboard/Tickets/AgregarTickets/AgregarTick
 import ListarTickets from '@/views/Dashboard/Tickets/ListarTickets/ListarTickets.vue'
 import Historial from '@/views/Dashboard/historial/Historial.vue'
 import RealizarPedido from '../views/Dashboard/RealizarPedido/RealizarPedido.vue'
+import Marketplace from '@/views/Dashboard/marketplace/Marketplace.vue'
 
 const routes = [
   { path: '/', component: Home },
@@ -34,6 +35,7 @@ const routes = [
   { path: '/listarTickets', component: ListarTickets },
   { path: '/realizarPedido', component: RealizarPedido },
   { path: '/historial', component: Historial },
+  { path: '/marketplace', component: Marketplace },
 ]
 
 const router = createRouter({

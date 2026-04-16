@@ -21,6 +21,8 @@ export const loginUser = async (data = {}) => {
 export const userInfo = async () => {
   try {
     const token = getAuthToken();
+    console.log('token ' +token);
+    
     const config = {
       headers: { authorization: `Bearer ${token}` },
     };
@@ -402,6 +404,63 @@ export const cancelarPedido = async (id) => {
     }
 
     const response = await axios.delete(`${API_URL}/api/orders/cancelar/${id}`, config)
+    return response.data
+  } catch (error) {
+    if (error.response?.status === 401) {
+      logoutUser()
+    }
+    console.error('Error cancelando pedido:', error)
+    throw error
+  }
+}
+
+/*
+################# MARKETPLACE ENDPOINTS ########################
+*/
+export const pedidosRealizadosMarketPlace = async () => {
+  try {
+    const token = getAuthToken()
+    const config = {
+      headers: { authorization: `Bearer ${token}` },
+    }
+
+    const response = await axios.get(`${API_URL}/api/marketplace/mypocket`, config)
+    return response.data
+  } catch (error) {
+    if (error.response?.status === 401) {
+      logoutUser()
+    }
+    console.error('Error cancelando pedido:', error)
+    throw error
+  }
+}
+
+export const listaProductosMarketplace = async () => {
+  try {
+    const token = getAuthToken()
+    const config = {
+      headers: { authorization: `Bearer ${token}` },
+    }
+
+    const response = await axios.get(`${API_URL}/api/marketplace/items`, config)
+    return response.data
+  } catch (error) {
+    if (error.response?.status === 401) {
+      logoutUser()
+    }
+    console.error('Error cancelando pedido:', error)
+    throw error
+  }
+}
+
+export const cangearProductoMarkePlace = async (id) => {
+  try {
+    const token = getAuthToken()
+    const config = {
+      headers: { authorization: `Bearer ${token}` },
+    }
+
+    const response = await axios.post(`${API_URL}/api/marketplace/comprar/${id}`, config)
     return response.data
   } catch (error) {
     if (error.response?.status === 401) {
