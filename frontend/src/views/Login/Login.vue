@@ -1,12 +1,13 @@
 <script setup>
 import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
 import { loginUser } from '../../Services/api';
 import { message } from 'ant-design-vue';
 import './Login.css';
 
 const router = useRouter();
+const route = useRoute();
 
 const formState = ref({
     email: '',
@@ -33,12 +34,11 @@ const rules = {
 async function verificarUser() {
     try {
         await loginUser(formState.value);
-        console.log(formState.value);
-        
-        router.push('/')
-        } catch (errorFromBack) {
+
+        const redirect = route.query.redirect || '/';
+        router.push(redirect);
+    } catch (errorFromBack) {
         message.error('El usuario o la contraseña no son válidos');
-        
     }
 }
 
@@ -46,9 +46,9 @@ const volver = () => {
     router.push('/');
 };
 
-function registrarse (){
+function registrarse() {
     router.push('/register');
-};
+}
 </script>
 
 <template>
@@ -81,7 +81,7 @@ function registrarse (){
                     </div>
                 </a-form-item>
             </a-form>
-            <a-typography-text>¿Aún no tienes cuenta? <a-typography-link @click="registrarse()">¡Únete a la familia!</a-typography-link> </a-typography-text>
+            <a-typography-text>¿Aún no tienes cuenta? <a-typography-link @click="registrarse()">¡Únete a la familia!</a-typography-link></a-typography-text>
         </a-card>
     </div>
 </template>
