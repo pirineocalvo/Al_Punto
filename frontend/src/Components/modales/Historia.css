@@ -1,0 +1,24 @@
+.historia-contenido {
+  padding: 12px;
+  overflow: hidden;
+}
+
+.historia-imagen {
+  float: left;
+  width: 250px;
+  height: auto;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-right: 20px;
+  margin-bottom: 12px;
+}
+
+.historia-imagen-secundaria {
+  float: right;
+  width: 260px;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-left: 20px;
+  margin-bottom: 8px;
+}

@@ -21,7 +21,7 @@ const routes = [
     path: '/reservas',
     component: Reservation,
     beforeEnter: (to, from, next) => {
-      const token = localStorage.getItem('loginUserToken'); // 👈 corregido
+      const token = localStorage.getItem('loginUserToken'); 
       if (token) {
         next()
       } else {

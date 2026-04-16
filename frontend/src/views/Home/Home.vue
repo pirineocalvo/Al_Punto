@@ -1,13 +1,16 @@
 <script setup>
-import { useRouter } from 'vue-router'; // 👈 faltaba este import
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import AppHeader from '../../Components/cabeceraYpiePrincipal/Header.vue';
 import AppFooter from '../../Components/cabeceraYpiePrincipal/Footer.vue';
+import Historia from '../../Components/modales/Historia.vue';
 import './Home.css';
 
-const router = useRouter(); // 👈 faltaba inicializarlo
+const router = useRouter();
+const modalVisible = ref(false);
 
 function irAReservas() {
-  const token = localStorage.getItem('loginUserToken'); // 👈 corregido
+  const token = localStorage.getItem('loginUserToken');
   if (token) {
     router.push('/reservas');
   } else {
@@ -38,7 +41,7 @@ function irAReservas() {
       </div>
       <a-typography-paragraph>Desde 1995, hemos estado sirviendo los platos más exquisitos...</a-typography-paragraph>
       <a-typography-paragraph>Cada plato cuenta una historia...</a-typography-paragraph>
-      <a-button type="default">Conoce Más</a-button>
+      <a-button type="default" @click="modalVisible = true">Conoce Más</a-button> 
     </div>
 
     <div id="contenedorTarjetas">
@@ -87,4 +90,5 @@ function irAReservas() {
     </div>
   </main>
   <AppFooter />
+  <Historia v-model:open="modalVisible" />
 </template>
