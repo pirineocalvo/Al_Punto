@@ -125,6 +125,8 @@ export const addCategory = async (data = {}) => {
 
 export const addReservation = async (reservation) => {
   try {
+    console.log(reservation);
+    
     const token = getAuthToken();
     const config = {
       headers: { authorization: `Bearer ${token}` },
