@@ -21,7 +21,6 @@ export const loginUser = async (data = {}) => {
 export const userInfo = async () => {
   try {
     const token = getAuthToken();
-    console.log('token ' +token);
     
     const config = {
       headers: { authorization: `Bearer ${token}` },
@@ -125,7 +124,6 @@ export const addCategory = async (data = {}) => {
 
 export const addReservation = async (reservation) => {
   try {
-    console.log(reservation);
     
     const token = getAuthToken();
     const config = {

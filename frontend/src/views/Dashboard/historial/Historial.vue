@@ -18,7 +18,6 @@ const listaPedidos = ref([]);
 onMounted(async () => {
     listaPedidos.value = await getProductosCompradosCliente();
     listaReservas.value = await misReservas();
-    console.log(listaReservas.value);
 });
 
 async function eliminarPedido(pedido) {

@@ -1,12 +1,12 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { UserOutlined, LockOutlined } from '@ant-design/icons-vue'
-import { registerUser } from '../../Services/api'
-import './Register.css'
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
+import { registerUser } from '../../Services/api';
+import './Register.css';
 
-const router = useRouter()
-const error = ref('')
+const router = useRouter();
+const error = ref('');
 
 const formState = ref({
     firstName: '',
@@ -14,7 +14,7 @@ const formState = ref({
     phone: '',
     email: '',
     password: ''
-})
+});
 
 const rules = {
     firstName: [
@@ -52,30 +52,28 @@ const rules = {
             trigger: 'blur'
         }
     ]
-}
+};
 
 onMounted(() => {
-    const token = localStorage.getItem('loginUserToken')
+    const token = localStorage.getItem('loginUserToken');
     if (token) {
-        router.push('/')
+        router.push('/');
     }
-})
+});
 
 async function registrarUsuario() {
-    error.value = ''
+    error.value = '';
 
     try {
-        const res = await registerUser(formState.value)
-        console.log(res);
-        
+        const res = await registerUser(formState.value);
         if (res === true) {
             router.push('/login')
         } else {
-            error.value = res
+            error.value = res;
         }
     } catch (err) {
-        console.error('Error al registrar:', err)
-        error.value = 'Ha ocurrido un error al registrarse.'
+        console.error('Error al registrar:', err);
+        error.value = 'Ha ocurrido un error al registrarse.';
     }
 }
 

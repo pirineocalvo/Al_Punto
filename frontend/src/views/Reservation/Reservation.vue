@@ -24,7 +24,6 @@ onMounted(async () => {
 async function onSelect(date) {
     const fecha = date.format('YYYY-MM-DD');
     mesasDia.value = await todasLasMesasLibresPorDia(fecha, null);
-    console.log(mesasDia.value);
     
     fechaSeleccionada.value = fecha;
 }
@@ -66,11 +65,10 @@ async function guardarReserva() {
             ...datosForm.value,
             fecha: fechaSeleccionada.value
         };
-        const r = await addReservation(dato);
+        await addReservation(dato);
         await cargarMes(fechasCalendario.value.year(), fechasCalendario.value.month() + 1);
         datosForm.value = { comensales: null, mesa: null, hora: null };
 
-        console.log(r);
     }
 
 

@@ -10,7 +10,6 @@ import './RealizarPedido.css';
 const menu = ref([]);
 onMounted(async () => {
     menu.value = await getMenu();
-    console.log(menu.value)
 })
 
 
