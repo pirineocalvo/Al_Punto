@@ -8,7 +8,6 @@ const props = defineProps(["user"]);
 const router = useRouter();
 
 const logout = () => {
-    localStorage.removeItem('loginUserToken');
     router.push('/logout');
 }
 </script>

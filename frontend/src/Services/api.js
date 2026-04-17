@@ -462,7 +462,7 @@ export const cangearProductoMarkePlace = async (id) => {
       headers: { authorization: `Bearer ${token}` },
     }
 
-    const response = await axios.post(`${API_URL}/api/marketplace/comprar/${id}`, config)
+    const response = await axios.post(`${API_URL}/api/marketplace/comprar/${id}`, {} ,config)
     return response.data
   } catch (error) {
     if (error.response?.status === 401) {

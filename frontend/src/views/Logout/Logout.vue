@@ -18,7 +18,7 @@ function logout() {
 }
 
 function volver() {
-    router.push('/');
+    router.back();
 }
 </script>
 <template>

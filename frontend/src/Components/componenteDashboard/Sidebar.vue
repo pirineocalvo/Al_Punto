@@ -44,6 +44,12 @@ const router = useRouter()
                 </template>
                 Realizar un pedido
             </a-menu-item>
+            <a-menu-item key="7" @click="router.push('/marketplace')">
+                <template #icon>
+                    <InfoCircleOutlined />
+                </template>
+                Marketplace
+            </a-menu-item>
             <a-sub-menu key="sub1">
                 <template #icon>
                     <SettingOutlined />

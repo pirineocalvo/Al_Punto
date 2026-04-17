@@ -4,3 +4,32 @@
     justify-content: space-between;
     width: 100%;
 }
+.mpContent {
+    padding: 24px;
+}
+
+.mpCardLocked {
+    opacity: 0.55;
+}
+
+.mpCardCover {
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mpCardEmoji {
+    font-size: 48px;
+}
+
+.mpCardFooter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 12px 0;
+}
+
+.mpPts {
+    font-weight: 500;
+}
