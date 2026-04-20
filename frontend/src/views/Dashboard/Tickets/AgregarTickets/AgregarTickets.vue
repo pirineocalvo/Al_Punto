@@ -1,110 +1,110 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { UploadOutlined } from '@ant-design/icons-vue'
-import { message } from 'ant-design-vue'
-import { uploadTickets, userInfo } from '../../../../Services/api'
-import HeaderDashboard from '@/Components/componenteDashboard/HeaderDashboard.vue'
-import Footer from '@/Components/cabeceraYpiePrincipal/Footer.vue'
-import Sidebar from '../../../../Components/componenteDashboard/Sidebar.vue'
-import './AgregarTickets.css'
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { InboxOutlined } from '@ant-design/icons-vue';
+import { message } from 'ant-design-vue';
+import { uploadTickets, userInfo } from '../../../../Services/api';
+import HeaderDashboard from '@/Components/componenteDashboard/HeaderDashboard.vue';
+import Footer from '@/Components/cabeceraYpiePrincipal/Footer.vue';
+import Sidebar from '../../../../Components/componenteDashboard/Sidebar.vue';
+import './AgregarTickets.css';
 
-const router = useRouter()
-const user = ref(null)
-const collapsed = ref(false)
-const cargando = ref(false)
-const archivo = ref(null)
-const ticketInfo = ref(null)
+const router = useRouter();
+const user = ref(null);
+const collapsed = ref(false);
+const cargando = ref(false);
+const archivo = ref(null);
+const ticketInfo = ref(null);
 
 onMounted(async () => {
-    const token = localStorage.getItem('loginUserToken')
+    const token = localStorage.getItem('loginUserToken');
     if (!token) { router.push('/login'); return }
     try {
-        user.value = await userInfo()
+        user.value = await userInfo();
     } catch {
-        router.push('/login')
+        router.push('/login');
     }
 })
 
 // evita que Ant Design suba automáticamente
 const antesDeSubir = (file) => {
     archivo.value = file;
-    return false 
+    return false;
 }
 
 const subirTicket = async () => {
     if (!archivo.value) {
-        message.error('Selecciona una imagen primero')
-        return
+        message.error('Selecciona una imagen primero');
+        return;
     }
-    cargando.value = true
+    cargando.value = true;
     try {
-        const formData = new FormData()
-        formData.append('imagen', archivo.value)
-        const data = await uploadTickets(formData)
-        ticketInfo.value = parsearTicket(data.text)
-        archivo.value = null
-        message.success('¡Ticket subido! Tus puntos serán acreditados')
+        const formData = new FormData();
+        formData.append('imagen', archivo.value);
+        const data = await uploadTickets(formData);
+        ticketInfo.value = parsearTicket(data.text);
+        archivo.value = null;
+        message.success('¡Ticket subido! Tus puntos serán acreditados');
     } catch {
-        message.error('Error al subir el ticket, inténtalo de nuevo')
+        message.error('Error al subir el ticket, inténtalo de nuevo');
     } finally {
-        cargando.value = false
+        cargando.value = false;
     }
 }
 
 const parsearTicket = (textoOcr) => {
-    const lineas = textoOcr.split('\n').map(l => l.trim())
-    const ticket = { restaurante: '', direccion: '', fecha: '', hora: '', productos: [], total: 0 }
+    const lineas = textoOcr.split('\n').map(l => l.trim());
+    const ticket = { restaurante: '', direccion: '', fecha: '', hora: '', productos: [], total: 0 };
 
     lineas.forEach(linea => {
-        const limpia = linea.replace(/^[^a-zA-Z0-9\[(]+|[^a-zA-Z0-9€)\]]+$/g, '').trim()
+        const limpia = linea.replace(/^[^a-zA-Z0-9\[(]+|[^a-zA-Z0-9€)\]]+$/g, '').trim();
 
-        const matchRestaurante = limpia.match(/\[\s*(.*?)\s*\]/)
+        const matchRestaurante = limpia.match(/\[\s*(.*?)\s*\]/);
         if (matchRestaurante) {
-            ticket.restaurante = matchRestaurante[1]
-            return
+            ticket.restaurante = matchRestaurante[1];
+            return;
         }
 
         if (limpia.toLowerCase().includes('fecha')) {
-            const matchFecha = limpia.match(/(\d{2}-\d{2}-\d{4})/)
-            const matchHora = limpia.match(/(\d{2}:\d{2})/)
-            if (matchFecha) ticket.fecha = matchFecha[0]
-            if (matchHora) ticket.hora = matchHora[0]
-            return
+            const matchFecha = limpia.match(/(\d{2}-\d{2}-\d{4})/);
+            const matchHora = limpia.match(/(\d{2}:\d{2})/);
+            if (matchFecha) ticket.fecha = matchFecha[0];
+            if (matchHora) ticket.hora = matchHora[0];
+            return;
         }
 
         if (/Paseo|Calle|Avda|C\/|Plaza/i.test(limpia) || /\d{5}/.test(limpia)) {
-            ticket.direccion = limpia.replace(/^[A-Z]\s[—\-]+\s*/, '')
-            return
+            ticket.direccion = limpia.replace(/^[A-Z]\s[—\-]+\s*/, '');
+            return;
         }
 
-        const matchProducto = limpia.match(/(.+?)\s+([\d,.]+)\s*€/)
+        const matchProducto = limpia.match(/(.+?)\s+([\d,.]+)\s*€/);
         if (matchProducto) {
-            const nombre = matchProducto[1].replace(/[><\/\\|]/g, '').trim()
-            const importe = parseFloat(matchProducto[2].replace(',', '.'))
+            const nombre = matchProducto[1].replace(/[><\/\\|]/g, '').trim();
+            const importe = parseFloat(matchProducto[2].replace(',', '.'));
             if (nombre.toLowerCase().includes('total') && !nombre.toLowerCase().includes('subtotal')) {
-                ticket.total = importe
+                ticket.total = importe;
             } else if (
                 !['importe', 'producto', 'subtotal'].some(p => nombre.toLowerCase().includes(p)) &&
                 nombre.length > 3
             ) {
-                ticket.productos.push({ nombre, importe })
+                ticket.productos.push({ nombre, importe });
             }
         }
     })
 
-    return ticket
+    return ticket;
 }
 
 const resetear = () => {
-    ticketInfo.value = null
-    archivo.value = null
+    ticketInfo.value = null;
+    archivo.value = null;
 }
 </script>
 
 <template>
     <a-layout class="dashboard-container">
-        <HeaderDashboard :user="user"/>
+        <HeaderDashboard :user="user" />
 
         <a-layout class="dashboard-main-layout">
             <Sidebar :collapsed="collapsed" />
@@ -123,14 +123,16 @@ const resetear = () => {
                                 <a-row :gutter="[24, 24]" align="middle">
 
                                     <a-col :xs="24" :md="16">
-                                        <a-upload :before-upload="antesDeSubir" accept="image/*" :max-count="1" list-type="picture" :file-list="archivo ? [archivo] : []">
-                                            <a-button size="large">
-                                                <template #icon>
-                                                    <UploadOutlined />
-                                                </template>
-                                                Seleccionar imagen
-                                            </a-button>
-                                        </a-upload>
+                                        <a-upload-dragger name="file" accept="image/*" :max-count="1" :before-upload="antesDeSubir" list-type="picture" :file-list="archivo ? [archivo] : []">
+                                            <p class="ant-upload-drag-icon">
+                                                <inbox-outlined></inbox-outlined>
+                                            </p>
+                                            <p class="ant-upload-text">Haz click o arrasta la imagen para subirla</p>
+                                            <p class="ant-upload-hint">
+                                                Solo se admiten tickets de este establecimiento, recuerde que la imagen
+                                                se debe de poder leer su contenido
+                                            </p>
+                                        </a-upload-dragger>
                                     </a-col>
 
                                     <a-col :xs="24" :md="8">
@@ -197,9 +199,9 @@ const resetear = () => {
 
                     </div>
                 </a-spin>
-                
+
             </a-layout-content>
         </a-layout>
     </a-layout>
-    <Footer/>
+    <Footer />
 </template>

@@ -46,9 +46,6 @@ async function adquirirProducto(producto) {
                             </div>
 
                             <a-popconfirm   :disabled="!estaDesbloqueado(producto)" title="¿Seguro que desea adquirir este producto?" ok-text="Sí" cancel-text="No" @confirm="adquirirProducto(producto)" >
-                                <template #icon>
-                                    <QuestionCircleOutlined style="color: red" />
-                                </template>
 
                                 <a-button block :disabled="!estaDesbloqueado(producto)">
                                     {{ estaDesbloqueado(producto) ? 'Canjear' : 'Bloqueado' }}

@@ -4,7 +4,7 @@ import { ref, onMounted, computed } from 'vue';
 import HeaderDashboard from '@/Components/componenteDashboard/HeaderDashboard.vue';
 import Footer from '@/Components/cabeceraYpiePrincipal/Footer.vue';
 import Sidebar from '../../../Components/componenteDashboard/Sidebar.vue';
-import { getProductosCompradosCliente, cancelarPedido, misReservas } from '../../../Services/api';
+import { getProductosCompradosCliente, cancelarPedido, misReservas, pedidosRealizadosMarketPlace } from '../../../Services/api';
 
 const user = ref(null);
 const collapsed = ref(false);
@@ -14,10 +14,14 @@ const acordeonActivo = ref(null);
 
 const listaReservas = ref([]);
 const listaPedidos = ref([]);
+const listaMarketPlaceReclamado = ref([]);
 
 onMounted(async () => {
     listaPedidos.value = await getProductosCompradosCliente();
     listaReservas.value = await misReservas();
+    listaMarketPlaceReclamado.value = await pedidosRealizadosMarketPlace();
+    console.log(listaMarketPlaceReclamado.value);
+    
 });
 
 async function eliminarPedido(pedido) {
