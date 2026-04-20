@@ -1,7 +1,7 @@
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { MenuOutlined } from '@ant-design/icons-vue'
-import './Header.css'
+import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { MenuOutlined } from '@ant-design/icons-vue';
+import './Header.css';
 import { useRouter, useRoute } from 'vue-router'
 
 const router = useRouter();

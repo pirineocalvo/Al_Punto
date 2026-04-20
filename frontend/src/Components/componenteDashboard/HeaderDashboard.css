@@ -9,20 +9,17 @@
     background-color: var(--color-menu-fondo);
 }
 
-/* TEXTO */
 .header-left h2 {
     font-size: 1.2rem;
     font-weight: 600;
     color: white;
 }
 
-/* DERECHA */
 .header-right {
     display: flex;
     align-items: center;
 }
 
-/* ICONO USUARIO */
 .user-icon {
     width: 40px;
     height: 40px;
@@ -40,30 +37,26 @@
     background: var(--color-accent);
 }
 
-/* 🔥 DROPDOWN (ESTO ES LO IMPORTANTE) */
+
 .custom-dropdown .ant-dropdown-menu {
     background-color: #1f1f1f !important;
     border-radius: 10px;
 }
 
-/* TEXTO SIEMPRE BLANCO */
 .custom-dropdown .ant-dropdown-menu-title-content {
     color: white !important;
 }
 
-/* ITEM */
 .custom-dropdown .ant-dropdown-menu-item {
     display: flex;
     align-items: center;
     gap: 8px;
 }
 
-/* ICONO */
 .custom-dropdown .ant-dropdown-menu-item svg {
     color: white !important;
 }
 
-/* (opcional) hover suave SIN cambiar color texto */
 .custom-dropdown .ant-dropdown-menu-item:hover {
     background-color: rgba(255, 255, 255, 0.1);
 }
