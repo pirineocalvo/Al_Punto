@@ -2,9 +2,9 @@
 import Footer from '../../../Components/cabeceraYpiePrincipal/Footer.vue';
 import HeaderDashboard from '../../../Components/componenteDashboard/HeaderDashboard.vue';
 import Sidebar from '../../../Components/componenteDashboard/Sidebar.vue';
-import { ref, computed,onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { QuestionCircleOutlined, EditOutlined, CheckOutlined } from '@ant-design/icons-vue';
-import {getMenu, guardarCarritoCompraClientes } from '../../../Services/api';
+import { getMenu, guardarCarritoCompraClientes } from '../../../Services/api';
 import './RealizarPedido.css';
 
 const menu = ref([]);
@@ -86,9 +86,9 @@ const totalPedido = computed(() => {
 });
 
 async function guardarCarrito() {
-    if(productosElegidos.value.length == 0){
+    if (productosElegidos.value.length == 0) {
 
-    }else{
+    } else {
         const datosAguardar = {
             items: productosElegidos.value.map(producto => ({
                 product_id: producto.id,
@@ -98,7 +98,7 @@ async function guardarCarrito() {
             total_price: totalPedido.value
         };
 
-        await guardarCarritoCompraClientes(datosAguardar);   
+        await guardarCarritoCompraClientes(datosAguardar);
         productosElegidos.value = [];
     }
 }
@@ -106,12 +106,9 @@ async function guardarCarrito() {
 
 <template>
     <HeaderDashboard></HeaderDashboard>
-
-    <div >
-        
-        <div class="altoPag"> 
-            <Sidebar></Sidebar>
-            <a-row class="contenedorPedidos">
+    <a-layout class="altoPag">
+        <Sidebar></Sidebar>
+        <a-row class="contenedorPedidos">
             <a-col :xs="24" :lg="17">
                 <a-row>
                     <a-col v-for="producto in menu" :key="producto.name" :xs="20" :md="18" :lg="19">
@@ -146,7 +143,8 @@ async function guardarCarrito() {
                                         {{ producto.price.toFixed(2) }} €
                                     </a-typography-text>
 
-                                    <a-button type="primary" size="small" ghost @click="addCarritoProducto(producto)">+ Añadir</a-button>
+                                    <a-button type="primary" size="small" ghost @click="addCarritoProducto(producto)">+
+                                        Añadir</a-button>
                                 </div>
                             </div>
                         </a-card>
@@ -217,10 +215,7 @@ async function guardarCarrito() {
                     <a-button @click="guardarCarrito()">Realizar pedido</a-button>
                 </a-form>
             </a-col>
-        </a-row>        
-        </div>
-        
-
-        <Footer></Footer>
-    </div>
+        </a-row>
+    </a-layout>
+    <Footer></Footer>
 </template>

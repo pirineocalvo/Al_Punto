@@ -59,7 +59,7 @@ const rutasMenu = [
         </div>
     </a-drawer>
 
-    <a-layout-sider v-else theme="light" breakpoint="lg" :collapsed-width="0" :trigger="null" class="sidebarCustom">
+    <a-layout-sider v-else theme="light" breakpoint="md" :collapsed-width="0" :trigger="null" class="sidebarCustom">
         <a-menu theme="light" mode="inline" :default-selected-keys="['1']" class="sidebarMenu">
             <template v-for="entrada in rutasMenu" :key="entrada.key">
 
