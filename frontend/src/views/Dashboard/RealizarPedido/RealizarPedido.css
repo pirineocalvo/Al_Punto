@@ -1,45 +1,8 @@
-.cardProducto .hoverPanel {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.35s ease;
-}
-
-.cardProducto:hover .hoverPanel {
-    max-height: 200px;
-}
-
-.imgMenuCompra {
-    height: 130px;
-    object-fit: cover;
-}
-
-.altoPag {
-    min-height: 100vh;
-    display: flex;
-}
-
 .contenedorPedidos {
     flex: 1;
     margin: 120px 0;
 }
 
-.cardProducto {
-    width: 190px;
-    overflow: hidden;
-}
-
-.descripcionProducto {
-    font-size: 12px;
-    color: #888;
-    margin: 6px 0 8px;
-    line-height: 1.5;
-}
-
-.footerProducto {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
 .totalPedido {
     display: flex;
     justify-content: space-between;
@@ -113,6 +76,18 @@
     font-size: 16px;
 }
 
+.detallePedido {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+}
+
+.ajusteBtn {
+    width: 100%;
+    margin-top: 10px;
+}
+
 @media (max-width: 768px) {
     .productoRow {
         min-height: 88px;
@@ -121,4 +96,20 @@
     .productoActions {
         min-width: 84px;
     }
+}
+
+@media (max-width: 1568px) {
+    .itemPedido {
+        padding: 0 !important;
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        text-align: center;
+    }
+
+    .detallePedido {
+
+        justify-content: center;
+        gap: 5px;
+    }
+
 }

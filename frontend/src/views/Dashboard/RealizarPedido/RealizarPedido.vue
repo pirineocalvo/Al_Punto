@@ -3,6 +3,7 @@ import Footer from '../../../Components/cabeceraYpiePrincipal/Footer.vue';
 import HeaderDashboard from '../../../Components/componenteDashboard/HeaderDashboard.vue';
 import Sidebar from '../../../Components/componenteDashboard/Sidebar.vue';
 import { ref, computed, onMounted } from 'vue';
+import { message } from 'ant-design-vue';
 import { QuestionCircleOutlined, EditOutlined, CheckOutlined } from '@ant-design/icons-vue';
 import { getMenu, guardarCarritoCompraClientes } from '../../../Services/api';
 import './RealizarPedido.css';
@@ -87,7 +88,7 @@ const totalPedido = computed(() => {
 
 async function guardarCarrito() {
     if (productosElegidos.value.length == 0) {
-
+        message.warning('¡Su cesta no contiene ningún producto!');
     } else {
         const datosAguardar = {
             items: productosElegidos.value.map(producto => ({
@@ -106,7 +107,7 @@ async function guardarCarrito() {
 
 <template>
     <HeaderDashboard></HeaderDashboard>
-    <a-layout class="altoPag">
+    <a-layout>
         <Sidebar></Sidebar>
         <a-row class="contenedorPedidos">
             <a-col :xs="24" :lg="17">
@@ -153,8 +154,8 @@ async function guardarCarrito() {
             </a-col>
 
             <a-col :xs="20" :lg="6">
-                <a-card title="Tu pedido" class="pedidoCard">
-                    <a-list :data-source="productosElegidos" item-layout="horizontal" class="listaPedido">
+                <a-card title="Tu pedido">
+                    <a-list :data-source="productosElegidos" item-layout="horizontal">
                         <template #renderItem="{ item }">
                             <a-list-item class="itemPedido">
                                 <template #actions>
@@ -172,31 +173,28 @@ async function guardarCarrito() {
 
                                 <a-list-item-meta>
                                     <template #title>
-                                        <span class="nombreProducto">{{ item.name }}</span>
+                                        <span>{{ item.name }}</span>
                                     </template>
 
                                     <template #description>
                                         <div class="detallePedido">
-                                            <a-tag color="blue" v-if="item.edicion == false">
-                                                Cantidad: {{ item.cantidad }}
+                                            <template v-if="!item.edicion">
+                                                <span>Cantidad: {{ item.cantidad }}</span>
                                                 <a-button type="text" size="small"
                                                     @click="activarEdicionCantidad(item.name)">
                                                     <EditOutlined />
                                                 </a-button>
-                                            </a-tag>
-
-                                            <a-tag color="blue" v-else>
-                                                Cantidad:
-                                                <a-input-number id="inputNumber" v-model:value="item.cantidad"
-                                                    @pressEnter="guardarCambios(item)" min="0" />
+                                            </template>
+                                            <template v-else class="p">
+                                                <a-input-number v-model:value="item.cantidad" 
+                                                    @pressEnter="guardarCambios(item)" :min="0" size="small"
+                                                    style="width: 70px;" />
                                                 <a-button type="primary" size="small" @click="guardarCambios(item)">
                                                     <CheckOutlined />
                                                 </a-button>
-                                            </a-tag>
+                                            </template>
 
-                                            <a-tag color="green">
-                                                {{ item.precioTotal.toFixed(2) }} €
-                                            </a-tag>
+                                            <a-tag color="green">{{ item.precioTotal.toFixed(2) }} €</a-tag>
                                         </div>
                                     </template>
                                 </a-list-item-meta>
@@ -212,7 +210,7 @@ async function guardarCarrito() {
                     </div>
                 </a-card>
                 <a-form>
-                    <a-button @click="guardarCarrito()">Realizar pedido</a-button>
+                    <a-button class="ajusteBtn" @click="guardarCarrito()">Realizar pedido</a-button>
                 </a-form>
             </a-col>
         </a-row>
