@@ -3,11 +3,7 @@ import Footer from '../../../Components/cabeceraYpiePrincipal/Footer.vue';
 import HeaderDashboard from '../../../Components/componenteDashboard/HeaderDashboard.vue';
 import Sidebar from '../../../Components/componenteDashboard/Sidebar.vue';
 import { ref, computed, onMounted } from 'vue';
-<<<<<<< HEAD
 import { useRouter } from 'vue-router';
-=======
-import { message } from 'ant-design-vue';
->>>>>>> 3b7442de35d54c059d70416d58759403511a3828
 import { QuestionCircleOutlined, EditOutlined, CheckOutlined } from '@ant-design/icons-vue';
 import { getMenu, guardarCarritoCompraClientes, userInfo } from '../../../Services/api';
 import './RealizarPedido.css';
@@ -118,13 +114,8 @@ async function guardarCarrito() {
 </script>
 
 <template>
-<<<<<<< HEAD
-    <HeaderDashboard :user="user"></HeaderDashboard>
-    <a-layout class="altoPag">
-=======
-    <HeaderDashboard></HeaderDashboard>
+    <HeaderDashboard :user="user" />
     <a-layout>
->>>>>>> 3b7442de35d54c059d70416d58759403511a3828
         <Sidebar></Sidebar>
         <a-row class="contenedorPedidos">
             <a-col :xs="24" :lg="17">
