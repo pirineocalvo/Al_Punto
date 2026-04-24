@@ -1,6 +1,6 @@
 <script setup>
 import './Historial.css';
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted } from 'vue';
 import HeaderDashboard from '@/Components/componenteDashboard/HeaderDashboard.vue';
 import Footer from '@/Components/cabeceraYpiePrincipal/Footer.vue';
 import Sidebar from '../../../Components/componenteDashboard/Sidebar.vue';
@@ -20,8 +20,8 @@ onMounted(async () => {
     listaPedidos.value = await getProductosCompradosCliente();
     listaReservas.value = await misReservas();
     listaMarketPlaceReclamado.value = await pedidosRealizadosMarketPlace();
-    console.log(listaMarketPlaceReclamado.value);
-    
+    console.log(listaReservas.value);
+
 });
 
 async function eliminarPedido(pedido) {
@@ -29,27 +29,7 @@ async function eliminarPedido(pedido) {
     listaPedidos.value = await getProductosCompradosCliente();
 }
 
-const columns = [
-    {
-        title: 'Fecha',
-        dataIndex: 'reserve_date',
-        sorter: (a, b) =>
-            String(a.reserve_date ?? '').localeCompare(String(b.reserve_date ?? '')),
-    },
-    {
-        title: 'Hora',
-        dataIndex: 'reserve_hour',
-        sorter: (a, b) =>
-            String(a.reserve_hour ?? '').localeCompare(String(b.reserve_hour ?? '')),
-    },
-    {
-        title: 'Asistentes',
-        dataIndex: 'guests',
-        sorter: (a, b) => Number(a.guests ?? -1) - Number(b.guests ?? -1),
-    },
-];
 </script>
-
 <template>
     <a-layout>
         <HeaderDashboard :user="user" />
@@ -58,13 +38,27 @@ const columns = [
             <Sidebar :collapsed="collapsed" />
 
             <a-tabs v-model:activeKey="tabActiva" style="flex:1; padding: 32px;">
+
                 <a-tab-pane key="reservas" tab="Reservas">
-                    <a-table
-                        :columns="columns"
-                        :data-source="listaReservas"
-                        :row-key="record => record.id"
-                        :pagination="{ pageSize: 10 }"
-                    />
+                    <a-collapse v-model:activeKey="acordeonActivo" accordion>
+                        <a-collapse-panel v-for="reserva in listaReservas" :key="reserva.id">
+                            <template #header>
+                                <div class="datosTituloAcordeon">
+                                    <span>{{ reserva.reserve_date }}</span>
+                                    <!--aqui iría el estado y los botones para interaccionar-->
+                                </div>
+                            </template>
+
+                            <div>
+                                <p><span>Fecha:</span> {{ reserva.reserve_date }}</p>
+                                <p><span>Hora:</span> {{ reserva.reserve_hour }}</p>
+                                <p><span>Asistentes:</span> {{ reserva.guests }}</p>
+                                <p><span>Estado:</span> {{ reserva.status }}</p>
+                            </div>
+                        </a-collapse-panel>
+                    </a-collapse>
+
+                    <a-empty v-if="listaReservas.length === 0" description="No tienes reservas" />
                 </a-tab-pane>
 
                 <a-tab-pane key="pedidos" tab="Pedidos">
@@ -73,13 +67,8 @@ const columns = [
                             <template #header>
                                 <div class="datosTituloAcordeon">
                                     <span>{{ pedido.created_at }}</span>
-                                    <a-button
-                                        size="small"
-                                        type="primary"
-                                        ghost
-                                        @click.stop="eliminarPedido(pedido)"
-                                        v-if="pedido.is_picked_up == 0 && pedido.status == 'pendiente'"
-                                    >
+                                    <a-button size="small" type="primary" ghost @click.stop="eliminarPedido(pedido)"
+                                        v-if="pedido.is_picked_up == 0 && pedido.status == 'pendiente'">
                                         Cancelar pedido
                                     </a-button>
                                     <p v-else-if="pedido.status == 'cancelado'">El pedido fue cancelado</p>
@@ -93,7 +82,10 @@ const columns = [
                             </p>
                         </a-collapse-panel>
                     </a-collapse>
+
+                    <a-empty v-if="listaPedidos.length === 0" description="No tienes pedidos" />
                 </a-tab-pane>
+
             </a-tabs>
         </a-layout>
 

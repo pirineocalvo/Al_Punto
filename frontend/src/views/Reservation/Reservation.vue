@@ -56,6 +56,8 @@ async function alCambiarOcupantes() {
 
 function filtrarHorario() {
     horario.value = mesasDia.value.find((mesa) => mesa.id == datosForm.value.mesa).horasDisponibles;
+    console.log(horario.value)
+    console.log(mesasDia.value)
     datosForm.value.hora = null;
 }
 
