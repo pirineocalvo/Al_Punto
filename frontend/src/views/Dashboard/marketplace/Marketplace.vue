@@ -2,13 +2,25 @@
 import Footer from '../../../Components/cabeceraYpiePrincipal/Footer.vue';
 import HeaderDashboard from '../../../Components/componenteDashboard/HeaderDashboard.vue';
 import Sidebar from '../../../Components/componenteDashboard/Sidebar.vue';
-import { listaProductosMarketplace, cangearProductoMarkePlace } from '../../../Services/api';
+import { listaProductosMarketplace, cangearProductoMarkePlace, userInfo } from '../../../Services/api';
 import { onMounted, ref, computed } from 'vue';
+import { useRouter } from 'vue-router'; 
 import './Marketplace.css';
+
+const user = ref(null); 
+const router = useRouter(); 
 const listaProductos = ref([]);
 const nivelUsuario = ref(2);
 
 onMounted(async () => {
+    const token = localStorage.getItem('loginUserToken'); 
+    if (!token) { router.push('/login'); return; }        
+    try {                                                  
+        user.value = await userInfo();                    
+    } catch (err) {                                        
+        router.push('/login');                             
+    }                                                      
+
     listaProductos.value = await listaProductosMarketplace();
 });
 
@@ -22,12 +34,11 @@ async function adquirirProducto(producto) {
     if (!estaDesbloqueado(producto)) return;
     await cangearProductoMarkePlace(producto.id);
 }
-
 </script>
 
 <template>
     <a-layout>
-        <HeaderDashboard />
+        <HeaderDashboard :user="user" /> 
         <a-layout class="dashboardMainLayout">
             <Sidebar />
             <a-layout-content class="mpContent">
@@ -45,8 +56,7 @@ async function adquirirProducto(producto) {
                                 <span class="mpPts">{{ producto.points_price }} pts</span>
                             </div>
 
-                            <a-popconfirm   :disabled="!estaDesbloqueado(producto)" title="¿Seguro que desea adquirir este producto?" ok-text="Sí" cancel-text="No" @confirm="adquirirProducto(producto)" >
-
+                            <a-popconfirm :disabled="!estaDesbloqueado(producto)" title="¿Seguro que desea adquirir este producto?" ok-text="Sí" cancel-text="No" @confirm="adquirirProducto(producto)">
                                 <a-button block :disabled="!estaDesbloqueado(producto)">
                                     {{ estaDesbloqueado(producto) ? 'Canjear' : 'Bloqueado' }}
                                 </a-button>

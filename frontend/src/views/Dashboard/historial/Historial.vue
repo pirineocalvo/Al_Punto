@@ -4,10 +4,12 @@ import { ref, onMounted } from 'vue';
 import HeaderDashboard from '@/Components/componenteDashboard/HeaderDashboard.vue';
 import Footer from '@/Components/cabeceraYpiePrincipal/Footer.vue';
 import Sidebar from '../../../Components/componenteDashboard/Sidebar.vue';
-import { getProductosCompradosCliente, cancelarPedido, misReservas, pedidosRealizadosMarketPlace } from '../../../Services/api';
+import { getProductosCompradosCliente, cancelarPedido, misReservas, pedidosRealizadosMarketPlace, userInfo } from '../../../Services/api';
+import { useRouter } from 'vue-router';
 
 const user = ref(null);
 const collapsed = ref(false);
+const router = useRouter();
 
 const tabActiva = ref('reservas');
 const acordeonActivo = ref(null);
@@ -17,6 +19,14 @@ const listaPedidos = ref([]);
 const listaMarketPlaceReclamado = ref([]);
 
 onMounted(async () => {
+    const token = localStorage.getItem('loginUserToken');
+    if (!token) { router.push('/login'); return; }
+    try {
+        user.value = await userInfo();
+    } catch (err) {
+        router.push('/login');
+    }
+
     listaPedidos.value = await getProductosCompradosCliente();
     listaReservas.value = await misReservas();
     listaMarketPlaceReclamado.value = await pedidosRealizadosMarketPlace();

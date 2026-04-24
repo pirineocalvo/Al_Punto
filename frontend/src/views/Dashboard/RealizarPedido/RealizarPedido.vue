@@ -3,19 +3,28 @@ import Footer from '../../../Components/cabeceraYpiePrincipal/Footer.vue';
 import HeaderDashboard from '../../../Components/componenteDashboard/HeaderDashboard.vue';
 import Sidebar from '../../../Components/componenteDashboard/Sidebar.vue';
 import { ref, computed, onMounted } from 'vue';
-import { message } from 'ant-design-vue';
+import { useRouter } from 'vue-router';
 import { QuestionCircleOutlined, EditOutlined, CheckOutlined } from '@ant-design/icons-vue';
-import { getMenu, guardarCarritoCompraClientes } from '../../../Services/api';
+import { getMenu, guardarCarritoCompraClientes, userInfo } from '../../../Services/api';
 import './RealizarPedido.css';
 
+const user = ref(null);
+const router = useRouter();
 const menu = ref([]);
-onMounted(async () => {
-    menu.value = await getMenu();
-})
 
+onMounted(async () => {
+    const token = localStorage.getItem('loginUserToken');
+    if (!token) { router.push('/login'); return; }
+    try {
+        user.value = await userInfo();
+    } catch (err) {
+        router.push('/login');
+    }
+
+    menu.value = await getMenu();
+});
 
 const productosElegidos = ref([]);
-
 
 function addCarritoProducto(nuevoProducto) {
     const existente = productosElegidos.value.find(pro => pro.name === nuevoProducto.name);
@@ -45,7 +54,6 @@ function activarEdicionCantidad(nombreProducto) {
             } else {
                 pro.edicion = true;
             }
-
         }
     });
 }
@@ -106,7 +114,7 @@ async function guardarCarrito() {
 </script>
 
 <template>
-    <HeaderDashboard></HeaderDashboard>
+    <HeaderDashboard :user="user" />
     <a-layout>
         <Sidebar></Sidebar>
         <a-row class="contenedorPedidos">

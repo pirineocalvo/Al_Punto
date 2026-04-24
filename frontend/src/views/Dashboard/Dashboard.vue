@@ -5,7 +5,7 @@ import Sidebar from '../../Components/componenteDashboard/Sidebar.vue'
 import { misReservas, userInfo } from '../../Services/api'
 import { Bar } from '@antv/g2plot'
 import { UserOutlined, TrophyOutlined, FileTextOutlined } from '@ant-design/icons-vue'
-import QRCode from 'qrcode' // 🔥 NUEVO
+import QRCode from 'qrcode' 
 import './Dashboard.css'
 import HeaderDashboard from '@/Components/componenteDashboard/HeaderDashboard.vue'
 import Footer from '@/Components/cabeceraYpiePrincipal/Footer.vue'
