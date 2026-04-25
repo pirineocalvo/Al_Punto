@@ -30,10 +30,27 @@ onMounted(async () => {
     listaPedidos.value = await getProductosCompradosCliente();
     listaReservas.value = await misReservas();
     listaMarketPlaceReclamado.value = await pedidosRealizadosMarketPlace();
-    console.log(listaReservas.value);
+    console.log(listaMarketPlaceReclamado.value);
+
+    relojActualizarReservas();
+
 
 });
 
+async function actualizarEstadoReserva() {
+
+}
+
+async function relojActualizarReservas(estado) {
+    setInterval(() => {
+        if (estado == false) {
+            clearInterval();
+            console.log("Tiempo terminado");
+        }
+        console.log('dentro del reloj');
+        actualizarEstadoReserva();
+    }, 1000);
+}
 async function eliminarPedido(pedido) {
     await cancelarPedido(pedido.id);
     listaPedidos.value = await getProductosCompradosCliente();
@@ -55,7 +72,14 @@ async function eliminarPedido(pedido) {
                             <template #header>
                                 <div class="datosTituloAcordeon">
                                     <span>{{ reserva.reserve_date }}</span>
-                                    <!--aqui iría el estado y los botones para interaccionar-->
+                                    <div v-if="reserva.status == 'booked'">
+                                        <a-button>Cancelar</a-button>
+                                    </div>
+                                    <div v-else-if="reserva.status == 'pending'">
+                                        <a-button>Confirmar asistencia</a-button>
+                                        <a-button>Cancelar</a-button>
+                                    </div>
+                                    <a-typography-text>{{ reserva.status }}</a-typography-text>
                                 </div>
                             </template>
 
@@ -95,7 +119,22 @@ async function eliminarPedido(pedido) {
 
                     <a-empty v-if="listaPedidos.length === 0" description="No tienes pedidos" />
                 </a-tab-pane>
+                <a-tab-pane key="marketplace" tab="Marketplace">
+                    <a-collapse v-model:activeKey="acordeonActivo" accordion>
+                        <a-collapse-panel v-for="market in listaMarketPlaceReclamado" :key="market.id">
+                            <template #header>
+                                <div class="datosTituloAcordeon">
+                                    <span>{{ market.name }}</span>
+                                    <a-tag v-if="market.is_used == 0" color="success">Sin canjear</a-tag>
+                                    <a-tag v-else color="error">Canjeado el {{ market.used_at }}</a-tag>
+                                </div>
+                            </template>
+                            <span>{{ market.description }}</span>
+                        </a-collapse-panel>
+                    </a-collapse>
 
+                    <a-empty v-if="listaMarketPlaceReclamado.length === 0" description="No tienes reservas" />
+                </a-tab-pane>
             </a-tabs>
         </a-layout>
 
