@@ -21,7 +21,7 @@ export const loginUser = async (data = {}) => {
 export const userInfo = async () => {
   try {
     const token = getAuthToken();
-    
+
     const config = {
       headers: { authorization: `Bearer ${token}` },
     };
@@ -61,7 +61,18 @@ export const getMenu = async (data = {}) => {
     throw error;
   }
 };
+ 
 
+export const getCategories = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/api/menu/categorias`);
+    return response.data;  
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+    throw error;
+  }
+};
+ 
 export const getMenuByIdCategory = async (data = {}) => {
   try {
     const response = await axios.get(`${API_URL}/api/menu/${data.idcategory}`);
@@ -118,13 +129,15 @@ export const addCategory = async (data = {}) => {
 };
 
 
+
+
 /*
 ################# RESERVAS ENDPOINTS ########################
 */
 
 export const addReservation = async (reservation) => {
   try {
-    
+
     const token = getAuthToken();
     const config = {
       headers: { authorization: `Bearer ${token}` },
@@ -460,7 +473,7 @@ export const cangearProductoMarkePlace = async (id) => {
       headers: { authorization: `Bearer ${token}` },
     }
 
-    const response = await axios.post(`${API_URL}/api/marketplace/comprar/${id}`, {} ,config)
+    const response = await axios.post(`${API_URL}/api/marketplace/comprar/${id}`, {}, config)
     return response.data
   } catch (error) {
     if (error.response?.status === 401) {
