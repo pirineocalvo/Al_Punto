@@ -6,6 +6,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { QuestionCircleOutlined, EditOutlined, CheckOutlined } from '@ant-design/icons-vue';
 import { getMenu, guardarCarritoCompraClientes, userInfo } from '../../../Services/api';
+import { message } from 'ant-design-vue';
 import './RealizarPedido.css';
 
 const user = ref(null);

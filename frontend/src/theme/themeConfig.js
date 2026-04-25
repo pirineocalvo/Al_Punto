@@ -8,7 +8,7 @@ export const themeTokens = {
 
     token: {
       // Colores base
-      colorPrimary: "#D97742",  
+      colorPrimary: "#D97742",
       colorSuccess: "#3A9E6F",
       colorWarning: "#E8A020",
       colorError: "#D94F3D",
@@ -112,6 +112,17 @@ export const themeTokens = {
         bodyBg: "#FFF5EC",
         footerBg: "#3A2E2A",
       },
+      // ── Mensaje normal y de confirmación ───────────────────────────────────────────────────────────────
+      Popconfirm: {
+        colorBgElevated: "#ffffff", 
+      },
+      Popover: {
+        colorBgElevated: "#fcf4ee",
+      },
+      Message: {
+        colorBgElevated: "#FFFFFF",
+      },
+      // -
     },
   },
 
