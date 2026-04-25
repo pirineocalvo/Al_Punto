@@ -1,14 +1,14 @@
 <script setup>
-import { ref, onMounted, computed, nextTick } from 'vue'
-import { useRouter } from 'vue-router'
-import Sidebar from '../../Components/componenteDashboard/Sidebar.vue'
-import { misReservas, userInfo } from '../../Services/api'
-import { Bar } from '@antv/g2plot'
-import { UserOutlined, TrophyOutlined, FileTextOutlined } from '@ant-design/icons-vue'
-import QRCode from 'qrcode' 
-import './Dashboard.css'
-import HeaderDashboard from '@/Components/componenteDashboard/HeaderDashboard.vue'
-import Footer from '@/Components/cabeceraYpiePrincipal/Footer.vue'
+import { ref, onMounted, computed, nextTick } from 'vue';
+import { useRouter } from 'vue-router';
+import Sidebar from '../../Components/componenteDashboard/Sidebar.vue';
+import { misReservas, userInfo } from '../../Services/api';
+import { Bar } from '@antv/g2plot';
+import { UserOutlined, TrophyOutlined, FileTextOutlined } from '@ant-design/icons-vue';
+import QRCode from 'qrcode';
+import './Dashboard.css';
+import HeaderDashboard from '@/Components/componenteDashboard/HeaderDashboard.vue';
+import Footer from '@/Components/cabeceraYpiePrincipal/Footer.vue';
 
 const user = ref(null);
 const reserveInfo = ref([]);
@@ -19,13 +19,13 @@ const chartRef = ref(null);
 let chartInstance = null;
 
 
-const qr = ref('')
+const qr = ref('');
 
 
 const generarCodigoQR = (userId) => {
-    const secret = 'mi_clave_secreta_123'
-    return btoa(`${userId}:${secret}`)
-}
+    const secret = 'mi_clave_secreta_123';
+    return btoa(`${userId}:${secret}`);
+};
 
 onMounted(async () => {
     await fetchUser();
@@ -36,7 +36,7 @@ onMounted(async () => {
 
 const fetchUser = async () => {
     const token = localStorage.getItem('loginUserToken');
-    if (!token) { router.push('/login'); return }
+    if (!token) { router.push('/login'); return; }
     try {
         user.value = await userInfo();
     } catch (err) {
@@ -50,23 +50,23 @@ const fetchReserve = async () => {
     } catch (err) {
         console.error(err);
     }
-}
+};
 
 // TO DO: pantalla verificada tras escanear (cuando despleguemos)
 const generarQR = async () => {
-    if (!user.value) return
+    if (!user.value) return;
 
-    const code = generarCodigoQR(user.value.id)
-    const url = `https://tudominio.com/checkin?code=${code}`
+    const code = generarCodigoQR(user.value.id);
+    const url = `https://tudominio.com/checkin?code=${code}`;
 
-    qr.value = await QRCode.toDataURL(url)
-}
+    qr.value = await QRCode.toDataURL(url);
+};
 
 const chartData = computed(() => [
     { name: 'Reservas', value: reserveInfo.value.length || 1 },
     { name: 'Tickets', value: user.value?.ticket_count || 1 },
     { name: 'Puntos', value: user.value?.points || 1 }
-])
+]);
 
 const renderChart = async () => {
     await nextTick();
@@ -93,9 +93,9 @@ const renderChart = async () => {
             type: 'log',
             base: 10
         }
-    })
+    });
     chartInstance.render();
-}
+};
 </script>
 
 <template>
@@ -125,7 +125,7 @@ const renderChart = async () => {
                         </a-typography-paragraph>
                     </div>
 
-                    <div class="stats-row">
+                    <a-row>
                         <a-card class="stat-card">
                             <div class="stat-header">
                                 <FileTextOutlined class="stat-icon" />
@@ -155,7 +155,7 @@ const renderChart = async () => {
                                 {{ user?.points || 0 }}
                             </div>
                         </a-card>
-                    </div>
+                    </a-row>
 
 
 
