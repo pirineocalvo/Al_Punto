@@ -84,32 +84,27 @@ onUnmounted(() => {
     <h1 v-if="!menu" class="menu-loading">Cargando Menú...</h1>
 
     <template v-if="menu">
-      <h1 class="menu-title">Menú</h1>
-
+      <a-typography-title :level="1">Menú</a-typography-title>
       <div v-if="viewPlate" class="plate-card-container">
         <button class="back-btn" @click="viewPlate = null">← Volver</button>
         <PlateCard :item="viewPlate" />
       </div>
 
       <template v-else>
-        <section
-          v-for="category in categories"
-          :key="category.id"
-          class="menu-section"
-        >
-          <template v-if="platesByCategory[category.id]?.length">
+        <a-row v-for="category in categories" :key="category.id" class="menu-section">
+          <a-col v-if="platesByCategory[category.id]?.length">
 
-            <div class="menu-section-header">
-              <h2 class="menu-section-title">{{ category.name }}</h2>
+            <a-flex justify="center">
+              <a-typography-title :level="3">{{ category.name}}</a-typography-title>
               <div class="menu-section-line" />
-            </div>
+            </a-flex>
 
             <div class="carousel-wrapper">
-              <button
+              <a-button
                 class="carousel-arrow carousel-arrow--left"
                 :disabled="currentPage[category.id] === 0"
                 @click="slide(category.id, -1)"
-              >‹</button>
+              >‹</a-button>
 
               <div class="carousel-viewport" :ref="el => setViewportRef(el, category.id)">
                 <div
@@ -163,8 +158,8 @@ onUnmounted(() => {
               />
             </div>
 
-          </template>
-        </section>
+          </a-col>
+        </a-row>
       </template>
     </template>
   </div>

@@ -9,15 +9,6 @@
   gap: 64px;
 }
 
-.menu-title {
-  font-size: 3rem;
-  font-weight: 700;
-  color: var(--color-primary);
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  margin: 0;
-}
-
 .menu-loading {
   font-size: 1.4rem;
   color: var(--text-secondary);
@@ -28,22 +19,6 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
-}
-
-.menu-section-header {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.menu-section-title {
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: var(--color-primary);
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  white-space: nowrap;
-  margin: 0;
 }
 
 .menu-section-line {
