@@ -38,7 +38,6 @@ const rutasMenu = [
     <a-drawer v-if="pantallaPeque" v-model:open="menuAbierto" placement="left" :width="220" title="Menú">
         <div class="menuMovil">
             <template v-for="entrada in rutasMenu" :key="entrada.key">
-                <!-- Entrada simple -->
                 <RouterLink v-if="!entrada.subMenu || !entrada.subMenu.length" :to="entrada.ruta"
                     @click="cambiarEstadoSidebar">
                     <component :is="entrada.icon" class="iconoMovil" />

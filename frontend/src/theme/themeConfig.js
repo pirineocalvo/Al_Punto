@@ -96,8 +96,11 @@ export const themeTokens = {
       // ── Drawer (menú móvil) ──────────────────────────────────────────────────
       Drawer: {
         colorBgElevated: "#3A2E2A",
+        colorText: "#FFFFFF",
+        colorTextHeading: "#FFFFFF",
+        colorIcon: "#FFFFFF",
+        colorIconHover: "#D97742",
       },
-
       // ── Table ─────────────────────────────────────
       Table: {
         colorBgContainer: "#FFFFFF",
@@ -114,7 +117,7 @@ export const themeTokens = {
       },
       // ── Mensaje normal y de confirmación ───────────────────────────────────────────────────────────────
       Popconfirm: {
-        colorBgElevated: "#ffffff", 
+        colorBgElevated: "#ffffff",
       },
       Popover: {
         colorBgElevated: "#fcf4ee",
