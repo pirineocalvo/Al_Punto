@@ -5,13 +5,15 @@ import Sidebar from '../../../Components/componenteDashboard/Sidebar.vue';
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { QuestionCircleOutlined, EditOutlined, CheckOutlined } from '@ant-design/icons-vue';
-import { getMenu, guardarCarritoCompraClientes, userInfo } from '../../../Services/api';
+import { getMenu, getCategories, guardarCarritoCompraClientes, userInfo } from '../../../Services/api';
 import { message } from 'ant-design-vue';
 import './RealizarPedido.css';
 
 const user = ref(null);
 const router = useRouter();
 const menu = ref([]);
+const categorias = ref([]);
+const menuClasificado = ref([]);
 
 onMounted(async () => {
     const token = localStorage.getItem('loginUserToken');
@@ -23,7 +25,26 @@ onMounted(async () => {
     }
 
     menu.value = await getMenu();
+    categorias.value = await getCategories();
+    clasificarMenu();
 });
+
+function clasificarMenu() {
+    categorias.value.forEach(catego => {
+        const inforCatego = {
+            categoria: catego.name,
+            productos: []
+        };
+
+        menu.value.forEach(product => {
+            if (product.id_category == catego.id) {
+                inforCatego.productos.push(product);
+            };
+        });
+
+        menuClasificado.value.push(inforCatego);
+    });
+}
 
 const productosElegidos = ref([]);
 
@@ -121,44 +142,53 @@ async function guardarCarrito() {
         <a-row class="contenedorPedidos">
             <a-col :xs="24" :lg="17">
                 <a-row>
-                    <a-col v-for="producto in menu" :key="producto.name" :xs="20" :md="18" :lg="19">
-                        <a-card class="productoCard" size="small" :bodyStyle="{ padding: '14px 16px' }">
-                            <div class="productoRow">
-                                <a-image :width="72" :preview="false"
-                                    src="https://i.pinimg.com/originals/ce/e3/e4/cee3e4cebaf12a51e9fc4018f9471e38.png"
-                                    :alt="producto.name" class="productoImage" />
+                    <a-col v-for="catego in menuClasificado" :key="catego.categoria">
+                        <a-flex justify="center">
+                            <a-typography-title :level="3">{{ catego.categoria }}</a-typography-title>
+                        </a-flex>
+                        <a-row>
+                            <a-col v-for="producto in catego.productos" :key="producto.name" :xs="20" :md="18" :lg="19">
+                                <a-card class="productoCard" size="small" :bodyStyle="{ padding: '14px 16px' }">
+                                    <div class="productoRow">
+                                        <a-image :width="72" :preview="false"
+                                            src="https://i.pinimg.com/originals/ce/e3/e4/cee3e4cebaf12a51e9fc4018f9471e38.png"
+                                            :alt="producto.name" class="productoImage" />
 
-                                <div class="productoInfo">
-                                    <a-space :size="[8, 8]" wrap class="productoHeader">
-                                        <a-typography-text strong>
-                                            {{ producto.name }}
-                                        </a-typography-text>
+                                        <div class="productoInfo">
+                                            <a-space :size="[8, 8]" wrap class="productoHeader">
+                                                <a-typography-text strong>
+                                                    {{ producto.name }}
+                                                </a-typography-text>
 
-                                        <a-tag v-if="producto.tag" color="processing">
-                                            {{ producto.tag }}
-                                        </a-tag>
-                                    </a-space>
+                                                <a-tag v-if="producto.tag" color="processing">
+                                                    {{ producto.tag }}
+                                                </a-tag>
+                                            </a-space>
 
-                                    <a-typography-paragraph :ellipsis="{ rows: 1 }" class="productoDescription">
-                                        {{ producto.description }}
-                                    </a-typography-paragraph>
+                                            <a-typography-paragraph :ellipsis="{ rows: 1 }" class="productoDescription">
+                                                {{ producto.description }}
+                                            </a-typography-paragraph>
 
-                                    <a-typography-text type="secondary" class="productoSecondary">
-                                        {{ producto.ingredients }}
-                                    </a-typography-text>
-                                </div>
+                                            <a-typography-text type="secondary" class="productoSecondary">
+                                                {{ producto.ingredients }}
+                                            </a-typography-text>
+                                        </div>
 
-                                <div class="productoActions">
-                                    <a-typography-text strong class="productoPrice">
-                                        {{ producto.price.toFixed(2) }} €
-                                    </a-typography-text>
+                                        <div class="productoActions">
+                                            <a-typography-text strong class="productoPrice">
+                                                {{ producto.price.toFixed(2) }} €
+                                            </a-typography-text>
 
-                                    <a-button type="primary" size="small" ghost @click="addCarritoProducto(producto)">+
-                                        Añadir</a-button>
-                                </div>
-                            </div>
-                        </a-card>
+                                            <a-button type="primary" size="small" ghost
+                                                @click="addCarritoProducto(producto)">+
+                                                Añadir</a-button>
+                                        </div>
+                                    </div>
+                                </a-card>
+                            </a-col>
+                        </a-row>
                     </a-col>
+
                 </a-row>
             </a-col>
 
@@ -195,7 +225,7 @@ async function guardarCarrito() {
                                                 </a-button>
                                             </template>
                                             <template v-else class="p">
-                                                <a-input-number v-model:value="item.cantidad" 
+                                                <a-input-number v-model:value="item.cantidad"
                                                     @pressEnter="guardarCambios(item)" :min="0" size="small"
                                                     style="width: 70px;" />
                                                 <a-button type="primary" size="small" @click="guardarCambios(item)">

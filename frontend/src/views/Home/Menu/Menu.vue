@@ -1,3 +1,83 @@
+<script setup>
+import { ref, reactive, computed, onMounted, onUnmounted, nextTick } from 'vue';
+import AppHeader from '../../../Components/cabeceraYpiePrincipal/Header.vue';
+import AppFooter from '../../../Components/cabeceraYpiePrincipal/Footer.vue';
+import PlateCard from './Components/PlateCard.vue';
+import { getMenu, getCategories } from '../../../Services/api';
+import './Menu.css';
+
+const VISIBLE = 3;   
+
+const categories = ref([]);
+
+const menu = ref(null);
+const viewPlate = ref(null);
+
+const currentPage = reactive({});
+
+const viewportRefs = reactive({});
+
+function setViewportRef(el, catId) {
+  if (el) viewportRefs[catId] = el;
+}
+
+const platesByCategory = computed(() => {
+  if (!menu.value) return {};
+  return menu.value.reduce((acc, item) => {
+    const cat = item.id_category ?? item.id_menu_category;
+    if (!acc[cat]) acc[cat] = [];
+    acc[cat].push(item);
+    return acc;
+  }, {});
+});
+
+
+function getStep(catId) {
+  const el = viewportRefs[catId];
+  return el ? el.clientWidth : 0;
+}
+
+function pageCount(catId) {
+  const count = platesByCategory.value[catId]?.length ?? 0;
+  return Math.ceil(count / VISIBLE);
+}
+
+function isLastPage(catId) {
+  return (currentPage[catId] ?? 0) >= pageCount(catId) - 1;
+}
+
+function slide(catId, direction) {
+  const next = (currentPage[catId] ?? 0) + direction;
+  currentPage[catId] = Math.max(0, Math.min(next, pageCount(catId) - 1));
+}
+
+function onResize() {
+  Object.keys(currentPage).forEach(k => {
+    currentPage[k] = currentPage[k];
+  });
+}
+
+onMounted(() => {
+  categories.value.forEach(c => { currentPage[c.id] = 0; });
+  window.addEventListener('resize', onResize);
+
+  Promise.all([getCategories(), getMenu()])
+    .then(([cats, data]) => {
+      categories.value = cats;  
+      cats.forEach(c => { currentPage[c.id] = 0; });
+
+      data.forEach((item) => {
+        item.ingredients = item.ingredients.split(',').map(i => i.trim());
+      });
+      menu.value = data;
+    })
+    .catch((err) => console.error('Error cargando menú:', err));
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', onResize);
+});
+</script>
 <template>
   <AppHeader />
   <div class="menu-container">
@@ -90,83 +170,3 @@
   </div>
   <AppFooter />
 </template>
-
-<script setup>
-import { ref, reactive, computed, onMounted, onUnmounted, nextTick } from 'vue'
-import AppHeader from '../../../Components/cabeceraYpiePrincipal/Header.vue'
-import AppFooter from '../../../Components/cabeceraYpiePrincipal/Footer.vue'
-import PlateCard from './Components/PlateCard.vue'
-import { getMenu, getCategories } from '../../../Services/api'
-import './Menu.css'
-
-const VISIBLE = 3   
-
-const categories = ref([])
-
-const menu      = ref(null)
-const viewPlate = ref(null)
-
-const currentPage = reactive({})
-
-const viewportRefs = reactive({})
-
-function setViewportRef(el, catId) {
-  if (el) viewportRefs[catId] = el
-}
-
-const platesByCategory = computed(() => {
-  if (!menu.value) return {}
-  return menu.value.reduce((acc, item) => {
-    const cat = item.id_category ?? item.id_menu_category
-    if (!acc[cat]) acc[cat] = []
-    acc[cat].push(item)
-    return acc
-  }, {})
-})
-
-function getStep(catId) {
-  const el = viewportRefs[catId]
-  return el ? el.clientWidth : 0
-}
-
-function pageCount(catId) {
-  const count = platesByCategory.value[catId]?.length ?? 0
-  return Math.ceil(count / VISIBLE)
-}
-
-function isLastPage(catId) {
-  return (currentPage[catId] ?? 0) >= pageCount(catId) - 1
-}
-
-function slide(catId, direction) {
-  const next = (currentPage[catId] ?? 0) + direction
-  currentPage[catId] = Math.max(0, Math.min(next, pageCount(catId) - 1))
-}
-
-function onResize() {
-  Object.keys(currentPage).forEach(k => {
-    currentPage[k] = currentPage[k]
-  })
-}
-
-onMounted(() => {
-  categories.value.forEach(c => { currentPage[c.id] = 0 })
-  window.addEventListener('resize', onResize)
-
-  Promise.all([getCategories(), getMenu()])
-    .then(([cats, data]) => {
-      categories.value = cats  
-      cats.forEach(c => { currentPage[c.id] = 0 })
-
-      data.forEach((item) => {
-        item.ingredients = item.ingredients.split(',').map(i => i.trim())
-      })
-      menu.value = data
-    })
-    .catch((err) => console.error('Error cargando menú:', err))
-})
-
-onUnmounted(() => {
-  window.removeEventListener('resize', onResize)
-})
-</script>
