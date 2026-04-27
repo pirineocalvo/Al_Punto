@@ -1,20 +1,21 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { MenuOutlined } from '@ant-design/icons-vue';
-import { message } from 'ant-design-vue';
 import './Header.css';
-import { useRouter, useRoute } from 'vue-router';
-import { userInfo } from '../../Services/api';
+import { useRouter, useRoute } from 'vue-router'
+
+userInfo
 
 const router = useRouter();
 const route = useRoute();
 
 const menuAbierto = ref(false);
+const usuarioRegistrado = ref(localStorage.getItem('loginUserToken'));
 
 const pantallaPeque = ref(window.innerWidth < 768);
 
 const rutaActual = computed(() => route.path);
-const menuActual = ref(null);
+
 const menuSinLog = [
     { ruta: '/', label: 'Inicio' },
     { ruta: '/menu', label: 'Menú' },
@@ -42,48 +43,16 @@ const menuConLog = [
     { ruta: '/reservas', label: 'Reservas' },
 ];
 
-const menuAdmin = [
-    { ruta: '/', label: 'Inicio' },
-    {
-        ruta: '',
-        label: 'Acceder',
-        subMenu: [
-            { ruta: '/logout', label: 'Cerrar Sesión' },
-        ],
-    },
-    { ruta: '/zonaPersonal', label: 'Administración' },
-];
+const menuActual = computed(() => usuarioRegistrado.value ? menuConLog : menuSinLog);
 
+const actualizarTamano = () => {
+    pantallaPeque.value = window.innerWidth < 768
+};
 
-
-const actualizarTamano = () => { pantallaPeque.value = window.innerWidth < 768 };
-
-onMounted(async () => {
-    try {
-        const usuarioRegistrado = ref(localStorage.getItem('loginUserToken'));
-        
-        if (usuarioRegistrado) {
-            try {
-                const data = await userInfo();
-                if (data && data.access_level > 3) {
-                    menuActual.value = menuAdmin;
-                }else{
-                    menuActual.value = menuConLog;
-                }
-            } catch (error) {
-                menuActual.value = menuSinLog;
-                message.warning('Se esta tratando de acceder a una zona donde el usuario no tiene permisos');
-            }
-        }else{
-            menuActual.value = menuConLog;
-        }
-    } catch (error) {
-        message.error('Hubo un error al iniciar sesión '+error);
-    }
-
+onMounted(() => {
+    window.addEventListener('resize', actualizarTamano);
+    
 });
-
-onMounted(() => window.addEventListener('resize', actualizarTamano));
 onUnmounted(() => window.removeEventListener('resize', actualizarTamano));
 </script>
 <template>
@@ -92,7 +61,7 @@ onUnmounted(() => window.removeEventListener('resize', actualizarTamano));
         <nav v-if="!pantallaPeque">
             <a-menu mode="horizontal" :selectedKeys="[rutaActual]" @click="({ key }) => router.push(key)">
                 <template v-for="entrada in menuActual" :key="entrada.ruta || entrada.key">
-
+                    
                     <a-menu-item v-if="!entrada.subMenu || !entrada.subMenu.length" :key="entrada.ruta">
                         {{ entrada.label }}
                     </a-menu-item>
@@ -111,7 +80,7 @@ onUnmounted(() => window.removeEventListener('resize', actualizarTamano));
                 <MenuOutlined />
             </button>
         </nav>
-        <a-drawer v-model:open="menuAbierto" placement="left" :width="220" title="Menú">
+            <a-drawer v-model:open="menuAbierto" placement="left" :width="220" title="Menú">
             <div class="menuMovil">
                 <template v-for="entrada in menuActual" :key="entrada.label">
                     <RouterLink v-if="!entrada.subMenu || !entrada.subMenu.length" :to="entrada.ruta"
