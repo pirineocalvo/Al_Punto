@@ -1,10 +1,10 @@
 <script setup>
-import './Reservation.css'
+import './Reservation.css';
 import AppHeader from '../../Components/cabeceraYpiePrincipal/Header.vue';
 import AppFooter from '../../Components/cabeceraYpiePrincipal/Footer.vue';
-import { getDisponibilidadMes, todasLasMesasLibresPorDia, addReservation } from '../../Services/api'
-import { ref, onMounted } from 'vue'
-import dayjs from 'dayjs'
+import { getDisponibilidadMes, todasLasMesasLibresPorDia, addReservation, misReservas } from '../../Services/api';
+import { ref, onMounted } from 'vue';
+import dayjs from 'dayjs';
 
 const fechasCalendario = ref(dayjs());
 const diasBloqueados = ref({});
@@ -19,7 +19,7 @@ const datosForm = ref({
 
 onMounted(async () => {
     await cargarMes(fechasCalendario.value.year(), fechasCalendario.value.month() + 1);
-})
+});
 
 async function onSelect(date) {
     const fecha = date.format('YYYY-MM-DD');
@@ -51,13 +51,24 @@ async function alCambiarOcupantes() {
     datosForm.value.mesa = null;
     datosForm.value.hora = null;
     horario.value = [];
-    mesasDia.value = await todasLasMesasLibresPorDia(fecha, datosForm.value.comensales);
+    let mesasQueVienenDelBack = await todasLasMesasLibresPorDia(fecha, datosForm.value.comensales);
+
+    const todasLasReservas = await misReservas(); 
+
+    mesasDia.value = mesasQueVienenDelBack.map(mesa => {
+        const reservasDeEstaMesa = todasLasReservas.filter(res => res.id_mesa === mesa.id && res.reserve_date === fecha && res.status !== 'cancel');
+
+        const horasOcupadas = reservasDeEstaMesa.map(res => res.reserve_hour);
+
+        return {
+            ...mesa,
+            horasDisponibles: mesa.horasDisponibles.filter(h => !horasOcupadas.includes(h))
+        };
+    }).filter(mesa => mesa.horasDisponibles.length > 0); // Quitamos mesas que se hayan quedado sin horas
 }
 
 function filtrarHorario() {
     horario.value = mesasDia.value.find((mesa) => mesa.id == datosForm.value.mesa).horasDisponibles;
-    console.log(horario.value)
-    console.log(mesasDia.value)
     datosForm.value.hora = null;
 }
 
@@ -70,10 +81,7 @@ async function guardarReserva() {
         await addReservation(dato);
         await cargarMes(fechasCalendario.value.year(), fechasCalendario.value.month() + 1);
         datosForm.value = { comensales: null, mesa: null, hora: null };
-
     }
-
-
 }
 </script>
 
