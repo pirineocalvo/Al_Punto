@@ -21,7 +21,7 @@
 </template>
 
 <script setup>
-import '../Menu.css'
+import './PlateCard.css'  
 
 defineProps({
   item: {

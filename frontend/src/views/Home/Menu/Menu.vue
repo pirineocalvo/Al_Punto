@@ -1,167 +1,125 @@
 <script setup>
-import { ref, reactive, computed, onMounted, onUnmounted, nextTick } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import AppHeader from '../../../Components/cabeceraYpiePrincipal/Header.vue';
 import AppFooter from '../../../Components/cabeceraYpiePrincipal/Footer.vue';
-import PlateCard from './Components/PlateCard.vue';
+import PlateCard from '../../../Components/componenteMenu/PlateCard.vue';
 import { getMenu, getCategories } from '../../../Services/api';
 import './Menu.css';
 
-const VISIBLE = 3;   
-
-const categories = ref([]);
-
+const categorias = ref([]);
 const menu = ref(null);
-const viewPlate = ref(null);
+const platoSeleccionado = ref(null);
+const referenciasCarrusel = ref({});
 
-const currentPage = reactive({});
-
-const viewportRefs = reactive({});
-
-function setViewportRef(el, catId) {
-  if (el) viewportRefs[catId] = el;
-}
-
-const platesByCategory = computed(() => {
+const platosPorCategoria = computed(() => {
   if (!menu.value) return {};
-  return menu.value.reduce((acc, item) => {
-    const cat = item.id_category ?? item.id_menu_category;
-    if (!acc[cat]) acc[cat] = [];
-    acc[cat].push(item);
-    return acc;
+  return menu.value.reduce((acumulador, plato) => {
+    const categoria = plato.id_category ?? plato.id_menu_category;
+    if (!acumulador[categoria]) acumulador[categoria] = [];
+    acumulador[categoria].push(plato);
+    return acumulador;
   }, {});
 });
 
-
-function getStep(catId) {
-  const el = viewportRefs[catId];
-  return el ? el.clientWidth : 0;
+function dividirEnGrupos(arr, tamanio) {
+  const grupos = [];
+  for (let i = 0; i < arr.length; i += tamanio) {
+    grupos.push(arr.slice(i, i + tamanio));
+  }
+  return grupos;
 }
 
-function pageCount(catId) {
-  const count = platesByCategory.value[catId]?.length ?? 0;
-  return Math.ceil(count / VISIBLE);
+function anterior(idCategoria) {
+  referenciasCarrusel.value[idCategoria]?.prev();
 }
 
-function isLastPage(catId) {
-  return (currentPage[catId] ?? 0) >= pageCount(catId) - 1;
-}
-
-function slide(catId, direction) {
-  const next = (currentPage[catId] ?? 0) + direction;
-  currentPage[catId] = Math.max(0, Math.min(next, pageCount(catId) - 1));
-}
-
-function onResize() {
-  Object.keys(currentPage).forEach(k => {
-    currentPage[k] = currentPage[k];
-  });
+function siguiente(idCategoria) {
+  referenciasCarrusel.value[idCategoria]?.next();
 }
 
 onMounted(() => {
-  categories.value.forEach(c => { currentPage[c.id] = 0; });
-  window.addEventListener('resize', onResize);
-
   Promise.all([getCategories(), getMenu()])
-    .then(([cats, data]) => {
-      categories.value = cats;  
-      cats.forEach(c => { currentPage[c.id] = 0; });
-
-      data.forEach((item) => {
-        item.ingredients = item.ingredients.split(',').map(i => i.trim());
+    .then(([cats, datos]) => {
+      categorias.value = cats;
+      datos.forEach(plato => {
+        plato.ingredients = plato.ingredients.split(',').map(i => i.trim());
       });
-      menu.value = data;
+      menu.value = datos;
     })
-    .catch((err) => console.error('Error cargando menú:', err));
-});
-
-onUnmounted(() => {
-  window.removeEventListener('resize', onResize);
+    .catch(err => console.error('Error cargando menú:', err));
 });
 </script>
+
 <template>
   <AppHeader />
-  <div class="menu-container">
-    <h1 v-if="!menu" class="menu-loading">Cargando Menú...</h1>
 
-    <template v-if="menu">
+  <div class="menu-container">
+
+    <a-spin v-if="!menu" size="large">
+      <template #tip>
+        <a-typography-text type="secondary">Cargando Menú...</a-typography-text>
+      </template>
+    </a-spin>
+
+    <template v-else>
       <a-typography-title :level="1">Menú</a-typography-title>
-      <div v-if="viewPlate" class="plate-card-container">
-        <button class="back-btn" @click="viewPlate = null">← Volver</button>
-        <PlateCard :item="viewPlate" />
+      <div v-if="platoSeleccionado" class="plate-card-container">
+        <a-button @click="platoSeleccionado = null">← Volver</a-button>
+        <PlateCard :item="platoSeleccionado" />
       </div>
 
       <template v-else>
-        <a-row v-for="category in categories" :key="category.id" class="menu-section">
-          <a-col v-if="platesByCategory[category.id]?.length">
+        <div v-for="categoria in categorias" :key="categoria.id" class="menu-section">
+          <template v-if="platosPorCategoria[categoria.id]?.length">
 
-            <a-flex justify="center">
-              <a-typography-title :level="3">{{ category.name}}</a-typography-title>
+            <a-flex align="center" gap="middle">
+              <a-typography-title :level="3" style="margin: 0">
+                {{ categoria.name }}
+              </a-typography-title>
               <div class="menu-section-line" />
             </a-flex>
 
             <div class="carousel-wrapper">
-              <a-button
-                class="carousel-arrow carousel-arrow--left"
-                :disabled="currentPage[category.id] === 0"
-                @click="slide(category.id, -1)"
-              >‹</a-button>
+              <button class="carousel-arrow" @click="anterior(categoria.id)">‹</button>
 
-              <div class="carousel-viewport" :ref="el => setViewportRef(el, category.id)">
-                <div
-                  class="carousel-track"
-                  :style="{ transform: `translateX(-${currentPage[category.id] * getStep(category.id)}px)` }"
-                >
-                  <div
-                    v-for="(item, index) in platesByCategory[category.id]"
-                    :key="index"
-                    class="carousel-card"
-                    @click="viewPlate = item"
-                  >
+              <a-carousel :ref="el => { if (el) referenciasCarrusel[categoria.id] = el }" class="menu-carousel">
+                <div v-for="(grupo, indiceGrupo) in dividirEnGrupos(platosPorCategoria[categoria.id], 3)"
+                  :key="indiceGrupo" class="carousel-slide">
+                  <div v-for="(plato, indicePlato) in grupo" :key="indicePlato" class="carousel-card"
+                    @click="platoSeleccionado = plato">
                     <div class="card-img-wrapper">
-                      <img
-                        draggable="false"
-                        :alt="item.name"
-                        :src="'images/plates/' + item.img_src"
-                      />
+                      <img draggable="false" :alt="plato.name" :src="'images/plates/' + plato.img_src" />
                     </div>
                     <div class="card-body">
-                      <h3 class="card-title">{{ item.name }}</h3>
-                      <p class="card-description">{{ item.description }}</p>
-                      <h6>Ingredientes: </h6>
+                      <a-typography-title :level="5" class="card-title">
+                        {{ plato.name }}
+                      </a-typography-title>
+                      <a-typography-paragraph type="secondary" class="card-description">
+                        {{ plato.description }}
+                      </a-typography-paragraph>
+                      <a-typography-text strong style="font-size: 0.78rem">
+                        Ingredientes:
+                      </a-typography-text>
                       <div class="card-ingredients">
-                        <span
-                          v-for="(ingredient, i) in item.ingredients"
-                          :key="i"
-                          class="ingredient-tag"
-                        >{{ ingredient }}</span>
+                        <a-tag v-for="(ingrediente, indiceIngrediente) in plato.ingredients" :key="indiceIngrediente"
+                          class="ingredient-tag">{{ ingrediente }}</a-tag>
                       </div>
-                      <p class="card-price">{{ item.price }} €</p>
+                      <a-typography-text strong class="card-price">
+                        {{ plato.price }} €
+                      </a-typography-text>
                     </div>
                   </div>
                 </div>
-              </div>
+              </a-carousel>
 
-              <button
-                class="carousel-arrow carousel-arrow--right"
-                :disabled="isLastPage(category.id)"
-                @click="slide(category.id, 1)"
-              >›</button>
+              <button class="carousel-arrow" @click="siguiente(categoria.id)">›</button>
             </div>
 
-            <div class="carousel-dots">
-              <span
-                v-for="dot in pageCount(category.id)"
-                :key="dot"
-                class="carousel-dot"
-                :class="{ active: currentPage[category.id] === dot - 1 }"
-                @click="currentPage[category.id] = dot - 1"
-              />
-            </div>
-
-          </a-col>
-        </a-row>
+          </template>
+        </div>
       </template>
     </template>
   </div>
+
   <AppFooter />
 </template>
