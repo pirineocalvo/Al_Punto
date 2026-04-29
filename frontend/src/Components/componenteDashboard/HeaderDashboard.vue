@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, onUnmounted  } from 'vue';
+import { ref, onMounted, onUnmounted  } from 'vue';
 import { useRouter } from 'vue-router';
 import { MenuOutlined } from '@ant-design/icons-vue';
 import { UserOutlined, LogoutOutlined } from '@ant-design/icons-vue';

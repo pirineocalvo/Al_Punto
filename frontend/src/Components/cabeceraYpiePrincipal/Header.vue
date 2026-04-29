@@ -42,18 +42,6 @@ const menuConLog = [
     { ruta: '/reservas', label: 'Reservas' },
 ];
 
-const menuAdmin = [
-    { ruta: '/', label: 'Inicio' },
-    {
-        ruta: '',
-        label: 'Acceder',
-        subMenu: [
-            { ruta: '/logout', label: 'Cerrar Sesión' },
-        ],
-    },
-    { ruta: '/zonaPersonal', label: 'Administración' },
-];
-
 
 
 const actualizarTamano = () => { pantallaPeque.value = window.innerWidth < 768 };
@@ -62,20 +50,19 @@ onMounted(async () => {
     try {
         const usuarioRegistrado = ref(localStorage.getItem('loginUserToken'));
         
-        if (usuarioRegistrado) {
+        if (usuarioRegistrado.value) {
             try {
                 const data = await userInfo();
-                if (data && data.access_level > 3) {
-                    menuActual.value = menuAdmin;
-                }else{
+                if (data) {
                     menuActual.value = menuConLog;
+                }else{
+                    menuActual.value = menuSinLog;
                 }
             } catch (error) {
                 menuActual.value = menuSinLog;
-                message.warning('Se esta tratando de acceder a una zona donde el usuario no tiene permisos');
             }
         }else{
-            menuActual.value = menuConLog;
+            menuActual.value = menuSinLog;
         }
     } catch (error) {
         message.error('Hubo un error al iniciar sesión '+error);
