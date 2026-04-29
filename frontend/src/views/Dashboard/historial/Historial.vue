@@ -4,7 +4,7 @@ import { ref, onMounted } from 'vue';
 import HeaderDashboard from '@/Components/componenteDashboard/HeaderDashboard.vue';
 import Footer from '@/Components/cabeceraYpiePrincipal/Footer.vue';
 import Sidebar from '../../../Components/componenteDashboard/Sidebar.vue';
-import { getProductosCompradosCliente, cancelarPedido, misReservas, pedidosRealizadosMarketPlace, userInfo } from '../../../Services/api';
+import { getProductosCompradosCliente, cancelarPedido, misReservas, pedidosRealizadosMarketPlace, cancelarReserva, userInfo } from '../../../Services/api';
 import { useRouter } from 'vue-router';
 
 const user = ref(null);
@@ -30,32 +30,18 @@ onMounted(async () => {
     listaPedidos.value = await getProductosCompradosCliente();
     listaReservas.value = await misReservas();
     listaMarketPlaceReclamado.value = await pedidosRealizadosMarketPlace();
-    console.log(listaMarketPlaceReclamado.value);
-
-    relojActualizarReservas();
-
-
 });
 
-async function actualizarEstadoReserva() {
 
-}
-
-async function relojActualizarReservas(estado) {
-    setInterval(() => {
-        if (estado == false) {
-            clearInterval();
-            console.log("Tiempo terminado");
-        }
-        console.log('dentro del reloj');
-        actualizarEstadoReserva();
-    }, 1000);
-}
 async function eliminarPedido(pedido) {
     await cancelarPedido(pedido.id);
     listaPedidos.value = await getProductosCompradosCliente();
 }
 
+async function pararReserva(reserva) {
+    await cancelarReserva(reserva.id);
+    listaReservas.value = await misReservas();
+}
 </script>
 <template>
     <a-layout>
@@ -72,14 +58,10 @@ async function eliminarPedido(pedido) {
                             <template #header>
                                 <div class="datosTituloAcordeon">
                                     <span>{{ reserva.reserve_date }}</span>
-                                    <div v-if="reserva.status == 'booked'">
-                                        <a-button>Cancelar</a-button>
-                                    </div>
-                                    <div v-else-if="reserva.status == 'pending'">
-                                        <a-button>Confirmar asistencia</a-button>
-                                        <a-button>Cancelar</a-button>
-                                    </div>
-                                    <a-typography-text>{{ reserva.status }}</a-typography-text>
+
+                                    <a-tag v-if="reserva.status == 'attended'" color="lime">Atendido</a-tag>
+                                    <a-tag v-else-if="reserva.status == null" color="purple">Pendiente</a-tag>
+                                    <a-tag v-else color="red">Cancelado</a-tag>
                                 </div>
                             </template>
 
@@ -87,7 +69,9 @@ async function eliminarPedido(pedido) {
                                 <p><span>Fecha:</span> {{ reserva.reserve_date }}</p>
                                 <p><span>Hora:</span> {{ reserva.reserve_hour }}</p>
                                 <p><span>Asistentes:</span> {{ reserva.guests }}</p>
-                                <p><span>Estado:</span> {{ reserva.status }}</p>
+                                <div v-if="reserva.status == null">
+                                    <a-button @click="pararReserva(reserva)">Cancelar reserva</a-button>
+                                </div>
                             </div>
                         </a-collapse-panel>
                     </a-collapse>
@@ -101,11 +85,13 @@ async function eliminarPedido(pedido) {
                             <template #header>
                                 <div class="datosTituloAcordeon">
                                     <span>{{ pedido.created_at }}</span>
-                                    <a-button size="small" type="primary" ghost @click.stop="eliminarPedido(pedido)"
-                                        v-if="pedido.is_picked_up == 0 && pedido.status == 'pendiente'">
-                                        Cancelar pedido
-                                    </a-button>
-                                    <p v-else-if="pedido.status == 'cancelado'">El pedido fue cancelado</p>
+
+                                    <a-tag color="purple" v-if="pedido.status == 'pendiente'">Pedido pendiente de
+                                        preparación</a-tag>
+                                    <a-tag color="purple" v-else-if="pedido.status == 'listo'">Pedido preparado</a-tag>
+                                    <a-tag color="red" v-else-if="pedido.status == 'cancelado'">El pedido fue
+                                        cancelado</a-tag>
+                                    <a-tag color="lime" v-else>El pedido fue entregado</a-tag>
                                 </div>
                             </template>
 
@@ -113,7 +99,11 @@ async function eliminarPedido(pedido) {
                                 <span>Producto:</span> {{ producto.product_name }};
                                 <span>Cantidad:</span> {{ producto.quantity }};
                                 <span>Precio unidad:</span> {{ producto.price_at_time }}
+
                             </p>
+                            <a-button @click.stop="eliminarPedido(pedido)" v-if="pedido.is_picked_up == 0 && pedido.status == 'pendiente'">
+                                Cancelar pedido
+                            </a-button>
                         </a-collapse-panel>
                     </a-collapse>
 
@@ -125,11 +115,14 @@ async function eliminarPedido(pedido) {
                             <template #header>
                                 <div class="datosTituloAcordeon">
                                     <span>{{ market.name }}</span>
-                                    <a-tag v-if="market.is_used == 0" color="success">Sin canjear</a-tag>
-                                    <a-tag v-else color="error">Canjeado el {{ market.used_at }}</a-tag>
+                                    <a-tag v-if="market.is_used == 0" color="lime">Sin canjear</a-tag>
+                                    <a-tag v-else color="red">Canjeado el {{ market.used_at }}</a-tag>
                                 </div>
-                            </template>
-                            <span>{{ market.description }}</span>
+                            </template> 
+                            <a-row>
+                                <a-col :xs="24"><span>{{ market.description }}</span></a-col>
+                                <a-col :xs="24"><span>Código del producto: <a-tag>{{ market.token_url }}</a-tag></span></a-col>
+                            </a-row>
                         </a-collapse-panel>
                     </a-collapse>
 
