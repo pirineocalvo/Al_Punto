@@ -7,6 +7,7 @@ import Sidebar from '../../../../Components/componenteDashboard/Sidebar.vue'
 import './ListarTickets.css'
 import HeaderDashboard from '@/Components/componenteDashboard/HeaderDashboard.vue'
 import Footer from '@/Components/cabeceraYpiePrincipal/Footer.vue'
+import { CalendarOutlined, ClockCircleOutlined, EuroCircleOutlined, StarOutlined, EnvironmentOutlined, FileTextOutlined } from '@ant-design/icons-vue'
 
 const router = useRouter()
 
@@ -87,99 +88,98 @@ const separarFechaHora = (fecha) => {
         hora: h || '—'
     }
 }
+
+const columnasProductos = [
+    {
+        title: 'Producto',
+        dataIndex: 'nombre',
+        key: 'nombre',
+    },
+    {
+        title: 'Cant.',
+        dataIndex: 'cantidad',
+        key: 'cantidad',
+        width: 80,
+    },
+    {
+        title: 'Precio Unit.',
+        dataIndex: 'precio',
+        key: 'precio',
+        customRender: ({ text }) => `${text.toFixed(2)} €`,
+    },
+    {
+        title: 'Total',
+        key: 'total',
+        customRender: ({ record }) => `${(record.cantidad * record.precio).toFixed(2)} €`,
+    }
+];
+
 </script>
 
 <template>
     <a-layout>
         <HeaderDashboard :user="user" />
-        <a-layout>
+        <a-layout class="dashboardMainLayout">
             <Sidebar :collapsed="collapsed" />
 
-            <a-row >
+            <a-row class="colocarAcordeon">
                 <a-col :xs="24" :md="20" :lg="24">
                     <a-flex justify="center">
-                        <a-typography-title :level="2" style="text-align: center;">
+                        <a-typography-title :level="2">
                             Mis Tickets
                         </a-typography-title>
                     </a-flex>
 
                     <a-spin :spinning="cargando">
-                        <a-flex v-if="tickets.length === 0" justify="center">
-                            <a-empty description="No tienes tickets todavía" />
-                        </a-flex>
+                        <a-empty v-if="tickets.length === 0" description="No tienes tickets todavía" />
 
-                        <a-row v-else :gutter="[24, 24]" justify="center">
-                            <a-col
-                                :xs="22"     
-                                :sm="22"     
-                                :md="18"     
-                                :lg="10"     
-                                :xl="6" 
-                                v-for="ticket in tickets"
-                                :key="ticket.id"
-                                class="ticket-item"
-                            >
-                                <a-card class="ticket-card">
-                                    <a-descriptions :column="1" bordered size="small">
-                                        <a-descriptions-item label="Tipo">
-                                            {{ ticket.parsed.tipo || '—' }}
-                                        </a-descriptions-item>
-
-                                        <a-descriptions-item label="Fecha subida">
+                        <a-collapse v-else accordion>
+                            <a-collapse-panel v-for="ticket in tickets" :key="ticket.id">
+                                <template #header>
+                                    <a-space size="middle" wrap>
+                                        <a-typography-text>
+                                            <calendar-outlined  />
                                             {{ separarFechaHora(ticket.created_at).fecha }}
-                                        </a-descriptions-item>
+                                        </a-typography-text>
 
-                                        <a-descriptions-item label="Hora subida">
+                                        <a-typography-text type="secondary">
+                                            <clock-circle-outlined  />
                                             {{ separarFechaHora(ticket.created_at).hora }}
-                                        </a-descriptions-item>
+                                        </a-typography-text>
 
-                                        <a-descriptions-item label="Fecha ticket">
-                                            {{ ticket.parsed.fecha || '—' }}
-                                        </a-descriptions-item>
+                                        <a-typography-text strong>
+                                            <euro-circle-outlined  />
+                                            {{ ticket.parsed.total?.toFixed(2) || '0.00' }} €
+                                        </a-typography-text>
 
-                                        <a-descriptions-item label="Hora ticket">
-                                            {{ ticket.parsed.hora || '—' }}
-                                        </a-descriptions-item>
+                                        <a-typography-text type="warning">
+                                            <star-outlined  />
+                                            {{ ticket.points_awarded || 0 }} pts
+                                        </a-typography-text>
+                                    </a-space>
+                                </template>
 
-                                        <a-descriptions-item label="Dirección">
-                                            {{ ticket.parsed.direccion || '—' }}
-                                        </a-descriptions-item>
+                                <a-descriptions :column="1" bordered size="small">
+                                    <a-descriptions-item>
+                                        <template #label><calendar-outlined /> Fecha ticket</template>
+                                        {{ ticket.parsed.fecha || '—' }}
+                                    </a-descriptions-item>
 
-                                        <a-descriptions-item label="Estado">
-                                            {{ ticket.status }}
-                                        </a-descriptions-item>
+                                    <a-descriptions-item>
+                                        <template #label><clock-circle-outlined /> Hora ticket</template>
+                                        {{ ticket.parsed.hora || '—' }}
+                                    </a-descriptions-item>
 
-                                        <a-descriptions-item label="Puntos">
-                                            {{ ticket.points_awarded || 0 }}
-                                        </a-descriptions-item>
-                                    </a-descriptions>
+                                    <a-descriptions-item :span="2">
+                                        <template #label><environment-outlined /> Dirección</template>
+                                        {{ ticket.parsed.direccion || '—' }}
+                                    </a-descriptions-item>
+                                </a-descriptions>
 
-                                    <a-row justify="space-between" style="margin-top: 10px;">
-                                        <a-statistic
-                                            title="Subtotal"
-                                            :value="ticket.parsed.subtotal || 0"
-                                            precision="2"
-                                            suffix="€"
-                                        />
-                                        <a-statistic
-                                            title="Total"
-                                            :value="ticket.parsed.total || 0"
-                                            precision="2"
-                                            suffix="€"
-                                        />
-                                    </a-row>
-
-                                    <div v-if="ticket.parsed.productos?.length" style="margin-top: 15px;">
-                                        <strong>Productos:</strong>
-                                        <ul>
-                                            <li v-for="(p, i) in ticket.parsed.productos" :key="i">
-                                                {{ p.nombre }} — {{ p.cantidad }} x {{ p.precio }}€
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </a-card>
-                            </a-col>
-                        </a-row>
+                                <a-table v-if="ticket.parsed.productos?.length" :dataSource="ticket.parsed.productos"
+                                    :pagination="false" size="small" :columns="columnasProductos" />
+                            </a-collapse-panel>
+                        </a-collapse>
                     </a-spin>
                 </a-col>
             </a-row>

@@ -50,7 +50,7 @@ async function pararReserva(reserva) {
         <a-layout class="dashboardMainLayout">
             <Sidebar :collapsed="collapsed" />
 
-            <a-tabs v-model:activeKey="tabActiva" style="flex:1; padding: 32px;">
+            <a-tabs v-model:activeKey="tabActiva" class="colocarAcordeon">
 
                 <a-tab-pane key="reservas" tab="Reservas">
                     <a-collapse v-model:activeKey="acordeonActivo" accordion>
