@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import AppHeader from '../../../Components/cabeceraYpiePrincipal/Header.vue';
 import AppFooter from '../../../Components/cabeceraYpiePrincipal/Footer.vue';
 import PlateCard from '../../../Components/componenteMenu/PlateCard.vue';
@@ -10,6 +10,7 @@ const categorias = ref([]);
 const menu = ref(null);
 const platoSeleccionado = ref(null);
 const referenciasCarrusel = ref({});
+const anchoVentana = ref(window.innerWidth);
 
 const platosPorCategoria = computed(() => {
   if (!menu.value) return {};
@@ -33,11 +34,25 @@ function anterior(idCategoria) {
   referenciasCarrusel.value[idCategoria]?.prev();
 }
 
+const actualizarAncho = () => {
+  anchoVentana.value = window.innerWidth;
+};
+
+
+const tarjetasPorSlide = computed(() => {
+  if (anchoVentana.value < 640) return 1;
+  if (anchoVentana.value < 1024) return 2; 
+  return 3;                                
+});
+
+
 function siguiente(idCategoria) {
   referenciasCarrusel.value[idCategoria]?.next();
 }
 
 onMounted(() => {
+  window.addEventListener('resize', actualizarAncho);
+
   Promise.all([getCategories(), getMenu()])
     .then(([cats, datos]) => {
       categorias.value = cats;
@@ -47,6 +62,10 @@ onMounted(() => {
       menu.value = datos;
     })
     .catch(err => console.error('Error cargando menú:', err));
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', actualizarAncho);
 });
 </script>
 
@@ -73,7 +92,7 @@ onMounted(() => {
           <template v-if="platosPorCategoria[categoria.id]?.length">
 
             <a-flex align="center" gap="middle">
-              <a-typography-title :level="3" style="margin: 0">
+              <a-typography-title :level="3">
                 {{ categoria.name }}
               </a-typography-title>
               <div class="menu-section-line" />
@@ -83,9 +102,9 @@ onMounted(() => {
               <button class="carousel-arrow" @click="anterior(categoria.id)">‹</button>
 
               <a-carousel :ref="el => { if (el) referenciasCarrusel[categoria.id] = el }" class="menu-carousel">
-                <div v-for="(grupo, indiceGrupo) in dividirEnGrupos(platosPorCategoria[categoria.id], 3)"
+                <div v-for="(grupo, indiceGrupo) in dividirEnGrupos(platosPorCategoria[categoria.id], tarjetasPorSlide)"
                   :key="indiceGrupo" class="carousel-slide">
-                  <div v-for="(plato, indicePlato) in grupo" :key="indicePlato" class="carousel-card"
+                  <div v-for="(plato, indicePlato) in grupo" :key="indicePlato" class="carousel-card"  :style="{ width: `${100 / tarjetasPorSlide}%` }"
                     @click="platoSeleccionado = plato">
                     <div class="card-img-wrapper">
                       <img draggable="false" :alt="plato.name" :src="'images/plates/' + plato.img_src" />
@@ -97,9 +116,9 @@ onMounted(() => {
                       <a-typography-paragraph type="secondary" class="card-description">
                         {{ plato.description }}
                       </a-typography-paragraph>
-                      <a-typography-text strong style="font-size: 0.78rem">
+                      <a-typography-title strong :level="5">
                         Ingredientes:
-                      </a-typography-text>
+                      </a-typography-title>
                       <div class="card-ingredients">
                         <a-tag v-for="(ingrediente, indiceIngrediente) in plato.ingredients" :key="indiceIngrediente"
                           class="ingredient-tag">{{ ingrediente }}</a-tag>
