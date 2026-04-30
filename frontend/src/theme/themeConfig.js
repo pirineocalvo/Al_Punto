@@ -1,8 +1,6 @@
 import { theme } from "ant-design-vue";
 
 export const themeTokens = {
-
-  // ─── MODO CLARO ──────────────────────────────────────────────────────────────
   light: {
     algorithm: theme.defaultAlgorithm,
 
@@ -60,12 +58,20 @@ export const themeTokens = {
 
       // ── Menu (el horizontal del header) ─────────────────────────────────────
       Menu: {
-        itemHoverBg: "rgba(217, 119, 66, 0.10)",
-        itemSelectedBg: "rgba(217, 119, 66, 0.15)",
-        itemSelectedColor: "#D97742",
-        itemBorderRadius: 6,
-      },
+        colorItemBg: "transparent",
+        // Antes: #f06846 (muy brillante) -> Ahora: Un tono derivado de tu Header
+        colorSubItemBg: "#463833",
+        colorItemBgHover: "rgba(217, 119, 66, 0.1)",
+        colorItemBgSelected: "rgba(217, 119, 66, 0.2)",
 
+        // Texto
+        colorItemText: "#E8C9A0",
+        colorItemTextHover: "#D97742",
+        colorItemTextSelected: "#D97742",
+
+        colorPopupBg: "#3A2E2A",
+        colorBgElevated: "#3A2E2A",
+      },
       // ── Input / Select / Form ────────────────────────────────────────────────
       Input: {
         colorBgContainer: "#FFFFFF",
@@ -96,11 +102,12 @@ export const themeTokens = {
       // ── Drawer (menú móvil) ──────────────────────────────────────────────────
       Drawer: {
         colorBgElevated: "#3A2E2A",
-        colorText: "#FFFFFF",
-        colorTextHeading: "#FFFFFF",
-        colorIcon: "#FFFFFF",
+        colorText: "#C8B49A",
+        colorTextHeading: "#D97742",
+        colorIcon: "#C8B49A",
         colorIconHover: "#D97742",
       },
+
       // ── Table ─────────────────────────────────────
       Table: {
         colorBgContainer: "#FFFFFF",
@@ -111,9 +118,9 @@ export const themeTokens = {
 
       // ── Layout ───────────────────────────────────────────────────────────────
       Layout: {
-        headerBg: "#3A2E2A",
-        bodyBg: "#FFF5EC",
-        footerBg: "#3A2E2A",
+        colorBgHeader: "#5c443c",
+        colorBgBody: "#FFF5EC",
+        colorBgSider: "#3A2E2A",
       },
       // ── Mensaje normal y de confirmación ───────────────────────────────────────────────────────────────
       Popconfirm: {
@@ -125,33 +132,8 @@ export const themeTokens = {
       Message: {
         colorBgElevated: "#FFFFFF",
       },
-      // -
     },
-  },
-
-  // ─── MODO OSCURO ─────────────────────────────────────────────────────────────
-  dark: {
-    algorithm: theme.darkAlgorithm,
-    token: {
-      colorPrimary: "#f4a25a",
-      colorSuccess: "#3A9E6F",
-      colorWarning: "#E8A020",
-      colorError: "#D94F3D",
-      colorInfo: "#15616D",
-      colorBgBase: "#121212",
-      colorTextBase: "#F5F5F5",
-      colorBorder: "#F0C99A",
-      borderRadius: 8,
-    },
-    components: {
-      Menu: {
-        itemHoverBg: "rgba(244, 163, 14, 0.1)",
-        itemSelectedBg: "rgba(244, 163, 14, 0.15)",
-      },
-      Button: { borderRadius: 8 },
-      Card: { colorBgContainer: "rgba(255, 250, 244, 0.08)" },
-    },
-  },
+  }
 };
 
 export const getAntdTheme = (mode) => {

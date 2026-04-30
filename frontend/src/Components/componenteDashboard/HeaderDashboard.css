@@ -5,7 +5,6 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid var(--border-sutil);
     background-color: var(--color-menu-fondo);
 }
 

@@ -1,3 +1,13 @@
+<script setup>
+import './PlateCard.css'  
+
+defineProps({
+  item: {
+    type: Object,
+    required: true
+  }
+})
+</script>
 <template>
   <a-card hoverable>
     <a-row>
@@ -19,14 +29,3 @@
     </a-row>
   </a-card>
 </template>
-
-<script setup>
-import './PlateCard.css'  
-
-defineProps({
-  item: {
-    type: Object,
-    required: true
-  }
-})
-</script>
