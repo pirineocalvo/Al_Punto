@@ -1,16 +1,8 @@
 :root {
-  font-family: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
   --color-fondo: #FFEDDC;
-  --color-texto-principal: ;
-  --color-texto-secundario: ;
+
 
   --color-principal: #D97742;
-  --color-principal-texto: ;
-
-  --color-secundario: ;
-  --color-secundario-texto: ;
-
-  --color-borde: ;
 
   --color-boton-principal: var(--color-principal);
   --color-boton-principal-hover: #b86435;
@@ -40,62 +32,5 @@
   --color-footer-fondo: var(--color-menu-fondo);
   --color-footer-texto: var(--color-menu-texto);
 
-  --color-precio: ;
-  --color-oferta: ;
-  --color-reserva: ;
 }
 
-body {
-  margin: 0;
-  min-width: 320px;
-  min-height: 100vh;
-  background-color: var(--color-fondo);
-  color: var(--text-primary);
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-  color: var(--text-primary);
-}
-
-
-.mi-calendario.ant-picker-calendar.ant-picker-calendar-full .ant-picker-cell-in-view.ant-picker-cell-selected .ant-picker-calendar-date,
-.mi-calendario.ant-picker-calendar.ant-picker-calendar-full .ant-picker-cell-in-view.ant-picker-cell-selected .ant-picker-calendar-date-today {
-  background: var(--color-fondo) !important;
-}
-
-.mi-calendario .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
-  color: var(--color-principal) !important;
-  border-color: var(--color-principal) !important;
-}
-
-.mi-calendario .ant-picker-calendar-header {
-  border-color: var(--color-principal) !important;
-}
-
-.mi-calendario .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
-  border-color: var(--color-principal) !important;
-}
-
-.mi-calendario .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled)::before {
-  background-color: var(--color-principal) !important;
-}
-
-.mi-calendario .ant-radio-button-wrapper:hover {
-  color: var(--color-select-seleccionado) !important;
-}
-
-.mi-calendario .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
-  background-color: var(--color-select-seleccionado) !important;
-}
-
-.mi-calendario .ant-select-item-option-active:not(.ant-select-item-option-disabled) {
-  background-color: var(--color-select-seleccionado) !important;
-}
-
-.mi-calendario .ant-select:not(.ant-select-disabled):hover .ant-select-selector,
-.mi-calendario .ant-select-focused:not(.ant-select-disabled) .ant-select-selector {
-  border-color: var(--color-principal) !important;
-
-}

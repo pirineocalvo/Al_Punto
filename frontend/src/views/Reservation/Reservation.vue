@@ -88,7 +88,7 @@ async function guardarReserva() {
 <template>
     <AppHeader />
 
-    <main class="reservas-main">
+    <a-layout class="reservas-main">
         <a-typography-title :level="2" class="reservas-titulo">Reservas</a-typography-title>
 
         <a-row class="reservas-row">
@@ -137,7 +137,7 @@ async function guardarReserva() {
             </a-col>
 
         </a-row>
-    </main>
+    </a-layout>
 
     <AppFooter />
 </template>
