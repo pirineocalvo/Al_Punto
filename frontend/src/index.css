@@ -34,3 +34,14 @@
 
 }
 
+.contenedorLogin .ant-form-item-row {
+    gap: 0 !important;
+}
+
+.contenedorLogin .ant-form-item-label {
+    padding: 0 0 4px 0 !important;
+}
+
+.contenedorLogin .ant-form-item {
+    margin-bottom: 16px !important;
+}

@@ -1,15 +1,5 @@
-.separarBtn{
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-}
-.contenedorLogin {
+.formaTarjeta{
     min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.cardLogin {
-    width: 600px;
+    width: 100%;
+    margin: 0;
 }

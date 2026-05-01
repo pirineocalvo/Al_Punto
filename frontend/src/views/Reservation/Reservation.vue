@@ -24,7 +24,6 @@ onMounted(async () => {
 async function onSelect(date) {
     const fecha = date.format('YYYY-MM-DD');
     mesasDia.value = await todasLasMesasLibresPorDia(fecha, null);
-    
     fechaSeleccionada.value = fecha;
 }
 
@@ -57,14 +56,13 @@ async function alCambiarOcupantes() {
 
     mesasDia.value = mesasQueVienenDelBack.map(mesa => {
         const reservasDeEstaMesa = todasLasReservas.filter(res => res.id_mesa === mesa.id && res.reserve_date === fecha && res.status !== 'cancel');
-
         const horasOcupadas = reservasDeEstaMesa.map(res => res.reserve_hour);
 
         return {
             ...mesa,
             horasDisponibles: mesa.horasDisponibles.filter(h => !horasOcupadas.includes(h))
         };
-    }).filter(mesa => mesa.horasDisponibles.length > 0); // Quitamos mesas que se hayan quedado sin horas
+    }).filter(mesa => mesa.horasDisponibles.length > 0);
 }
 
 function filtrarHorario() {
@@ -88,13 +86,13 @@ async function guardarReserva() {
 <template>
     <AppHeader />
 
-    <a-layout class="reservas-main">
-        <a-typography-title :level="2" class="reservas-titulo">Reservas</a-typography-title>
+    <a-layout class="reservasMain">
+        <a-typography-title :level="2">Reservas</a-typography-title>
 
-        <a-row class="reservas-row">
+        <a-row>
             <a-col :xs="24" :lg="16">
                 <a-card class="cardCalendario">
-                    <a-calendar class="mi-calendario" :model:value="fechasCalendario" @panelChange="onPanelChange" @select="onSelect" :disabledDate="disabledDate" />
+                    <a-calendar :model:value="fechasCalendario" @panelChange="onPanelChange" @select="onSelect" :disabledDate="disabledDate" />
                 </a-card>
             </a-col>
 
@@ -104,8 +102,8 @@ async function guardarReserva() {
 
                         <a-form-item label="Número de ocupantes">
                             <a-select v-model:value="datosForm.comensales" placeholder="Selecciona comensales" @change="alCambiarOcupantes" :disabled="!fechaSeleccionada" size="large">
-                                <a-select-option v-for="n in 6" :key="n" :value="n">
-                                    {{ n }} {{ n === 1 ? 'persona' : 'personas' }}
+                                <a-select-option v-for="num in 6" :key="n" :value="n">
+                                    {{ num }} {{ num === 1 ? 'persona' : 'personas' }}
                                 </a-select-option>
                             </a-select>
                         </a-form-item>
@@ -135,7 +133,6 @@ async function guardarReserva() {
                     </a-form>
                 </a-card>
             </a-col>
-
         </a-row>
     </a-layout>
 

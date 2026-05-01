@@ -52,36 +52,57 @@ function registrarse() {
 </script>
 
 <template>
-    <div class="contenedorLogin">
-        <a-card class="cardLogin">
-            <a-typography-title :level="2" style="text-align: center;">
-                Inicio de sesión
-            </a-typography-title>
-            <a-form :model="formState" :rules="rules" @finish="verificarUser()">
-                <a-form-item label="Correo electrónico" name="email" :label-col="{ span: 7 }" :wrapper-col="{ span: 12 }">
-                    <a-input v-model:value="formState.email" placeholder="Correo electrónico">
-                        <template #prefix>
-                            <UserOutlined />
-                        </template>
-                    </a-input>
-                </a-form-item>
+    <a-layout class="contenedorLogin">
+        <a-row type="flex" justify="center" align="middle" class="formaTarjeta">
+            <a-col :xs="22" :md="12" :lg="8">
 
-                <a-form-item label="Contraseña" name="password" :label-col="{ span: 7 }" :wrapper-col="{ span: 12 }">
-                    <a-input-password v-model:value="formState.password" placeholder="Contraseña">
-                        <template #prefix>
-                            <LockOutlined />
-                        </template>
-                    </a-input-password>
-                </a-form-item>
+                <a-card>
+                    <a-flex vertical align="center" gap="large">
 
-                <a-form-item :wrapper-col="{ span: 12, offset: 5 }">
-                    <div class="separarBtn">
-                        <a-button type="primary" html-type="submit">Iniciar sesión</a-button>
-                        <a-button @click="volver">Volver</a-button>
-                    </div>
-                </a-form-item>
-            </a-form>
-            <a-typography-text>¿Aún no tienes cuenta? <a-typography-link @click="registrarse()">¡Únete a la familia!</a-typography-link></a-typography-text>
-        </a-card>
-    </div>
+                        <a-typography-title :level="2">
+                            Inicio de sesión
+                        </a-typography-title>
+
+                        <a-form :model="formState" :rules="rules" @finish="verificarUser" layout="vertical"
+                            style="width: 100%">
+                            <a-form-item label="Correo electrónico" name="email">
+                                <a-input v-model:value="formState.email" placeholder="Correo electrónico">
+                                    <template #prefix>
+                                        <UserOutlined />
+                                    </template>
+                                </a-input>
+                            </a-form-item>
+
+                            <a-form-item label="Contraseña" name="password">
+                                <a-input-password v-model:value="formState.password" placeholder="Contraseña">
+                                    <template #prefix>
+                                        <LockOutlined />
+                                    </template>
+                                </a-input-password>
+                            </a-form-item>
+
+                            <a-form-item>
+                                <a-flex justify="center">
+                                    <a-space size="middle">
+                                        <a-button type="primary" html-type="submit" size="large">Iniciar
+                                            sesión</a-button>
+                                        <a-button @click="volver" size="large">Volver</a-button>
+                                    </a-space>
+                                </a-flex>
+                            </a-form-item>
+
+                            <a-flex justify="center">
+                                <a-typography-text>
+                                    ¿Aún no tienes cuenta?
+                                    <a-typography-link @click="registrarse"> ¡Únete a la familia!</a-typography-link>
+                                </a-typography-text>
+                            </a-flex>
+                        </a-form>
+
+                    </a-flex>
+                </a-card>
+
+            </a-col>
+        </a-row>
+    </a-layout>
 </template>

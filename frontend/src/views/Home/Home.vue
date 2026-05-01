@@ -21,7 +21,7 @@ function irAReservas() {
 
 <template>
   <AppHeader />
-  <main>
+  <a-layout>
     <div id="eslogan">
       <div id="contenidoEslogan">
         <a-typography-title>Sabores Que Enamoran</a-typography-title>
@@ -88,7 +88,7 @@ function irAReservas() {
         </a-col>
       </a-row>
     </div>
-  </main>
+  </a-layout>
   <AppFooter />
   <Historia v-model:open="modalVisible" />
 </template>

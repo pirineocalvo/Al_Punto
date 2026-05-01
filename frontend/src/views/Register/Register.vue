@@ -81,71 +81,82 @@ function volver() {
     router.push('/');
 }
 
-function iniciarSesion (){
+function iniciarSesion() {
     router.push('/login');
 };
 </script>
 <template>
-    <section class="contenedorLogin">
-        <a-alert v-if="error" :message="error" type="error" show-icon style="margin-bottom: 16px" />
-        <a-card>
-            <a-typography-title :level="2" style="text-align: center;">
-                Registrarse
-            </a-typography-title>
-            <a-form :model="formState" :rules="rules" @finish="registrarUsuario">
-                <a-form-item label="Nombre" name="firstName" :label-col="{ span: 7 }" :wrapper-col="{ span: 12 }">
-                    <a-input v-model:value="formState.firstName" placeholder="Nombre">
-                        <template #prefix>
-                            <UserOutlined />
-                        </template>
-                    </a-input>
-                </a-form-item>
+    <a-layout class="contenedorLogin">
 
-                <a-form-item label="Apellidos" name="lastName" :label-col="{ span: 7 }" :wrapper-col="{ span: 12 }">
-                    <a-input v-model:value="formState.lastName" placeholder="Apellidos">
-                        <template #prefix>
-                            <UserOutlined />
-                        </template>
-                    </a-input>
-                </a-form-item>
+        <a-row type="flex" justify="center" align="middle" class="formaTarjeta">
+            <a-col :xs="22" :md="16" :lg="8">
 
-                <a-form-item label="Teléfono" name="phone" :label-col="{ span: 7 }" :wrapper-col="{ span: 12 }">
-                    <a-input v-model:value="formState.phone" placeholder="612345678">
-                        <template #prefix>
-                            <UserOutlined />
-                        </template>
-                    </a-input>
-                </a-form-item>
+                <a-card class="registerCard">
+                    <a-typography-title :level="2" class="text-center">Registrarse</a-typography-title>
 
-                <a-form-item label="Correo electrónico" name="email" :label-col="{ span: 7 }"
-                    :wrapper-col="{ span: 12 }">
-                    <a-input v-model:value="formState.email" placeholder="Correo electrónico">
-                        <template #prefix>
-                            <UserOutlined />
-                        </template>
-                    </a-input>
-                </a-form-item>
+                    <a-form :model="formState" :rules="rules" @finish="registrarUsuario" layout="vertical">
+                        <a-form-item label="Nombre" name="firstName">
+                            <a-input v-model:value="formState.firstName" placeholder="Nombre">
+                                <template #prefix>
+                                    <UserOutlined />
+                                </template>
+                            </a-input>
+                        </a-form-item>
 
-                <a-form-item label="Contraseña" name="password" :label-col="{ span: 7 }" :wrapper-col="{ span: 12 }">
-                    <a-input-password v-model:value="formState.password" placeholder="Contraseña">
-                        <template #prefix>
-                            <LockOutlined />
-                        </template>
-                    </a-input-password>
-                </a-form-item>
+                        <a-form-item label="Apellidos" name="lastName">
+                            <a-input v-model:value="formState.lastName" placeholder="Apellidos">
+                                <template #prefix>
+                                    <UserOutlined />
+                                </template>
+                            </a-input>
+                        </a-form-item>
 
-                <a-form-item :wrapper-col="{ span: 12, offset: 5 }">
-                    <div class="separarBtn">
-                        <a-button type="primary" html-type="submit">
-                            Registrarse
-                        </a-button>
-                        <a-button @click="volver">
-                            Volver
-                        </a-button>
-                    </div>
-                </a-form-item>
-                <a-typography-text>¿Ya eres miembro? <a-typography-link @click="iniciarSesion()">Iniciar sesión</a-typography-link> </a-typography-text>
-            </a-form>
-        </a-card>
-    </section>
-</template>
+                        <a-form-item label="Teléfono" name="phone">
+                            <a-input v-model:value="formState.phone" placeholder="612345678">
+                                <template #prefix>
+                                    <UserOutlined />
+                                </template>
+                            </a-input>
+                        </a-form-item>
+
+                        <a-form-item label="Correo electrónico" name="email">
+                            <a-input v-model:value="formState.email" placeholder="Correo electrónico">
+                                <template #prefix>
+                                    <UserOutlined />
+                                </template>
+                            </a-input>
+                        </a-form-item>
+
+                        <a-form-item label="Contraseña" name="password">
+                            <a-input-password v-model:value="formState.password" placeholder="Contraseña">
+                                <template #prefix>
+                                    <LockOutlined />
+                                </template>
+                            </a-input-password>
+                        </a-form-item>
+
+                        <a-form-item>
+                            <a-flex justify="center">
+                                <a-space size="middle">
+                                    <a-button type="primary" html-type="submit" size="large">
+                                        Registrarse
+                                    </a-button>
+                                    <a-button @click="volver" size="large">
+                                        Volver
+                                    </a-button>
+                                </a-space>
+                            </a-flex>
+                        </a-form-item>
+
+                        <a-flex justify="center">
+                            <a-typography-text>
+                                ¿Ya eres miembro?
+                                <a-typography-link @click="iniciarSesion()">Iniciar sesión</a-typography-link>
+                            </a-typography-text>
+                        </a-flex>
+                    </a-form>
+                </a-card>
+            </a-col>
+        </a-row>
+    </a-layout>
+</template>s

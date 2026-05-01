@@ -22,20 +22,22 @@ function volver() {
 }
 </script>
 <template>
-    <section class="contenedorLogin">
-        <a-card class="logoutBox">
-            <a-typography-title :level="2" style="text-align: center;">
-                ¿Estás seguro de que quieres cerrar sesión?
-            </a-typography-title>
-            <div class="separarBtn">
-                <a-button type="primary" @click="logout">
-                    Sí
-                </a-button>
+    <a-layout class="contenedorLogin">
+        <a-row type="flex" justify="center" align="middle">
+            <a-col :xs="20" :md="12" :lg="24">
 
-                <a-button @click="volver">
-                    No
-                </a-button>
-            </div>
-        </a-card>
-    </section>
+                <a-card class="logoutBox">
+                    <a-typography-title :level="2" style="text-align: center;">
+                        ¿Estás seguro de que quieres cerrar sesión?
+                    </a-typography-title>
+
+                    <div class="separarBtn">
+                        <a-button type="primary" @click="logout">Sí</a-button>
+                        <a-button @click="volver">No</a-button>
+                    </div>
+                </a-card>
+
+            </a-col>
+        </a-row>
+    </a-layout>
 </template>
