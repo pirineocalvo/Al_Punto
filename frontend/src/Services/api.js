@@ -430,6 +430,7 @@ export const cancelarPedido = async (id) => {
 /*
 ################# MARKETPLACE ENDPOINTS ########################
 */
+
 export const pedidosRealizadosMarketPlace = async () => {
   try {
     const token = getAuthToken()
@@ -484,9 +485,58 @@ export const cangearProductoMarkePlace = async (id) => {
   }
 }
 
+/*
+################# RESEÑAS ENDPOINTS ########################
+*/
+
+export const addReview = async (data = {}) => {
+  try {
+    const token = getAuthToken();
+    const config = {
+      headers: { authorization: `Bearer ${token}` },
+    };
+    const response = await axios.post(`${API_URL}/api/resenias`, data, config);
+    return response.data;
+  } catch (error) {
+    if (error.response?.status === 401) {
+      logoutUser();
+    }
+    console.error('Error al añadir reseña:', error);
+    throw error;
+  }
+};
+
+export const getMyReviews = async () => {
+  try {
+    const token = getAuthToken();
+    const config = {
+      headers: { authorization: `Bearer ${token}` },
+    };
+    const response = await axios.get(`${API_URL}/api/resenias/my-reviews`, config);
+    return response.data;
+  } catch (error) {
+    if (error.response?.status === 401) {
+      logoutUser();
+    }
+    console.error('Error al obtener mis reseñas:', error);
+    throw error;
+  }
+};
+
+export const getReviewsByDish = async (idPlato) => {
+  try {
+    const response = await axios.get(`${API_URL}/api/resenias/${idPlato}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error al obtener reseñas del plato:', error);
+    throw error;
+  }
+};
+
 /* 
 ################# STORAGE FUNCTIONS ########################
 */
+
 const getAuthToken = () => {
   try {
     return localStorage.getItem('loginUserToken');

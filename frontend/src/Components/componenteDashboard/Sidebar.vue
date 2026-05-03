@@ -26,7 +26,8 @@ const rutasMenu = [
     { key: '2', ruta: '/zonaPersonal', label: 'Zona Personal', icon: UserOutlined },
     { key: '5', ruta: '/historial', label: 'Historial', icon: HistoryOutlined },
     { key: '6', ruta: '/realizarPedido', label: 'Realizar Pedido', icon: ShoppingOutlined },
-    { key: '7', ruta: '/marketplace', label: 'Marketplace', icon: ShopOutlined },
+        { key: '7', ruta: '/reviews', label: 'Tus comentarios', icon: ShoppingOutlined },
+    { key: '8', ruta: '/marketplace', label: 'Marketplace', icon: ShopOutlined },
     {
         key: 'sub1',
         ruta: '',
@@ -44,6 +45,7 @@ const rutasMenuAdmin = [
     { ruta: '/zonaPersonal', label: 'Zona Personal', icon: UserOutlined },
     { ruta: '/historial', label: 'Historial', icon: HistoryOutlined },
     { ruta: '/realizarPedido', label: 'Realizar Pedido', icon: ShoppingOutlined },
+    {ruta: '/reviews', label: 'Tus comentarios', icon: ShoppingOutlined },
     { ruta: '/marketplace', label: 'Marketplace', icon: ShopOutlined },
     {
         ruta: '',

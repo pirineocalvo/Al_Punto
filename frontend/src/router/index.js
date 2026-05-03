@@ -11,6 +11,7 @@ import ListarTickets from '@/views/Dashboard/Tickets/ListarTickets/ListarTickets
 import Historial from '@/views/Dashboard/historial/Historial.vue'
 import RealizarPedido from '../views/Dashboard/RealizarPedido/RealizarPedido.vue'
 import Marketplace from '@/views/Dashboard/marketplace/Marketplace.vue'
+import Review from '@/views/Dashboard/Review/Review.vue'
 
 const routes = [
   { path: '/', component: Home },
@@ -36,6 +37,7 @@ const routes = [
   { path: '/realizarPedido', component: RealizarPedido },
   { path: '/historial', component: Historial },
   { path: '/marketplace', component: Marketplace },
+    { path: '/reviews', component: Review},
 ]
 
 const router = createRouter({

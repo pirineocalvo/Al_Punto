@@ -1,0 +1,14 @@
+.reseniaTexto {
+    font-style: italic;
+    color: #555;
+}
+.cardImg {
+    height: 200px;
+    object-fit: cover;
+}
+.mpCardFooter {
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
