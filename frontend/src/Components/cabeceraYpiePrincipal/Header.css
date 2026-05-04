@@ -15,7 +15,7 @@
     color: var(--color-menu-texto); 
 }
 
-.btnMenuMovil {
+.botonMenuMovil {
     background-color: transparent;
     border: none;
     cursor: pointer;
@@ -30,12 +30,12 @@
     justify-content: center;
 }
 
-.btnMenuMovil:hover {
+.botonMenuMovil:hover {
     background-color: rgba(255, 245, 236, 0.1);
     color: var(--color-principal);
 }
 
-.btnMenuMovil:active {
+.botonMenuMovil:active {
     background-color: var(--color-principal);
     color: white;
 }

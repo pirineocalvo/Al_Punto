@@ -92,7 +92,7 @@ onUnmounted(() => window.removeEventListener('resize', actualizarTamano));
                 </a-sub-menu>
             </template>
         </a-menu>
-        <button v-else type="button" class="btnMenuMovil" @click="menuAbierto = true">
+        <button v-else type="button" class="botonMenuMovil" @click="menuAbierto = true">
             <MenuOutlined />
         </button>
         <a-drawer v-model:open="menuAbierto" placement="left" :width="220" title="Menú">

@@ -62,7 +62,7 @@ const rutasMenuAdmin = [
         icon: SettingOutlined,
         subMenu: [
             { ruta: '/listarTickets', label: 'Gestión de usuarios' },
-            { ruta: '/agregarTickets', label: 'Gestión mesas' },
+            { ruta: '/gestionarMesas', label: 'Gestión mesas' },
         ],
     },
 ];
@@ -106,7 +106,7 @@ const navegar = ({ key }) => {
                     <template #icon><component :is="entrada.icon" /></template>
                     {{ entrada.label }}
                 </a-menu-item>
-                <a-sub-menu v-else :key="entrada.label"><!-- se usa label en vez de ruta porque da fallo -->
+                <a-sub-menu v-else :key="entrada.label">
                     <template #icon><component :is="entrada.icon" /></template>
                     <template #title>{{ entrada.label }}</template>
                     <a-menu-item v-for="sub in entrada.subMenu" :key="sub.ruta">
