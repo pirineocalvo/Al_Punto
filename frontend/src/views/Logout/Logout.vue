@@ -23,20 +23,20 @@ function volver() {
 </script>
 <template>
     <a-layout class="contenedorLogin">
-        <a-row type="flex" justify="center" align="middle">
-            <a-col :xs="20" :md="12" :lg="24">
+        <a-row type="flex" justify="center" align="middle" class="formaTarjeta">
+            <a-col :xs="22" :md="12" :lg="8">
+                <a-card>
+                    <a-flex vertical align="center" gap="large">
+                        <a-typography-title :level="2" style="text-align: center;">¿Estás seguro de que quieres cerrar sesión?</a-typography-title>
+                        <div >
+                            <a-space size="middle">
+                                <a-button type="primary" size="large" @click="logout">Sí, salir</a-button>
+                                <a-button size="large" @click="volver">No, volver</a-button>
+                            </a-space>
+                        </div>
 
-                <a-card class="logoutBox">
-                    <a-typography-title :level="2" style="text-align: center;">
-                        ¿Estás seguro de que quieres cerrar sesión?
-                    </a-typography-title>
-
-                    <div class="separarBtn">
-                        <a-button type="primary" @click="logout">Sí</a-button>
-                        <a-button @click="volver">No</a-button>
-                    </div>
+                    </a-flex>
                 </a-card>
-
             </a-col>
         </a-row>
     </a-layout>

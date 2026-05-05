@@ -72,7 +72,7 @@ onUnmounted(() => {
 <template>
   <AppHeader />
 
-  <div class="menu-container">
+  <a-layout class="menuContainer">
 
     <a-spin v-if="!menu" size="large">
       <template #tip>
@@ -138,7 +138,7 @@ onUnmounted(() => {
         </div>
       </template>
     </template>
-  </div>
+  </a-layout>
 
   <AppFooter />
 </template>

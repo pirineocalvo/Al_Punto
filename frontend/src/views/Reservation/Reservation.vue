@@ -17,6 +17,9 @@ const datosForm = ref({
     hora: null
 });
 
+
+const opcionesOcupantes = ref([1, 2, 3, 4, 5, 6]);
+
 onMounted(async () => {
     await cargarMes(fechasCalendario.value.year(), fechasCalendario.value.month() + 1);
 });
@@ -52,7 +55,7 @@ async function alCambiarOcupantes() {
     horario.value = [];
     let mesasQueVienenDelBack = await todasLasMesasLibresPorDia(fecha, datosForm.value.comensales);
 
-    const todasLasReservas = await misReservas(); 
+    const todasLasReservas = await misReservas();
 
     mesasDia.value = mesasQueVienenDelBack.map(mesa => {
         const reservasDeEstaMesa = todasLasReservas.filter(res => res.id_mesa === mesa.id && res.reserve_date === fecha && res.status !== 'cancel');
@@ -92,26 +95,30 @@ async function guardarReserva() {
         <a-row>
             <a-col :xs="24" :lg="16">
                 <a-card class="cardCalendario">
-                    <a-calendar :model:value="fechasCalendario" @panelChange="onPanelChange" @select="onSelect" :disabledDate="disabledDate" />
+                    <a-calendar :model:value="fechasCalendario" @panelChange="onPanelChange" @select="onSelect"
+                        :disabledDate="disabledDate" />
                 </a-card>
             </a-col>
 
             <a-col :xs="24" :lg="8">
-                <a-card :title="fechaSeleccionada ? 'Fecha: ' + fechaSeleccionada : 'Selecciona una fecha'" class="cardFormulario">
+                <a-card :title="fechaSeleccionada ? 'Fecha: ' + fechaSeleccionada : 'Selecciona una fecha'"
+                    class="cardFormulario">
                     <a-form layout="vertical" @submit.prevent="guardarReserva">
 
                         <a-form-item label="Número de ocupantes">
-                            <a-select v-model:value="datosForm.comensales" placeholder="Selecciona comensales" @change="alCambiarOcupantes" :disabled="!fechaSeleccionada" size="large">
-                                <a-select-option v-for="num in 6" :key="n" :value="n">
+                            <a-select v-model:value="datosForm.comensales" placeholder="Selecciona comensales"
+                                @change="alCambiarOcupantes" :disabled="!fechaSeleccionada" size="large">
+                                <a-select-option v-for="num in opcionesOcupantes" :key="num" :value="num">
                                     {{ num }} {{ num === 1 ? 'persona' : 'personas' }}
                                 </a-select-option>
                             </a-select>
                         </a-form-item>
 
                         <a-form-item v-if="datosForm.comensales" label="Mesa disponible">
-                            <a-select v-model:value="datosForm.mesa" placeholder="Seleccione una mesa" @change="filtrarHorario" size="large">
+                            <a-select v-model:value="datosForm.mesa" placeholder="Selecciona una mesa"
+                                @change="filtrarHorario" size="large">
                                 <a-select-option v-for="mesa in mesasDia" :key="mesa.id" :value="mesa.id">
-                                    {{ mesa.name }}
+                                    Mesa {{ mesa.numero }} — capacidad {{ mesa.capacidad }}
                                 </a-select-option>
                             </a-select>
                         </a-form-item>
@@ -125,7 +132,8 @@ async function guardarReserva() {
                         </a-form-item>
 
                         <a-form-item>
-                            <a-button html-type="submit" size="large" block :disabled="!datosForm.comensales || !datosForm.mesa || !datosForm.hora">
+                            <a-button html-type="submit" size="large" block
+                                :disabled="!datosForm.comensales || !datosForm.mesa || !datosForm.hora">
                                 Realizar reserva
                             </a-button>
                         </a-form-item>

@@ -12,7 +12,7 @@ import Historial from '@/views/Dashboard/historial/Historial.vue'
 import RealizarPedido from '../views/Dashboard/RealizarPedido/RealizarPedido.vue'
 import Marketplace from '@/views/Dashboard/marketplace/Marketplace.vue'
 import Review from '@/views/Dashboard/Review/Review.vue'
-import GestionarMesas from '@/views/Dashboard/Administracion/GestionarMesas.vue'
+import GestionarMesas from '@/views/Dashboard/Administracion/GestionarMesas/GestionarMesas.vue'
 
 const routes = [
   { path: '/', component: Home },
