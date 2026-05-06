@@ -41,17 +41,17 @@ async function adquirirProducto(producto) {
         <HeaderDashboard :user="user" /> 
         <a-layout class="dashboardMainLayout">
             <Sidebar />
-            <a-layout-content class="mpContent">
+            <a-layout-content class="tarjetaContenido">
                 <a-typography-title :level="1">Tienda de recompensas</a-typography-title>
                 <a-typography-title :level="3">Canjea tus puntos por premios exclusivos</a-typography-title>
 
-                <a-row :gutter="[16, 16]" class="mpGrid">
-                    <a-col v-for="producto in productosFiltrados" :key="producto.id" :xs="24" :sm="12" :md="8" :lg="6">
-                        <a-card :class="['mpCard', { mpCardLocked: !estaDesbloqueado(producto) }]">
+                <a-row :gutter="[16, 16]">
+                    <a-col v-for="producto in productosFiltrados" :key="producto.id" :xs="24" :lg="10" :xl="6">
+                        <a-card :class="{ mpCardLocked: !estaDesbloqueado(producto) }">
 
                             <a-card-meta :title="producto.name" :description="producto.description" />
 
-                            <div class="mpCardFooter">
+                            <div class="tajetaFooter">
                                 <a-tag>Nivel {{ producto.min_level_id }}+</a-tag>
                                 <span class="mpPts">{{ producto.points_price }} pts</span>
                             </div>

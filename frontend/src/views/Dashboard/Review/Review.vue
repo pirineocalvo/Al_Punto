@@ -120,29 +120,28 @@ const formatearFecha = (fechaStr) => {
 </script>
 
 <template>
-    <a-layout>
+    <a-layout class="dashboardMainLayout">
         <HeaderDashboard :user="user" /> 
         <a-layout class="dashboardMainLayout">
             <Sidebar />
-            <a-layout-content class="mpContent">
+            <a-layout-content class="colocarContenido">
                 <a-typography-title :level="1">Gestión de Reseñas</a-typography-title>
                 
-                <a-tabs v-model:activeKey="keyLab" class="reseniasTabs">
+                <a-tabs v-model:activeKey="keyLab">
                     
-                    <!-- Pestaña 1: Reseñas ya publicadas -->
                     <a-tab-pane key="1" tab="Mis Reseñas Realizadas">
-                        <a-row :gutter="[16, 16]" class="mpGrid">
+                        <a-row :gutter="[16, 16]">
                             <a-col v-for="resenia in reseniasHechas" :key="resenia.id" :xs="24" :md="12" :lg="8">
                                 <a-card class="mpCard">
                                     <template #cover>
-                                        <img :alt="resenia.plato_name" :src="'images/plates/'+resenia.plato_img" class="cardImg" />
+                                        <img :alt="resenia.plato_name" :src="'images/plates/'+resenia.plato_img" class="tarjetaImg" />
                                     </template>
                                     <a-card-meta :title="resenia.plato_name">
                                         <template #description>
                                             <p class="reseniaTexto">"{{ resenia.descripcion }}"</p>
                                         </template>
                                     </a-card-meta>
-                                    <div class="mpCardFooter">
+                                    <div class="tarjetaFooter">
                                         <a-rate :value="resenia.puntuacion" disabled />
                                         <span class="mpPts">{{ formatearFecha(resenia.created_at) }}</span>
                                     </div>
@@ -152,13 +151,12 @@ const formatearFecha = (fechaStr) => {
                         <a-empty v-if="reseniasHechas.length === 0" description="No has realizado ninguna reseña aún." />
                     </a-tab-pane>
 
-                    <!-- Pestaña 2: Productos por calificar -->
                     <a-tab-pane key="2" tab="Pendientes de Calificar">
-                        <a-row :gutter="[16, 16]" class="mpGrid">
+                        <a-row :gutter="[16, 16]">
                             <a-col v-for="producto in reseniasPendientes" :key="producto.id" :xs="24" :md="12" :lg="8">
                                 <a-card class="mpCard pendingCard">
                                     <template #cover>
-                                        <img :alt="producto.product_name" :src="'images/plates/'+producto.img_src" class="cardImg" />
+                                        <img :alt="producto.product_name" :src="'images/plates/'+producto.img_src" class="tarjetaImg" />
                                     </template>
                                     
                                     <a-card-meta :title="producto.product_name">
@@ -184,28 +182,14 @@ const formatearFecha = (fechaStr) => {
             </a-layout-content>
         </a-layout>
 
-        <a-modal 
-            v-model:open="estadoModal" 
-            :title="'Valorar ' + formModal.plato_name" 
-            @ok="guardarResenia"
-            :confirm-loading="confirmLoading"
-            ok-text="Publicar Reseña"
-            cancel-text="Cancelar"
-            destroyOnClose
-        >
+        <a-modal v-model:open="estadoModal" :title="'Valorar ' + formModal.plato_name" @ok="guardarResenia" :confirm-loading="confirmLoading" ok-text="Publicar Reseña" cancel-text="Cancelar" destroyOnClose>
             <a-form layout="vertical">
                 <a-form-item label="Puntuación (Estrellas)">
                     <a-rate v-model:value="formModal.puntuacion" />
                 </a-form-item>
                 
                 <a-form-item label="Comentario">
-                    <a-textarea 
-                        v-model:value="formModal.descripcion" 
-                        placeholder="Cuéntanos qué te pareció este plato..." 
-                        :rows="4" 
-                        :maxlength="250"
-                        show-count
-                    />
+                    <a-textarea v-model:value="formModal.descripcion" placeholder="Cuéntanos qué te pareció este plato..." :rows="4" :maxlength="250" show-count/>
                 </a-form-item>
             </a-form>
         </a-modal>

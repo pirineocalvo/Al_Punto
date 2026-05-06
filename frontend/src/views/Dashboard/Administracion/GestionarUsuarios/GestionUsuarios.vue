@@ -18,11 +18,11 @@ const loadingMarket = ref(false);
 const listaPedidos = ref([]);
 
 // onMounted sigue recibiendo un callback, pero lo definimos como función asíncrona normal
-onMounted(async function() {
+onMounted(async function () {
     const token = localStorage.getItem('loginUserToken');
-    if (!token) { 
-        router.push('/login'); 
-        return; 
+    if (!token) {
+        router.push('/login');
+        return;
     }
 
     try {
@@ -63,14 +63,14 @@ async function cangearProductoMarket() {
     }
 }
 
-const pedidosPendientes = computed(function() {
-    return listaPedidos.value.filter(function(p) {
+const pedidosPendientes = computed(function () {
+    return listaPedidos.value.filter(function (p) {
         return p.status === 'pendiente';
     });
 });
 
-const pedidosListos = computed(function() {
-    return listaPedidos.value.filter(function(p) {
+const pedidosListos = computed(function () {
+    return listaPedidos.value.filter(function (p) {
         return p.status === 'listo';
     });
 });
@@ -86,7 +86,7 @@ async function cambiarEstado(id, estado, recogido = false) {
 }
 
 async function cancelarPedioRealizado(id) {
-        try {
+    try {
         await cancelarPedido(id);
         message.success(`Pedido #${id} cancelado`);
         await cargarPedidos();
@@ -107,10 +107,9 @@ async function cancelarPedioRealizado(id) {
 
                 <a-tab-pane key="pedidos" tab="Gestión de Pedidos">
                     <a-row :gutter="[24, 24]">
-
                         <a-col :xs="24" :lg="12">
                             <a-divider orientation="left">PENDIENTES DE COCINA</a-divider>
-                            <a-space direction="vertical" style="width: 100%" size="middle">
+                            <a-space direction="vertical" class="todoElAncho" size="middle">
                                 <a-empty v-if="pedidosPendientes.length === 0" />
                                 <a-card v-for="p in pedidosPendientes" :key="p.id" size="small"
                                     :head-style="{ borderLeft: '4px solid #D97742' }">
@@ -123,19 +122,26 @@ async function cancelarPedioRealizado(id) {
                                             <a-list-item>{{ item.quantity }}x {{ item.product_name }}</a-list-item>
                                         </template>
                                     </a-list>
-                                    <a-space size="middle">
-                                        <a-button type="primary" block @click="cambiarEstado(p.id, 'listo', false)">MARCAR COMO LISTO</a-button>
-                                        <a-popconfirm title="¿Estás seguro de que deseas cancelar este pedido?"
-                                            ok-text="Sí, cancelar" cancel-text="No" @confirm="cancelarPedioRealizado(p.id)">
-                                            <a-button>CANCELAR PEDIDO</a-button>
-                                        </a-popconfirm>
-                                    </a-space>
+                                    <a-row :gutter="[12, 12]">
+                                        <a-col :xs="24" :sm="10">
+                                            <a-button type="primary" block @click="cambiarEstado(p.id, 'listo', false)">
+                                                MARCAR COMO LISTO
+                                            </a-button>
+                                        </a-col>
+
+                                        <a-col :xs="24" :sm="10">
+                                            <a-popconfirm title="¿Estás seguro?" ok-text="Sí" cancel-text="No"
+                                                @confirm="cancelarPedioRealizado(p.id)">
+                                                <a-button block>CANCELAR PEDIDO</a-button>
+                                            </a-popconfirm>
+                                        </a-col>
+                                    </a-row>
                                 </a-card>
                             </a-space>
                         </a-col>
                         <a-col :xs="24" :lg="12">
                             <a-divider orientation="left">LISTOS PARA ENTREGA</a-divider>
-                            <a-space direction="vertical" style="width: 100%" size="middle">
+                            <a-space direction="vertical" class="todoElAncho" size="middle">
                                 <a-empty v-if="pedidosListos.length === 0" />
                                 <a-card v-for="p in pedidosListos" :key="p.id" size="small"
                                     :head-style="{ borderLeft: '4px solid #3A9E6F' }">
@@ -160,7 +166,6 @@ async function cancelarPedioRealizado(id) {
                             size="large" :loading="loadingMarket" @search="cangearProductoMarket" />
                     </a-card>
                 </a-tab-pane>
-
             </a-tabs>
         </a-layout>
 

@@ -174,7 +174,7 @@ const resetear = () => {
 
                                 <a-divider>Productos</a-divider>
 
-                                <!-- Tabla de productos -->
+
                                 <a-table :data-source="ticketInfo.productos" :pagination="false" row-key="nombre"
                                     size="middle">
                                     <a-table-column title="Producto" data-index="nombre" />
@@ -187,7 +187,6 @@ const resetear = () => {
 
                                 <a-divider />
 
-                                <!-- Total -->
                                 <a-row justify="end">
                                     <a-col>
                                         <a-statistic title="Total" :value="ticketInfo.total" precision="2" suffix="€"

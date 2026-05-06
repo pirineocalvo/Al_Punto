@@ -150,9 +150,7 @@ async function guardarCarrito() {
                             <a-col v-for="producto in catego.productos" :key="producto.name" :xs="20" :md="18" :lg="19">
                                 <a-card class="productoCard" size="small" :bodyStyle="{ padding: '14px 16px' }">
                                     <div class="productoRow">
-                                        <a-image :width="72" :preview="false"
-                                            :src="'images/plates/'+producto.img_src"
-                                            :alt="producto.name" class="productoImage" />
+                                        <a-image :width="72" :preview="false" :src="'/images/plates/'+producto.img_src" :alt="producto.name" class="productoImage" />
 
                                         <div class="productoInfo">
                                             <a-space :size="[8, 8]" wrap class="productoHeader">
@@ -192,7 +190,7 @@ async function guardarCarrito() {
                 </a-row>
             </a-col>
 
-            <a-col :xs="20" :lg="6">
+            <a-col :xs="20" :lg="6" class="pedidoCard">
                 <a-card title="Tu pedido">
                     <a-list :data-source="productosElegidos" item-layout="horizontal">
                         <template #renderItem="{ item }">

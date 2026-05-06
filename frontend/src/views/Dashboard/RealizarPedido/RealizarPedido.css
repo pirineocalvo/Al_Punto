@@ -10,7 +10,12 @@
     font-size: 16px;
     margin-top: 8px;
 }
-
+.pedidoCard {
+    display: flex !important;
+    align-self: flex-start !important;
+    flex-direction: column !important;
+    height: auto;
+}
 .productoCard {
     height: 100%;
     border-radius: 12px;
@@ -86,6 +91,10 @@
 .ajusteBtn {
     width: 100%;
     margin-top: 10px;
+}
+
+.colorRojo{
+    color: red !important;
 }
 
 @media (max-width: 768px) {
