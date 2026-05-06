@@ -38,7 +38,7 @@ onUnmounted(() => window.removeEventListener('resize', actualizarTamano));
                 Bienvenido, {{ user?.first_name || 'Usuario' }}
             </h2>
             <nav v-else>
-                <button type="button" class="btnMenuMovil" @click="estadoMenu">
+                <button type="button" class="botonMenuMovil" @click="estadoMenu">
                     <MenuOutlined />
                 </button>
             </nav>
