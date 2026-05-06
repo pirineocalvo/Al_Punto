@@ -135,7 +135,7 @@ const formatearFecha = (fechaStr) => {
                             <a-col v-for="resenia in reseniasHechas" :key="resenia.id" :xs="24" :md="12" :lg="8">
                                 <a-card class="mpCard">
                                     <template #cover>
-                                        <img :alt="resenia.plato_name" :src="resenia.plato_img" class="cardImg" />
+                                        <img :alt="resenia.plato_name" :src="'images/plates/'+resenia.plato_img" class="cardImg" />
                                     </template>
                                     <a-card-meta :title="resenia.plato_name">
                                         <template #description>
@@ -158,7 +158,7 @@ const formatearFecha = (fechaStr) => {
                             <a-col v-for="producto in reseniasPendientes" :key="producto.id" :xs="24" :md="12" :lg="8">
                                 <a-card class="mpCard pendingCard">
                                     <template #cover>
-                                        <img :alt="producto.product_name" :src="producto.img_src" class="cardImg" />
+                                        <img :alt="producto.product_name" :src="'images/plates/'+producto.img_src" class="cardImg" />
                                     </template>
                                     
                                     <a-card-meta :title="producto.product_name">

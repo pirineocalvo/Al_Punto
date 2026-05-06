@@ -151,7 +151,7 @@ async function guardarCarrito() {
                                 <a-card class="productoCard" size="small" :bodyStyle="{ padding: '14px 16px' }">
                                     <div class="productoRow">
                                         <a-image :width="72" :preview="false"
-                                            src="https://i.pinimg.com/originals/ce/e3/e4/cee3e4cebaf12a51e9fc4018f9471e38.png"
+                                            :src="'images/plates/'+producto.img_src"
                                             :alt="producto.name" class="productoImage" />
 
                                         <div class="productoInfo">
