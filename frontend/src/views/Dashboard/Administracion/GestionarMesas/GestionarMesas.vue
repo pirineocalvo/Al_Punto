@@ -28,32 +28,28 @@ const mesaEliminarId = ref(null);
 const cargandoEliminar = ref(false);
 const mensajeEliminar = ref(null);
 
-const cargarMesas = async () => {
+
+async function cargarMesas() {
     cargandoMesas.value = true;
     try {
         mesas.value = await todasLasMesas();
     } finally {
         cargandoMesas.value = false;
     }
-};
+}
 
-const onSeleccionarMesa = (id) => {
+function onSeleccionarMesa(id) {
     const mesa = mesas.value.find(m => m.id === id);
-    if (mesa) formActualizarMesa.value = { name: mesa.name, n_ocupantes: mesa.n_ocupantes };
-};
 
-onMounted(async () => {
-    const token = localStorage.getItem('loginUserToken');
-    if (!token) { router.push('/login'); return; }
-    try {
-        user.value = await userInfo();
-        await cargarMesas();
-    } catch {
-        router.push('/login');
+    if (mesa) {
+        formActualizarMesa.value = {
+            name: mesa.name,
+            n_ocupantes: mesa.n_ocupantes
+        };
     }
-});
+}
 
-const handleCrearMesa = async () => {
+async function nuevaMesa() {
     mensajeCrear.value = null;
     if (!formNuevaMesa.value.name.trim()) {
         mensajeCrear.value = { tipo: 'error', texto: 'El nombre de la mesa es obligatorio.' };
@@ -65,18 +61,24 @@ const handleCrearMesa = async () => {
     }
     cargandoCrear.value = true;
     try {
-        await crearMesa({ name: formNuevaMesa.value.name.trim(), n_ocupantes: formNuevaMesa.value.n_ocupantes });
+        await crearMesa({
+            name: formNuevaMesa.value.name.trim(),
+            n_ocupantes: formNuevaMesa.value.n_ocupantes
+        });
         mensajeCrear.value = { tipo: 'success', texto: 'Mesa creada correctamente.' };
         formNuevaMesa.value = { name: '', n_ocupantes: null };
         await cargarMesas();
     } catch (error) {
-        mensajeCrear.value = { tipo: 'error', texto: error?.response?.data?.error || 'Error al crear la mesa.' };
+        mensajeCrear.value = {
+            tipo: 'error',
+            texto: error?.response?.data?.error || 'Error al crear la mesa.'
+        };
     } finally {
         cargandoCrear.value = false;
     }
-};
+}
 
-const handleActualizarMesa = async () => {
+async function actualizarUnaMesaExistente() {
     mensajeActualizar.value = null;
     if (!mesaSeleccionadaId.value) {
         mensajeActualizar.value = { tipo: 'error', texto: 'Selecciona una mesa.' };
@@ -90,7 +92,11 @@ const handleActualizarMesa = async () => {
         mensajeActualizar.value = { tipo: 'error', texto: 'El número de ocupantes debe ser al menos 1.' };
         return;
     }
-    const mesa = mesas.value.find(m => m.id === mesaSeleccionadaId.value);
+
+    const mesa = mesas.value.find(function (m) {
+        return m.id === mesaSeleccionadaId.value;
+    });
+
     cargandoActualizar.value = true;
     try {
         await actualizarMesa(mesaSeleccionadaId.value, {
@@ -100,14 +106,19 @@ const handleActualizarMesa = async () => {
         });
         mensajeActualizar.value = { tipo: 'success', texto: 'Mesa actualizada correctamente.' };
         await cargarMesas();
+        mesaSeleccionadaId.value = null;
+        formActualizarMesa.value = { name: '', n_ocupantes: null };
     } catch (error) {
-        mensajeActualizar.value = { tipo: 'error', texto: error?.response?.data?.error || 'Error al actualizar la mesa.' };
+        mensajeActualizar.value = {
+            tipo: 'error',
+            texto: error?.response?.data?.error || 'Error al actualizar la mesa.'
+        };
     } finally {
         cargandoActualizar.value = false;
     }
-};
+}
 
-const handleEliminarMesa = async () => {
+async function eliminarMesa() {
     mensajeEliminar.value = null;
     if (!mesaEliminarId.value) {
         mensajeEliminar.value = { tipo: 'error', texto: 'Selecciona una mesa.' };
@@ -120,51 +131,61 @@ const handleEliminarMesa = async () => {
         mesaEliminarId.value = null;
         await cargarMesas();
     } catch (error) {
-        mensajeEliminar.value = { tipo: 'error', texto: error?.response?.data?.error || 'Error al eliminar la mesa.' };
+        mensajeEliminar.value = {
+            tipo: 'error',
+            texto: error?.response?.data?.error || 'Error al eliminar la mesa.'
+        };
     } finally {
         cargandoEliminar.value = false;
     }
-};
+}
+
+onMounted(async function () {
+    const token = localStorage.getItem('loginUserToken');
+    if (!token) {
+        router.push('/login');
+        return;
+    }
+    try {
+        user.value = await userInfo();
+        await cargarMesas();
+    } catch (err) {
+        router.push('/login');
+    }
+});
 </script>
 
 <template>
     <a-layout>
         <HeaderDashboard :user="user" />
-
         <a-layout class="dashboardMainLayout">
             <Sidebar :collapsed="collapsed" />
-
             <a-tabs v-model:activeKey="tabActiva" class="colocarAcordeon">
 
                 <a-tab-pane key="crear" tab="Crear mesa">
                     <a-card>
 
-                        <a-form layout="vertical" @submit.prevent="handleCrearMesa">
+                        <a-form layout="vertical" @submit.prevent="nuevaMesa">
                             <a-form-item label="Nombre de la mesa">
-                                <a-input v-model:value="formNuevaMesa.name" placeholder="Ej: Mesa 1, Terraza A..."
-                                    :maxlength="50" allow-clear />
+                                <a-input v-model:value="formNuevaMesa.name" placeholder="Ej: Mesa 1, Terraza A..." :maxlength="50" allow-clear />
                             </a-form-item>
                             <a-form-item label="Número de ocupantes">
                                 <a-input-number v-model:value="formNuevaMesa.n_ocupantes" :min="1" :max="999"
-                                    placeholder="Ej: 4" style="width: 100%" />
+                                    placeholder="Ej: 4" class="todoElAncho" />
                             </a-form-item>
-                            <a-alert v-if="mensajeCrear" :type="mensajeCrear.tipo" :message="mensajeCrear.texto"
-                                show-icon closable style="margin-bottom: 16px" @close="mensajeCrear = null" />
-                            <a-button type="primary" html-type="submit" :loading="cargandoCrear" block>
-                                Crear mesa
-                            </a-button>
+                            <a-alert v-if="mensajeCrear" :type="mensajeCrear.tipo" :message="mensajeCrear.texto" show-icon closable @close="mensajeCrear = null" />
+                            <a-button type="primary" html-type="submit" :loading="cargandoCrear" block>Crear mesa</a-button>
                         </a-form>
                     </a-card>
                 </a-tab-pane>
 
                 <a-tab-pane key="actualizar" tab="Actualizar mesa">
                     <a-card>
-                        <a-form layout="vertical" @submit.prevent="handleActualizarMesa">
+                        <a-form layout="vertical" @submit.prevent="actualizarUnaMesaExistente">
                             <a-form-item label="Selecciona una mesa">
                                 <a-select v-model:value="mesaSeleccionadaId" placeholder="Elige una mesa..."
-                                    :loading="cargandoMesas" style="width: 100%" @change="onSeleccionarMesa">
-                                    <a-select-option v-for="mesa in mesas.filter(m => m.activo)" :key="mesa.id"
-                                        :value="mesa.id">
+                                    :loading="cargandoMesas" class="todoElAncho" @change="onSeleccionarMesa">
+                                    <a-select-option v-for="mesa in mesas.filter(m => m.activo)" :key="mesa.id" :value="mesa.id">
                                         {{ mesa.name }}
                                     </a-select-option>
                                 </a-select>
@@ -175,13 +196,10 @@ const handleEliminarMesa = async () => {
                             </a-form-item>
                             <a-form-item label="Número de ocupantes">
                                 <a-input-number v-model:value="formActualizarMesa.n_ocupantes" :min="1" :max="999"
-                                    :disabled="!mesaSeleccionadaId" style="width: 100%" />
+                                    :disabled="!mesaSeleccionadaId" class="todoElAncho" />
                             </a-form-item>
-                            <a-alert v-if="mensajeActualizar" :type="mensajeActualizar.tipo"
-                                :message="mensajeActualizar.texto" show-icon closable style="margin-bottom: 16px"
-                                @close="mensajeActualizar = null" />
-                            <a-button type="primary" html-type="submit" :loading="cargandoActualizar"
-                                :disabled="!mesaSeleccionadaId" block>
+                            <a-alert v-if="mensajeActualizar" :type="mensajeActualizar.tipo" :message="mensajeActualizar.texto" show-icon closable@close="mensajeActualizar = null" />
+                            <a-button type="primary" html-type="submit" :loading="cargandoActualizar" :disabled="!mesaSeleccionadaId" block>
                                 Actualizar mesa
                             </a-button>
                         </a-form>
@@ -190,30 +208,23 @@ const handleEliminarMesa = async () => {
 
                 <a-tab-pane key="eliminar" tab="Eliminar mesa">
                     <a-card>
-                        <a-form layout="vertical" @submit.prevent="handleEliminarMesa">
+                        <a-form layout="vertical" @submit.prevent="eliminarMesa">
                             <a-form-item label="Selecciona una mesa">
-                                <a-select v-model:value="mesaEliminarId" placeholder="Elige una mesa..."
-                                    :loading="cargandoMesas" style="width: 100%">
-                                    <a-select-option v-for="mesa in mesas.filter(m => m.activo)" :key="mesa.id"
-                                        :value="mesa.id">
+                                <a-select v-model:value="mesaEliminarId" placeholder="Elige una mesa..." :loading="cargandoMesas" class="todoElAncho">
+                                    <a-select-option v-for="mesa in mesas.filter(m => m.activo)" :key="mesa.id" :value="mesa.id">
                                         {{ mesa.name }}
                                     </a-select-option>
                                 </a-select>
                             </a-form-item>
-                            <a-alert v-if="mensajeEliminar" :type="mensajeEliminar.tipo"
-                                :message="mensajeEliminar.texto" show-icon closable style="margin-bottom: 16px"
-                                @close="mensajeEliminar = null" />
-                            <a-button type="primary" danger html-type="submit" :loading="cargandoEliminar"
-                                :disabled="!mesaEliminarId" block>
+                            <a-alert v-if="mensajeEliminar" :type="mensajeEliminar.tipo" :message="mensajeEliminar.texto" show-icon closable @close="mensajeEliminar = null" />
+                            <a-button type="primary" danger html-type="submit" :loading="cargandoEliminar" :disabled="!mesaEliminarId" block>
                                 Eliminar mesa
                             </a-button>
                         </a-form>
                     </a-card>
                 </a-tab-pane>
-
             </a-tabs>
         </a-layout>
-
         <Footer />
     </a-layout>
 </template>
