@@ -13,6 +13,7 @@ import RealizarPedido from '../views/Dashboard/RealizarPedido/RealizarPedido.vue
 import Marketplace from '@/views/Dashboard/marketplace/Marketplace.vue'
 import Review from '@/views/Dashboard/Review/Review.vue'
 import GestionarMesas from '@/views/Dashboard/Administracion/GestionarMesas/GestionarMesas.vue'
+import GestionUsuarios from '@/views/Dashboard/Administracion/GestionarUsuarios/GestionUsuarios.vue'
 
 const routes = [
   { path: '/', component: Home },
@@ -39,7 +40,8 @@ const routes = [
   { path: '/historial', component: Historial },
   { path: '/marketplace', component: Marketplace },
   { path: '/reviews', component: Review},
-  { path: '/gestionarMesas', component: GestionarMesas}
+  { path: '/gestionarMesas', component: GestionarMesas},
+  {path: '/gestionarUsuarios', component: GestionUsuarios}
 ]
 
 const router = createRouter({

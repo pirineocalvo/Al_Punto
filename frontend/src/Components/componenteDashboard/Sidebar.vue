@@ -61,7 +61,7 @@ const rutasMenuAdmin = [
         label: 'Administración',
         icon: SettingOutlined,
         subMenu: [
-            { ruta: '/listarTickets', label: 'Gestión de usuarios' },
+            { ruta: '/gestionarUsuarios', label: 'Gestión de usuarios' },
             { ruta: '/gestionarMesas', label: 'Gestión mesas' },
         ],
     },

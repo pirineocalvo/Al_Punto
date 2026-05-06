@@ -427,6 +427,40 @@ export const cancelarPedido = async (id) => {
   }
 }
 
+// Obtener TODOS los pedidos (Para el tablero Kanban del Staff)
+export const getTodosLosPedidosAdmin = async () => {
+  try {
+    const token = getAuthToken();
+    const config = {
+      headers: { authorization: `Bearer ${token}` },
+    };
+
+    const response = await axios.get(`${API_URL}/api/orders/admin/todos`, config);
+    return response.data;
+  } catch (error) {
+    console.error('Error al obtener pedidos globales:', error);
+    throw error;
+  }
+};
+
+// Cambiar el estado del pedido (Pendiente -> Listo -> Entregado)
+export const updateOrderStatus = async (id, status, is_picked_up = false) => {
+  try {
+    const token = getAuthToken();
+    const config = {
+      headers: { authorization: `Bearer ${token}` },
+    };
+    // Enviamos el nuevo status y si ya fue recogido (1 o 0)
+    const response = await axios.patch(`${API_URL}/api/orders/admin/${id}/status`, { 
+      status, 
+      is_picked_up: is_picked_up ? 1 : 0 
+    }, config);
+    return response.data;
+  } catch (error) {
+    console.error('Error al actualizar estado del pedido:', error);
+    throw error;
+  }
+};
 /*
 ################# MARKETPLACE ENDPOINTS ########################
 */
@@ -484,6 +518,22 @@ export const cangearProductoMarkePlace = async (id) => {
     throw error
   }
 }
+
+// Validar y consumir un producto del Marketplace
+export const usarProductoMarket = async (userId, tokenUrl) => {
+  try {
+    const token = getAuthToken();
+    const config = {
+      headers: { authorization: `Bearer ${token}` },
+    };
+    // Esta ruta marca 'is_used = 1' en la tabla de la base de datos
+    const response = await axios.post(`${API_URL}/api/marketplace/pocket/${userId}/use/${tokenUrl}`, {}, config);
+    return response.data;
+  } catch (error) {
+    console.error('Error al canjear producto:', error);
+    throw error;
+  }
+};
 
 /*
 ################# RESEÑAS ENDPOINTS ########################
