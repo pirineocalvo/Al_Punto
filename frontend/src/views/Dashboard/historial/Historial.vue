@@ -144,10 +144,6 @@ async function pararReserva(reserva) {
     </a-layout>
 </template>
 <style scoped>
-.datosTituloAcordeon {
-    justify-content: space-between;
-    width: 100%;
-}
 
 .tagDerecha{
     text-align: right;

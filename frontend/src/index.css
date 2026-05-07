@@ -34,7 +34,7 @@
 
 }
 
-
+/*INICIO SE SESION*/
 .tarjetaInicioSesion{
     min-height: 100vh;
     width: 100%;
@@ -53,6 +53,7 @@
     margin-bottom: 16px !important;
 }
 
+/*DASHBOARD*/
 
 .dashboardMainLayout {
     min-height: calc(100vh - 70px);
@@ -61,4 +62,44 @@
 .colocarContenedorPrincipalDashBoard {
     flex:1;
     padding: 32px;
+}
+
+.datosTituloAcordeon {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.tarjetaFooter {
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/*CABECERA*/
+.botonMenuMovil {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    color: var(--color-menu-texto);
+    font-size: 20px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.botonMenuMovil:hover {
+    background-color: rgba(255, 245, 236, 0.1);
+    color: var(--color-principal);
+}
+
+.botonMenuMovil:active {
+    background-color: var(--color-principal);
+    color: white;
 }

@@ -70,26 +70,13 @@ async function adquirirProducto(producto) {
     </a-layout>
 </template>
 <style scoped>
-.datosTituloAcordeon {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-}
+
 .tarjetaContenido {
     padding: 24px;
 }
 
 .mpCardLocked {
     opacity: 0.55;
-}
-
-.tajetaFooter {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin: 12px 0;
-    margin-top: auto;
 }
 
 .puntos {
@@ -99,6 +86,7 @@ async function adquirirProducto(producto) {
 .ant-card {
     height: 100%;
     display: flex;
+    flex: 1;
     flex-direction: column;
 }
 

@@ -99,14 +99,13 @@ const renderChart = async () => {
 </script>
 
 <template>
-    <a-layout class="dashboard-container">
+    <a-layout>
         <HeaderDashboard :user="user" />
-        <a-layout class="dashboard-main-layout">
+        <a-layout class="dashboardMainLayout">
             <Sidebar :collapsed="collapsed" />
 
-            <a-layout-content class="dashboard-content">
+            <a-layout-content class="colocarContenedorPrincipalDashBoard">
                 <div class="content-wrapper">
-
                     <div class="header-section">
                         <a-typography-title class="dashboard-titulo">
                             Bienvenido {{ user?.first_name || 'Usuario' }}
@@ -170,27 +169,12 @@ const renderChart = async () => {
     </a-layout>
 </template>
 <style scoped>
-.dashboard-container {
-    min-height: 100vh;
-    font-family: 'Outfit', 'Inter', sans-serif;
-    background-color: var(--bg-primary);
-}
-
-.dashboard-main-layout {
-    min-height: calc(100vh - 70px);
-}
-
-.dashboard-content {
-    padding: 32px;
-    display: flex;
-    justify-content: center;
-    background-color: var(--bg-primary);
-}
 
 .content-wrapper {
     width: 100%;
     max-width: 1100px;
     animation: fadeIn 0.6s ease-out;
+    margin: auto;
 }
 
 @keyframes fadeIn {
@@ -217,15 +201,12 @@ const renderChart = async () => {
 }
 
 .stat-card {
-    flex: 1;
-}
-
-.stat-card {
     border-radius: 16px !important;
     border: 1px solid var(--border-sutil) !important;
     background: var(--bg-card) !important;
     transition: all 0.3s ease !important;
     padding: 20px !important;
+    flex: 1;
 }
 
 .stat-card:hover {

@@ -123,7 +123,7 @@ const resetear = () => {
 
                                 <a-col :xs="24" :sm="18" :md="16" :lg="8">
 
-                                    <a-card class="upload-card">
+                                    <a-card class="ticket-card">
                                         <a-row :gutter="[24, 24]" justify="center" align="middle">
 
                                             <a-col :span="24">
@@ -216,11 +216,6 @@ const resetear = () => {
     <Footer />
 </template>
 <style scoped>
-.upload-card {
-    border-radius: 16px !important;
-    box-shadow: 0 4px 20px rgba(58, 46, 42, 0.07) !important;
-    margin-top: 24px;
-}
 
 .ticket-card {
     border-radius: 16px !important;

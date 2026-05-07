@@ -135,130 +135,135 @@ async function guardarCarrito() {
 </script>
 
 <template>
-    <HeaderDashboard :user="user" />
-    <a-layout>
-        <Sidebar></Sidebar>
-        <a-row class="contenedorPedidos">
-            <a-col :xs="24" :lg="17">
-                <a-row>
-                    <a-col v-for="catego in menuClasificado" :key="catego.categoria">
-                        <a-flex justify="center">
-                            <a-typography-title :level="3">{{ catego.categoria }}</a-typography-title>
-                        </a-flex>
-                        <a-row>
-                            <a-col v-for="producto in catego.productos" :key="producto.name" :xs="20" :md="18" :lg="19">
-                                <a-card class="productoCard" size="small" :bodyStyle="{ padding: '14px 16px' }">
-                                    <div class="productoRow">
-                                        <a-image :width="72" :preview="false" :src="'/images/plates/'+producto.img_src" :alt="producto.name" class="productoImage" />
 
-                                        <div class="productoInfo">
-                                            <a-space :size="[8, 8]" wrap class="productoHeader">
-                                                <a-typography-text strong>
-                                                    {{ producto.name }}
+    <a-layout class="dashboardMainLayout">
+        <HeaderDashboard :user="user" />
+        <a-layout>
+            <Sidebar></Sidebar>
+
+
+            <a-row class="colocarContenedorPrincipalDashBoard">
+
+                <a-col :xs="24" :lg="17">
+                    <a-row>
+                        <a-col v-for="catego in menuClasificado" :key="catego.categoria">
+                            <a-flex justify="center">
+                                <a-typography-title :level="3">{{ catego.categoria }}</a-typography-title>
+                            </a-flex>
+                            <a-row>
+                                <a-col v-for="producto in catego.productos" :key="producto.name" :xs="20" :md="18"
+                                    :lg="19">
+                                    <a-card class="productoCard" size="small" :bodyStyle="{ padding: '14px 16px' }">
+                                        <div class="productoRow">
+                                            <a-image :width="72" :preview="false"
+                                                :src="'/images/plates/' + producto.img_src" :alt="producto.name"
+                                                class="productoImage" />
+
+                                            <div class="productoInfo">
+                                                <a-space :size="[8, 8]" wrap class="productoHeader">
+                                                    <a-typography-text strong>
+                                                        {{ producto.name }}
+                                                    </a-typography-text>
+
+                                                    <a-tag v-if="producto.tag" color="processing">
+                                                        {{ producto.tag }}
+                                                    </a-tag>
+                                                </a-space>
+
+                                                <a-typography-paragraph :ellipsis="{ rows: 1 }"
+                                                    class="productoDescription">
+                                                    {{ producto.description }}
+                                                </a-typography-paragraph>
+
+                                                <a-typography-text type="secondary" class="productoSecondary">
+                                                    {{ producto.ingredients }}
+                                                </a-typography-text>
+                                            </div>
+
+                                            <div class="productoActions">
+                                                <a-typography-text strong class="productoPrice">
+                                                    {{ producto.price.toFixed(2) }} €
                                                 </a-typography-text>
 
-                                                <a-tag v-if="producto.tag" color="processing">
-                                                    {{ producto.tag }}
-                                                </a-tag>
-                                            </a-space>
-
-                                            <a-typography-paragraph :ellipsis="{ rows: 1 }" class="productoDescription">
-                                                {{ producto.description }}
-                                            </a-typography-paragraph>
-
-                                            <a-typography-text type="secondary" class="productoSecondary">
-                                                {{ producto.ingredients }}
-                                            </a-typography-text>
+                                                <a-button type="primary" size="small" ghost
+                                                    @click="addCarritoProducto(producto)">+
+                                                    Añadir</a-button>
+                                            </div>
                                         </div>
+                                    </a-card>
+                                </a-col>
+                            </a-row>
+                        </a-col>
 
-                                        <div class="productoActions">
-                                            <a-typography-text strong class="productoPrice">
-                                                {{ producto.price.toFixed(2) }} €
-                                            </a-typography-text>
+                    </a-row>
+                </a-col>
 
-                                            <a-button type="primary" size="small" ghost
-                                                @click="addCarritoProducto(producto)">+
-                                                Añadir</a-button>
-                                        </div>
-                                    </div>
-                                </a-card>
-                            </a-col>
-                        </a-row>
-                    </a-col>
+                <a-col :xs="20" :lg="6" class="pedidoCard">
+                    <a-card title="Tu pedido">
+                        <a-list :data-source="productosElegidos" item-layout="horizontal">
+                            <template #renderItem="{ item }">
+                                <a-list-item class="itemPedido">
+                                    <template #actions>
+                                        <a-popconfirm title="¿Eliminar este producto?" ok-text="Sí" cancel-text="No"
+                                            @confirm="eliminarProductoCarrito(item)">
+                                            <template #icon>
+                                                <QuestionCircleOutlined style="color: red" />
+                                            </template>
 
-                </a-row>
-            </a-col>
+                                            <a-button type="text" danger size="small">
+                                                Eliminar
+                                            </a-button>
+                                        </a-popconfirm>
+                                    </template>
 
-            <a-col :xs="20" :lg="6" class="pedidoCard">
-                <a-card title="Tu pedido">
-                    <a-list :data-source="productosElegidos" item-layout="horizontal">
-                        <template #renderItem="{ item }">
-                            <a-list-item class="itemPedido">
-                                <template #actions>
-                                    <a-popconfirm title="¿Eliminar este producto?" ok-text="Sí" cancel-text="No"
-                                        @confirm="eliminarProductoCarrito(item)">
-                                        <template #icon>
-                                            <QuestionCircleOutlined style="color: red" />
+                                    <a-list-item-meta>
+                                        <template #title>
+                                            <span>{{ item.name }}</span>
                                         </template>
 
-                                        <a-button type="text" danger size="small">
-                                            Eliminar
-                                        </a-button>
-                                    </a-popconfirm>
-                                </template>
+                                        <template #description>
+                                            <div class="detallePedido">
+                                                <template v-if="!item.edicion">
+                                                    <span>Cantidad: {{ item.cantidad }}</span>
+                                                    <a-button type="text" size="small"
+                                                        @click="activarEdicionCantidad(item.name)">
+                                                        <EditOutlined />
+                                                    </a-button>
+                                                </template>
+                                                <template v-else class="p">
+                                                    <a-input-number v-model:value="item.cantidad"
+                                                        @pressEnter="guardarCambios(item)" :min="0" size="small"
+                                                        style="width: 70px;" />
+                                                    <a-button type="primary" size="small" @click="guardarCambios(item)">
+                                                        <CheckOutlined />
+                                                    </a-button>
+                                                </template>
 
-                                <a-list-item-meta>
-                                    <template #title>
-                                        <span>{{ item.name }}</span>
-                                    </template>
+                                                <a-tag color="green">{{ item.precioTotal.toFixed(2) }} €</a-tag>
+                                            </div>
+                                        </template>
+                                    </a-list-item-meta>
+                                </a-list-item>
+                            </template>
+                        </a-list>
 
-                                    <template #description>
-                                        <div class="detallePedido">
-                                            <template v-if="!item.edicion">
-                                                <span>Cantidad: {{ item.cantidad }}</span>
-                                                <a-button type="text" size="small"
-                                                    @click="activarEdicionCantidad(item.name)">
-                                                    <EditOutlined />
-                                                </a-button>
-                                            </template>
-                                            <template v-else class="p">
-                                                <a-input-number v-model:value="item.cantidad"
-                                                    @pressEnter="guardarCambios(item)" :min="0" size="small"
-                                                    style="width: 70px;" />
-                                                <a-button type="primary" size="small" @click="guardarCambios(item)">
-                                                    <CheckOutlined />
-                                                </a-button>
-                                            </template>
+                        <a-divider />
 
-                                            <a-tag color="green">{{ item.precioTotal.toFixed(2) }} €</a-tag>
-                                        </div>
-                                    </template>
-                                </a-list-item-meta>
-                            </a-list-item>
-                        </template>
-                    </a-list>
-
-                    <a-divider />
-
-                    <div class="totalPedido">
-                        <span>Total</span>
-                        <strong>{{ totalPedido.toFixed(2) }} €</strong>
-                    </div>
-                </a-card>
-                <a-form>
-                    <a-button class="ajusteBtn" @click="guardarCarrito()">Realizar pedido</a-button>
-                </a-form>
-            </a-col>
-        </a-row>
+                        <div class="totalPedido">
+                            <span>Total</span>
+                            <strong>{{ totalPedido.toFixed(2) }} €</strong>
+                        </div>
+                    </a-card>
+                    <a-form>
+                        <a-button class="ajusteBtn" @click="guardarCarrito()">Realizar pedido</a-button>
+                    </a-form>
+                </a-col>
+            </a-row>
+        </a-layout>
     </a-layout>
     <Footer></Footer>
 </template>
 <style scoped>
-.contenedorPedidos {
-    flex: 1;
-    margin: 120px 0;
-}
-
 .totalPedido {
     display: flex;
     justify-content: space-between;
@@ -266,12 +271,14 @@ async function guardarCarrito() {
     font-size: 16px;
     margin-top: 8px;
 }
+
 .pedidoCard {
     display: flex !important;
     align-self: flex-start !important;
     flex-direction: column !important;
     height: auto;
 }
+
 .productoCard {
     height: 100%;
     border-radius: 12px;
@@ -349,7 +356,7 @@ async function guardarCarrito() {
     margin-top: 10px;
 }
 
-.colorRojo{
+.colorRojo {
     color: red !important;
 }
 
@@ -376,6 +383,5 @@ async function guardarCarrito() {
         justify-content: center;
         gap: 5px;
     }
-
 }
 </style>

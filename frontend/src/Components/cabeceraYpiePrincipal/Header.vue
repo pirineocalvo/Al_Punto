@@ -129,28 +129,5 @@ onUnmounted(() => window.removeEventListener('resize', actualizarTamano));
     color: var(--color-menu-texto); 
 }
 
-.botonMenuMovil {
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    width: 40px;
-    height: 40px;
-    border-radius: 6px;
-    color: var(--color-menu-texto);
-    font-size: 20px;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
 
-.botonMenuMovil:hover {
-    background-color: rgba(255, 245, 236, 0.1);
-    color: var(--color-principal);
-}
-
-.botonMenuMovil:active {
-    background-color: var(--color-principal);
-    color: white;
-}
 </style>

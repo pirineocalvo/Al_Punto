@@ -123,7 +123,7 @@ const formatearFecha = (fechaStr) => {
         <HeaderDashboard :user="user" /> 
         <a-layout class="dashboardMainLayout">
             <Sidebar />
-            <a-layout-content class="colocarContenido">
+            <a-layout-content class="colocarContenedorPrincipalDashBoard">
                 <a-typography-title :level="1">Gestión de Reseñas</a-typography-title>
                 
                 <a-tabs v-model:activeKey="keyLab">
@@ -205,19 +205,6 @@ const formatearFecha = (fechaStr) => {
 .tarjetaImg {
     height: 200px;
     object-fit: cover;
-}
-
-.tarjetaFooter {
-    margin-top: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-
-.colocarContenido{
-    flex:1;
-    padding: 32px;
 }
 
 </style>
