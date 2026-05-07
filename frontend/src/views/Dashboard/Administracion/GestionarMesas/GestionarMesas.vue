@@ -160,7 +160,7 @@ onMounted(async function () {
         <HeaderDashboard :user="user" />
         <a-layout class="dashboardMainLayout">
             <Sidebar :collapsed="collapsed" />
-            <a-tabs v-model:activeKey="tabActiva" class="colocarAcordeon">
+            <a-tabs v-model:activeKey="tabActiva" class="colocarContenedorPrincipalDashBoard">
 
                 <a-tab-pane key="crear" tab="Crear mesa">
                     <a-card>

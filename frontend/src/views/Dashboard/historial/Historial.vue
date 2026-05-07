@@ -49,7 +49,7 @@ async function pararReserva(reserva) {
         <a-layout class="dashboardMainLayout">
             <Sidebar :collapsed="collapsed" />
 
-            <a-tabs v-model:activeKey="tabActiva" class="colocarAcordeon">
+            <a-tabs v-model:activeKey="tabActiva" class="colocarContenedorPrincipalDashBoard">
 
                 <a-tab-pane key="reservas" tab="Reservas">
                     <a-collapse v-model:activeKey="acordeonActivo" accordion>
@@ -147,15 +147,6 @@ async function pararReserva(reserva) {
 .datosTituloAcordeon {
     justify-content: space-between;
     width: 100%;
-}
-
-.dashboardMainLayout {
-    min-height: calc(100vh - 70px);
-}
-
-.colocarAcordeon{
-    flex:1;
-    padding: 32px;
 }
 
 .tagDerecha{

@@ -103,13 +103,13 @@ const resetear = () => {
 </script>
 
 <template>
-    <a-layout class="dashboard-container">
+    <a-layout class="dashboardMainLayout">
         <HeaderDashboard :user="user" />
 
-        <a-layout class="dashboard-main-layout">
+        <a-layout>
             <Sidebar :collapsed="collapsed" />
 
-            <a-layout-content class="dashboard-content">
+            <a-layout-content class="colocarContenedorPrincipalDashBoard">
                 <a-spin :spinning="cargando" tip="Procesando ticket...">
                     <div class="content-wrapper">
 
@@ -119,30 +119,42 @@ const resetear = () => {
                                 Sube una foto clara de tu ticket para validar tu compra.
                             </a-typography-paragraph>
 
-                            <a-card class="upload-card">
-                                <a-row :gutter="[24, 24]" align="middle">
+                            <a-row justify="center" style="margin-top: 2rem;">
 
-                                    <a-col :xs="24" :md="16">
-                                        <a-upload-dragger name="file" accept="image/*" :max-count="1" :before-upload="antesDeSubir" list-type="picture" :file-list="archivo ? [archivo] : []">
-                                            <p class="ant-upload-drag-icon">
-                                                <inbox-outlined></inbox-outlined>
-                                            </p>
-                                            <p class="ant-upload-text">Haz click o arrasta la imagen para subirla</p>
-                                            <p class="ant-upload-hint">
-                                                Solo se admiten tickets de este establecimiento, recuerde que la imagen
-                                                se debe de poder leer su contenido
-                                            </p>
-                                        </a-upload-dragger>
-                                    </a-col>
+                                <a-col :xs="24" :sm="18" :md="16" :lg="8">
 
-                                    <a-col :xs="24" :md="8">
-                                        <a-button size="large" block :disabled="!archivo" @click="subirTicket">
-                                            Subir Ticket
-                                        </a-button>
-                                    </a-col>
+                                    <a-card class="upload-card">
+                                        <a-row :gutter="[24, 24]" justify="center" align="middle">
 
-                                </a-row>
-                            </a-card>
+                                            <a-col :span="24">
+                                                <a-upload-dragger name="file" accept="image/*" :max-count="1"
+                                                    :before-upload="antesDeSubir" list-type="picture"
+                                                    :file-list="archivo ? [archivo] : []">
+                                                    <p class="ant-upload-drag-icon">
+                                                        <inbox-outlined></inbox-outlined>
+                                                    </p>
+                                                    <p class="ant-upload-text">Haz click o arrastra la imagen para
+                                                        subirla</p>
+                                                    <p class="ant-upload-hint">
+                                                        Solo se admiten tickets de este establecimiento, recuerde que la
+                                                        imagen
+                                                        se debe de poder leer su contenido
+                                                    </p>
+                                                </a-upload-dragger>
+                                            </a-col>
+
+                                            <a-col :span="24" style="text-align: center;">
+                                                <a-button type="primary" size="large" :disabled="!archivo"
+                                                    @click="subirTicket" style="min-width: 180px;">
+                                                    Subir Ticket
+                                                </a-button>
+                                            </a-col>
+
+                                        </a-row>
+                                    </a-card>
+
+                                </a-col>
+                            </a-row>
                         </template>
 
                         <template v-else>
@@ -156,7 +168,6 @@ const resetear = () => {
                             </a-row>
 
                             <a-card class="ticket-card">
-                                <!-- Cabecera del ticket -->
                                 <a-descriptions :column="{ xs: 1, sm: 2 }" bordered>
                                     <a-descriptions-item label="Restaurante">
                                         {{ ticketInfo.restaurante || '—' }}

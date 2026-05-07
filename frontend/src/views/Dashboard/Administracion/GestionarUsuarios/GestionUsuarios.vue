@@ -102,7 +102,7 @@ async function cancelarPedioRealizado(id) {
         <a-layout>
             <Sidebar :collapsed="collapsed" />
 
-            <a-tabs v-model:activeKey="tabActiva" class="colocarAcordeon">
+            <a-tabs v-model:activeKey="tabActiva" class="colocarContenedorPrincipalDashBoard">
 
                 <a-tab-pane key="pedidos" tab="Gestión de Pedidos">
                     <a-row :gutter="[24, 24]">
@@ -178,9 +178,7 @@ async function cancelarPedioRealizado(id) {
     font-size: 12px;
 }
 
-.colocarAcordeon {
-    padding: 24px;
-}
+
 
 .btnConfirmar{
     margin-top: 10px;

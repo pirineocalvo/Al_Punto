@@ -87,7 +87,7 @@ function iniciarSesion() {
 <template>
     <a-layout class="contenedorLogin">
 
-        <a-row type="flex" justify="center" align="middle" class="formaTarjeta">
+        <a-row type="flex" justify="center" align="middle" class="tarjetaInicioSesion">
             <a-col :xs="22" :md="16" :lg="8">
 
                 <a-card class="registerCard">
@@ -159,10 +159,3 @@ function iniciarSesion() {
         </a-row>
     </a-layout>
 </template>
-<style scoped>
-.formaTarjeta{
-    min-height: 100vh;
-    width: 100%;
-    margin: 0;
-}
-</style>

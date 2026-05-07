@@ -121,7 +121,7 @@ const columnasProductos = [
         <a-layout class="dashboardMainLayout">
             <Sidebar :collapsed="collapsed" />
 
-            <a-row class="colocarAcordeon">
+            <a-row class="colocarContenedorPrincipalDashBoard">
                 <a-col :xs="24" :md="20" :lg="24">
                     <a-flex justify="center">
                         <a-typography-title :level="2">
@@ -186,13 +186,3 @@ const columnasProductos = [
         <Footer />
     </a-layout>
 </template>
-<style scoped>
-.dashboardMainLayout {
-    min-height: calc(100vh - 70px);
-}
-
-.colocarAcordeon{
-    flex:1;
-    padding: 32px;
-}
-</style>

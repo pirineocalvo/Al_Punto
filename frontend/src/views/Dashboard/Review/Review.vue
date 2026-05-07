@@ -214,9 +214,6 @@ const formatearFecha = (fechaStr) => {
     align-items: center;
 }
 
-.dashboardMainLayout {
-    min-height: calc(100vh - 70px);
-}
 
 .colocarContenido{
     flex:1;
