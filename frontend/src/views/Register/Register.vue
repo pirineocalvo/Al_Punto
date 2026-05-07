@@ -21,12 +21,22 @@ const rules = {
             required: true,
             message: '¡Debe introducir su nombre!',
             trigger: 'blur'
+        },
+        {
+            pattern: /^[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+(?:\s[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+)*$/,
+            message: 'El nombre debe empezar por mayúscula y solo contener letras',
+            trigger: 'blur'
         }
     ],
     lastName: [
         {
             required: true,
             message: '¡Debe introducir sus apellidos!',
+            trigger: 'blur'
+        },
+        {
+            pattern: /^[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+(?:\s[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+)*$/,
+            message: 'Los apellidos deben empezar por mayúscula y solo contener letras',
             trigger: 'blur'
         }
     ],
@@ -35,6 +45,11 @@ const rules = {
             required: true,
             message: '¡Debe introducir su número de teléfono!',
             trigger: 'blur'
+        },
+        {
+            pattern: /^\d{9}$/,
+            message: 'El teléfono debe tener exactamente 9 dígitos',
+            trigger: 'blur'
         }
     ],
     email: [
@@ -42,12 +57,22 @@ const rules = {
             required: true,
             message: '¡Debe proporcionar un correo electrónico!',
             trigger: 'blur'
+        },
+        {
+            pattern: /^[^@\s]+@[a-z]+\.(com|es)$/,
+            message: 'El correo debe tener formato válido (ejemplo@dominio.com o .es)',
+            trigger: 'blur'
         }
     ],
     password: [
         {
             required: true,
             message: '¡Debe introducir una contraseña!',
+            trigger: 'blur'
+        },
+        {
+            pattern: /^(?=.*[^a-zA-Z0-9]).{8,}$/,
+            message: 'La contraseña debe tener mínimo 8 caracteres y al menos un símbolo especial',
             trigger: 'blur'
         }
     ]
@@ -84,6 +109,7 @@ function iniciarSesion() {
     router.push('/login');
 };
 </script>
+
 <template>
     <a-layout class="contenedorLogin">
 
