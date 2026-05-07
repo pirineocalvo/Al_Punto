@@ -2,7 +2,6 @@
 import { useRouter, useRoute } from 'vue-router';
 import { ref, onMounted, onUnmounted } from 'vue';
 import { HomeOutlined, UserOutlined, HistoryOutlined, ShoppingOutlined, ShopOutlined, TagsOutlined, SettingOutlined, CommentOutlined } from '@ant-design/icons-vue';
-import './Sidebar.css';
 import { message } from 'ant-design-vue';
 import { userInfo } from '../../Services/api';
 import { funcinalidadSidebar } from '../../Components/componenteDashboard/js/ocultarSidebar';

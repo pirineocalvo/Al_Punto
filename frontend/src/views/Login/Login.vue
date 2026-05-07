@@ -4,7 +4,6 @@ import { useRouter, useRoute } from 'vue-router';
 import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
 import { loginUser } from '../../Services/api';
 import { message } from 'ant-design-vue';
-import './Login.css';
 
 const router = useRouter();
 const route = useRoute();
@@ -106,3 +105,10 @@ function registrarse() {
         </a-row>
     </a-layout>
 </template>
+<style scoped>
+.formaTarjeta{
+    min-height: 100vh;
+    width: 100%;
+    margin: 0;
+}
+</style>

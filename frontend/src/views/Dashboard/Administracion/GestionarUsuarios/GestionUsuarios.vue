@@ -6,7 +6,6 @@ import { message } from 'ant-design-vue';
 import HeaderDashboard from '@/Components/componenteDashboard/HeaderDashboard.vue';
 import Footer from '@/Components/cabeceraYpiePrincipal/Footer.vue';
 import Sidebar from '../../../../Components/componenteDashboard/Sidebar.vue';
-import './GestionUsuarios.css';
 
 const router = useRouter();
 const user = ref(null);
@@ -172,3 +171,32 @@ async function cancelarPedioRealizado(id) {
         <Footer />
     </a-layout>
 </template>
+<style scoped>
+.textoFecha{
+    float: right;
+    font-weight: normal;
+    font-size: 12px;
+}
+
+.colocarAcordeon {
+    padding: 24px;
+}
+
+.btnConfirmar{
+    margin-top: 10px;
+    background-color: #52c41a;
+    border: none;
+}
+
+.btnConfirmar:hover{
+    background-color: #7de748 !important;
+}
+
+.btnConfirmar:active{
+    background-color: #34850c !important;
+}
+
+.todoElAncho{
+    width: 100%;
+}
+</style>

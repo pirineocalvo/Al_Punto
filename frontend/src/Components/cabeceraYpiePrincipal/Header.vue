@@ -2,7 +2,6 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import { MenuOutlined } from '@ant-design/icons-vue';
 import { message } from 'ant-design-vue';
-import './Header.css';
 import { useRouter, useRoute } from 'vue-router';
 import { userInfo } from '../../Services/api';
 
@@ -112,3 +111,46 @@ onUnmounted(() => window.removeEventListener('resize', actualizarTamano));
         </a-drawer>
     </a-layout-header>
 </template>
+<style scoped>
+.contenedorHeader {
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--color-menu-fondo);
+    padding: 10px 20px;
+}
+
+.contenedorHeader h2 {
+    margin: 0;
+    color: var(--color-menu-texto); 
+}
+
+.botonMenuMovil {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    color: var(--color-menu-texto);
+    font-size: 20px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.botonMenuMovil:hover {
+    background-color: rgba(255, 245, 236, 0.1);
+    color: var(--color-principal);
+}
+
+.botonMenuMovil:active {
+    background-color: var(--color-principal);
+    color: white;
+}
+</style>

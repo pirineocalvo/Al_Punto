@@ -4,7 +4,6 @@ import { useRouter } from 'vue-router'
 import { message } from 'ant-design-vue'
 import { getMyTickets, userInfo } from '../../../../Services/api'
 import Sidebar from '../../../../Components/componenteDashboard/Sidebar.vue'
-import './ListarTickets.css'
 import HeaderDashboard from '@/Components/componenteDashboard/HeaderDashboard.vue'
 import Footer from '@/Components/cabeceraYpiePrincipal/Footer.vue'
 import { CalendarOutlined, ClockCircleOutlined, EuroCircleOutlined, StarOutlined, EnvironmentOutlined, FileTextOutlined } from '@ant-design/icons-vue'
@@ -187,3 +186,13 @@ const columnasProductos = [
         <Footer />
     </a-layout>
 </template>
+<style scoped>
+.dashboardMainLayout {
+    min-height: calc(100vh - 70px);
+}
+
+.colocarAcordeon{
+    flex:1;
+    padding: 32px;
+}
+</style>

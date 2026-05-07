@@ -5,7 +5,6 @@ import Sidebar from '../../../Components/componenteDashboard/Sidebar.vue';
 import { listaProductosMarketplace, cangearProductoMarkePlace, userInfo } from '../../../Services/api';
 import { onMounted, ref, computed } from 'vue';
 import { useRouter } from 'vue-router'; 
-import './Marketplace.css';
 
 const user = ref(null); 
 const router = useRouter(); 
@@ -70,3 +69,43 @@ async function adquirirProducto(producto) {
         <Footer />
     </a-layout>
 </template>
+<style scoped>
+.datosTituloAcordeon {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+.tarjetaContenido {
+    padding: 24px;
+}
+
+.mpCardLocked {
+    opacity: 0.55;
+}
+
+.tajetaFooter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 12px 0;
+    margin-top: auto;
+}
+
+.puntos {
+    font-weight: 500;
+}
+
+.ant-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.ant-card-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+</style>

@@ -1,5 +1,4 @@
 <script setup>
-import './PlateCard.css'  
 
 defineProps({
   item: {
@@ -29,3 +28,23 @@ defineProps({
     </a-row>
   </a-card>
 </template>
+<style scoped>
+.ingredientlist-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+}
+
+.ingredientlist-table th {
+  text-align: left;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  padding-bottom: 4px;
+}
+
+.ingredientlist-table-row-cell {
+  font-size: 0.82rem;
+  color: var(--text-primary);
+  padding: 2px 0;
+}
+</style>

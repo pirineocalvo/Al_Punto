@@ -1,7 +1,6 @@
 <script setup>
 import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import './Logout.css';
 
 const router = useRouter();
 
@@ -41,3 +40,10 @@ function volver() {
         </a-row>
     </a-layout>
 </template>
+<style scoped>
+.formaTarjeta{
+    min-height: 100vh;
+    width: 100%;
+    margin: 0;
+}
+</style>

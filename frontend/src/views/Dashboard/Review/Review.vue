@@ -6,7 +6,6 @@ import { getMyReviews, userInfo, getProductosCompradosCliente, addReview } from 
 import { onMounted, ref, computed } from 'vue';
 import { useRouter } from 'vue-router'; 
 import { message, notification } from 'ant-design-vue';
-import './Review.css';
 
 const user = ref(null); 
 const router = useRouter(); 
@@ -197,3 +196,31 @@ const formatearFecha = (fechaStr) => {
         <Footer />
     </a-layout>
 </template>
+<style scoped>
+.reseniaTexto {
+    font-style: italic;
+    color: #555;
+}
+
+.tarjetaImg {
+    height: 200px;
+    object-fit: cover;
+}
+
+.tarjetaFooter {
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dashboardMainLayout {
+    min-height: calc(100vh - 70px);
+}
+
+.colocarContenido{
+    flex:1;
+    padding: 32px;
+}
+
+</style>

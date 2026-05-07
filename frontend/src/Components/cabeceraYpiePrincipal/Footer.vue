@@ -32,8 +32,17 @@
     </a-row>
   </footer>
 </template>
-
-<script setup>
-import { } from '@ant-design/icons-vue';
-import './Footer.css';
-</script>
+<style scoped>
+#preFooter{
+    padding: 30px;
+    background-color: var(--color-footer-fondo);
+    align-items: center;     
+    text-align: center;
+}
+.txtFooter{
+    color: var(--color-footer-texto);
+}
+.titulosFooter{
+    color:  var(--color-principal) !important;
+}
+</style>

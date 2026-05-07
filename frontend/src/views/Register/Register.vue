@@ -3,7 +3,6 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
 import { registerUser } from '../../Services/api';
-import './Register.css';
 
 const router = useRouter();
 const error = ref('');
@@ -159,4 +158,11 @@ function iniciarSesion() {
             </a-col>
         </a-row>
     </a-layout>
-</template>s
+</template>
+<style scoped>
+.formaTarjeta{
+    min-height: 100vh;
+    width: 100%;
+    margin: 0;
+}
+</style>

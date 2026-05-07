@@ -4,7 +4,6 @@ import { useRouter } from 'vue-router';
 import AppHeader from '../../Components/cabeceraYpiePrincipal/Header.vue';
 import AppFooter from '../../Components/cabeceraYpiePrincipal/Footer.vue';
 import Historia from '../../Components/modales/Historia.vue';
-import './Home.css';
 
 const router = useRouter();
 const modalVisible = ref(false);
@@ -92,3 +91,125 @@ function irAReservas() {
   <AppFooter />
   <Historia v-model:open="modalVisible" />
 </template>
+<style scoped>
+#eslogan {
+    margin-top: 80px;
+    height: 700px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#eslogan::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url('/images/imagenPrincipalMenu.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    filter: blur(6px);
+    z-index: 0;
+}
+
+#contenidoEslogan {
+    position: relative;
+    z-index: 1;
+}
+
+#contenidoEslogan {
+    width: 50%;
+    text-align: center;
+}
+
+#sobreNosotros {
+    padding: 80px 20px;
+    text-align: center;
+}
+
+.subTitulo {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#sobreNosotros p {
+    max-width: 700px;
+    margin: 0 auto 15px auto;
+    line-height: 1.6;
+    color: #444;
+}
+
+#sobreNosotros .cta-button {
+    margin-top: 20px;
+}
+
+#platosDestacado {
+    padding: 80px 20px;
+}
+
+#contenedorTarjetas {
+    margin-bottom: 30px;
+}
+
+.tarjeta.ant-card {
+    width: 500px;
+    border-radius: 15px;
+    overflow: hidden;
+    text-align: center;
+
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 1s ease;
+}
+
+.tarjeta .ant-card-body {
+    padding: 0;
+}
+
+.tarjeta:hover {
+    transform: translateY(-15px);
+}
+
+.imagenTarjeta img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+}
+
+.infoTarjeta {
+    padding: 40px;
+    text-align: center;
+}
+
+.infoTarjeta h2 {
+    margin-bottom: 10px;
+}
+
+.infoTarjeta p {
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 15px;
+}
+
+.colTarjeta {
+    display: flex;
+    justify-content: center;
+}
+
+.precioPlato {
+    font-weight: bold;
+    color: #a67c52;
+    font-size: 1.1rem;
+}
+
+.ant-row {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+</style>

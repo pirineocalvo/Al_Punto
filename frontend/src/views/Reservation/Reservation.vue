@@ -1,5 +1,4 @@
 <script setup>
-import './Reservation.css';
 import AppHeader from '../../Components/cabeceraYpiePrincipal/Header.vue';
 import AppFooter from '../../Components/cabeceraYpiePrincipal/Footer.vue';
 import { getDisponibilidadMes, todasLasMesasLibresPorDia, addReservation, misReservas } from '../../Services/api';
@@ -146,3 +145,17 @@ async function guardarReserva() {
 
     <AppFooter />
 </template>
+<style scoped>
+.reservasMain {
+    padding: 100px 32px;
+    display: flex;
+    justify-content: center;
+}
+
+.cardCalendario,
+.cardFormulario {
+    border-radius: 18px !important;
+    box-shadow: 0 10px 28px rgba(58, 46, 42, 0.08) !important;
+}
+
+</style>

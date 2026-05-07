@@ -1,5 +1,4 @@
 <script setup>
-import './Historial.css';
 import { ref, onMounted } from 'vue';
 import HeaderDashboard from '@/Components/componenteDashboard/HeaderDashboard.vue';
 import Footer from '@/Components/cabeceraYpiePrincipal/Footer.vue';
@@ -56,11 +55,11 @@ async function pararReserva(reserva) {
                     <a-collapse v-model:activeKey="acordeonActivo" accordion>
                         <a-collapse-panel v-for="reserva in listaReservas" :key="reserva.id">
                             <template #header>
-                                <a-row class="datosTituloAcordeon" :gutter="[6, 12]">
-                                    <a-col :xs="24" :lg="12">
+                                <a-row class="datosTituloAcordeon" :gutter="[6, 12]" justify="space-between">
+                                    <a-col :xs="24" :lg="11">
                                         <span>{{ reserva.reserve_date }}</span>
                                     </a-col>
-                                    <a-col :xs="24" :lg="12">
+                                    <a-col :xs="24" :lg="11" class="tagDerecha">
                                         <a-tag v-if="reserva.status == 'attended'" color="lime">Atendido</a-tag>
                                         <a-tag v-else-if="reserva.status == null" color="purple">Pendiente</a-tag>
                                         <a-tag v-else color="red">Cancelado</a-tag>
@@ -85,10 +84,10 @@ async function pararReserva(reserva) {
                         <a-collapse-panel v-for="pedido in listaPedidos" :key="pedido.id">
                             <template #header>
                                 <a-row class="datosTituloAcordeon" :gutter="[6, 12]">
-                                    <a-col :xs="24" :lg="12">
+                                    <a-col :xs="24" :lg="11">
                                         <span>{{ pedido.created_at }}</span>
                                     </a-col>
-                                    <a-col :xs="24" :lg="12">
+                                    <a-col :xs="24" :lg="11" class="tagDerecha">
                                         <a-tag color="purple" v-if="pedido.status == 'pendiente'">Pedido pendiente de
                                             preparación</a-tag>
                                         <a-tag color="purple" v-else-if="pedido.status == 'listo'">Pedido
@@ -106,7 +105,7 @@ async function pararReserva(reserva) {
                                     <span>Cantidad:</span> {{ producto.quantity }};
                                     <span>Precio unidad:</span> {{ producto.price_at_time }}
                                 </a-col>
-                                <a-col :xs="24" v-if="pedido.is_picked_up == 0 && pedido.status == 'pendiente'">
+                                <a-col :xs="24" v-if="pedido.is_picked_up == 0 && pedido.status == 'pendiente'" >
                                     <a-button @click.stop="eliminarPedido(pedido)">Cancelar pedido</a-button>
                                 </a-col>
                             </a-row>
@@ -120,10 +119,10 @@ async function pararReserva(reserva) {
                         <a-collapse-panel v-for="market in listaMarketPlaceReclamado" :key="market.id">
                             <template #header>
                                 <a-row class="datosTituloAcordeon" :gutter="[6, 12]">
-                                    <a-col :xs="24" :lg="12">
+                                    <a-col :xs="24" :lg="11">
                                         <span>{{ market.name }}</span>
                                     </a-col>
-                                    <a-col :xs="24" :lg="12">
+                                    <a-col :xs="24" :lg="11" class="tagDerecha">
                                         <a-tag v-if="market.is_used == 0" color="lime">Sin canjear</a-tag>
                                         <a-tag v-else color="red">Canjeado el {{ market.used_at }}</a-tag>
                                     </a-col>
@@ -131,8 +130,7 @@ async function pararReserva(reserva) {
                             </template>
                             <a-row :gutter="[6, 12]">
                                 <a-col :xs="24"><span>{{ market.description }}</span></a-col>
-                                <a-col :xs="24"><span>Código del producto: <a-tag>{{ market.token_url
-                                            }}</a-tag></span></a-col>
+                                <a-col :xs="24"><span>Código del producto: <a-tag>{{ market.token_url}}</a-tag></span></a-col>
                             </a-row>
                         </a-collapse-panel>
                     </a-collapse>
@@ -145,3 +143,22 @@ async function pararReserva(reserva) {
         <Footer />
     </a-layout>
 </template>
+<style scoped>
+.datosTituloAcordeon {
+    justify-content: space-between;
+    width: 100%;
+}
+
+.dashboardMainLayout {
+    min-height: calc(100vh - 70px);
+}
+
+.colocarAcordeon{
+    flex:1;
+    padding: 32px;
+}
+
+.tagDerecha{
+    text-align: right;
+}
+</style>

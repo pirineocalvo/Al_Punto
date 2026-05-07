@@ -7,7 +7,7 @@ import { uploadTickets, userInfo } from '../../../../Services/api';
 import HeaderDashboard from '@/Components/componenteDashboard/HeaderDashboard.vue';
 import Footer from '@/Components/cabeceraYpiePrincipal/Footer.vue';
 import Sidebar from '../../../../Components/componenteDashboard/Sidebar.vue';
-import './AgregarTickets.css';
+
 
 const router = useRouter();
 const user = ref(null);
@@ -204,3 +204,26 @@ const resetear = () => {
     </a-layout>
     <Footer />
 </template>
+<style scoped>
+.upload-card {
+    border-radius: 16px !important;
+    box-shadow: 0 4px 20px rgba(58, 46, 42, 0.07) !important;
+    margin-top: 24px;
+}
+
+.ticket-card {
+    border-radius: 16px !important;
+    box-shadow: 0 4px 20px rgba(58, 46, 42, 0.07) !important;
+    margin-top: 16px;
+}
+
+.resultado-header {
+    margin-bottom: 8px;
+}
+
+.ticket-total :deep(.ant-statistic-content-value) {
+    font-size: 2rem !important;
+    font-weight: 800 !important;
+    color: var(--color-principal) !important;
+}
+</style>
