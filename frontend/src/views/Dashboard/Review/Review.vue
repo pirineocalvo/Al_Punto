@@ -2,7 +2,7 @@
 import Footer from '../../../Components/cabeceraYpiePrincipal/Footer.vue';
 import HeaderDashboard from '../../../Components/componenteDashboard/HeaderDashboard.vue';
 import Sidebar from '../../../Components/componenteDashboard/Sidebar.vue';
-import { getMyReviews, userInfo, getProductosCompradosCliente, addReview } from '../../../Services/api';
+import { getMyReviews, userInfo, getProductosCompradosCliente, addReview, getMenu } from '../../../Services/api';
 import { onMounted, ref, computed } from 'vue';
 import { useRouter } from 'vue-router'; 
 import { message, notification } from 'ant-design-vue';
@@ -11,6 +11,7 @@ const user = ref(null);
 const router = useRouter(); 
 const listaResenias = ref([]);
 const productosComprados = ref([]);
+const menuCompleto = ref([]);
 const keyLab = ref('1');
 
 const estadoModal = ref(false);
@@ -23,12 +24,21 @@ const formModal = ref({
     descripcion: ''
 });
 
-
 const datosModal = (producto) => {
-    formModal.value.id_plato = producto.product_id || producto.id; 
+    const platoEnMenu = menuCompleto.value.find(
+        p => p.name.toLowerCase().trim() === producto.product_name.toLowerCase().trim()
+    );
+
+    formModal.value.id_plato = platoEnMenu?.id ?? null;
     formModal.value.plato_name = producto.product_name;
     formModal.value.puntuacion = 0;
     formModal.value.descripcion = '';
+
+    if (!formModal.value.id_plato) {
+        message.error('No se pudo identificar el plato. Inténtalo de nuevo.');
+        return;
+    }
+
     estadoModal.value = true;
 };
 
@@ -72,10 +82,12 @@ onMounted(async () => {
     if (!token) { router.push('/login'); return; }
 
     try {
-        user.value = await userInfo();
-        listaResenias.value = await getMyReviews();
-        productosComprados.value = await getProductosCompradosCliente();
-        
+        [user.value, listaResenias.value, productosComprados.value, menuCompleto.value] = await Promise.all([
+            userInfo(),
+            getMyReviews(),
+            getProductosCompradosCliente(),
+            getMenu()
+        ]);
     } catch (err) {
         console.error("Error cargando datos:", err);
     }
@@ -84,22 +96,16 @@ onMounted(async () => {
 const reseniasHechas = computed(() => listaResenias.value);
 
 const reseniasPendientes = computed(() => {
-
     const nombresReseniados = listaResenias.value.map(r => r.plato_name.toLowerCase().trim());
     
     const productosPendientes = [];
-
-
-    //set permite que no se dupliquen los podroductos
     const yaAgregadosALista = new Set();
 
     productosComprados.value.forEach(pedido => {
         if (pedido.status === 'entregado') {
             pedido.items.forEach(item => {
                 const nombreLimpio = item.product_name.toLowerCase().trim();
-
                 const yaReseniado = nombresReseniados.includes(nombreLimpio);
-                //devuelve true si ya existe el producto en el set
                 const enListaTemporal = yaAgregadosALista.has(nombreLimpio);
 
                 if (!yaReseniado && !enListaTemporal) {
@@ -181,14 +187,28 @@ const formatearFecha = (fechaStr) => {
             </a-layout-content>
         </a-layout>
 
-        <a-modal v-model:open="estadoModal" :title="'Valorar ' + formModal.plato_name" @ok="guardarResenia" :confirm-loading="confirmLoading" ok-text="Publicar Reseña" cancel-text="Cancelar" destroyOnClose>
+        <a-modal
+            v-model:open="estadoModal"
+            :title="'Valorar ' + formModal.plato_name"
+            @ok="guardarResenia"
+            :confirm-loading="confirmLoading"
+            ok-text="Publicar Reseña"
+            cancel-text="Cancelar"
+            destroyOnClose
+        >
             <a-form layout="vertical">
                 <a-form-item label="Puntuación (Estrellas)">
                     <a-rate v-model:value="formModal.puntuacion" />
                 </a-form-item>
                 
                 <a-form-item label="Comentario">
-                    <a-textarea v-model:value="formModal.descripcion" placeholder="Cuéntanos qué te pareció este plato..." :rows="4" :maxlength="250" show-count/>
+                    <a-textarea
+                        v-model:value="formModal.descripcion"
+                        placeholder="Cuéntanos qué te pareció este plato..."
+                        :rows="4"
+                        :maxlength="250"
+                        show-count
+                    />
                 </a-form-item>
             </a-form>
         </a-modal>
@@ -196,6 +216,7 @@ const formatearFecha = (fechaStr) => {
         <Footer />
     </a-layout>
 </template>
+
 <style scoped>
 .reseniaTexto {
     font-style: italic;
@@ -206,5 +227,4 @@ const formatearFecha = (fechaStr) => {
     height: 200px;
     object-fit: cover;
 }
-
 </style>

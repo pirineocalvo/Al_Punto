@@ -3,11 +3,13 @@ import { ref, computed, onMounted, onUnmounted } from 'vue';
 import AppHeader from '../../../Components/cabeceraYpiePrincipal/Header.vue';
 import AppFooter from '../../../Components/cabeceraYpiePrincipal/Footer.vue';
 import PlateCard from '../../../Components/componenteMenu/PlateCard.vue';
-import { getMenu, getCategories } from '../../../Services/api';
+import { getMenu, getCategories, getReviewsByDish } from '../../../Services/api';
 
 const categorias = ref([]);
 const menu = ref(null);
 const platoSeleccionado = ref(null);
+const resenias = ref([]);
+const cargandoResenias = ref(false);
 const referenciasCarrusel = ref({});
 const anchoVentana = ref(window.innerWidth);
 
@@ -37,16 +39,27 @@ const actualizarAncho = () => {
   anchoVentana.value = window.innerWidth;
 };
 
-
 const tarjetasPorSlide = computed(() => {
   if (anchoVentana.value < 640) return 1;
-  if (anchoVentana.value < 1024) return 2; 
-  return 3;                                
+  if (anchoVentana.value < 1024) return 2;
+  return 3;
 });
-
 
 function siguiente(idCategoria) {
   referenciasCarrusel.value[idCategoria]?.next();
+}
+
+async function seleccionarPlato(plato) {
+  platoSeleccionado.value = plato;
+  resenias.value = [];
+  cargandoResenias.value = true;
+  try {
+    resenias.value = await getReviewsByDish(plato.id);
+  } catch (err) {
+    console.error('Error cargando reseñas:', err);
+  } finally {
+    cargandoResenias.value = false;
+  }
 }
 
 onMounted(() => {
@@ -81,9 +94,41 @@ onUnmounted(() => {
 
     <template v-else>
       <a-typography-title :level="1">Menú</a-typography-title>
+
       <div v-if="platoSeleccionado" class="plate-card-container">
         <a-button @click="platoSeleccionado = null">← Volver</a-button>
         <PlateCard :item="platoSeleccionado" />
+
+        <!-- Sección de reseñas -->
+        <div class="reviews-section">
+          <a-flex align="center" gap="middle" class="reviews-header">
+            <a-typography-title :level="3" style="margin: 0 !important;">
+              Comentarios
+            </a-typography-title>
+            <div class="menu-section-line" />
+          </a-flex>
+
+          <a-spin v-if="cargandoResenias" />
+
+          <template v-else-if="resenias.length">
+            <div v-for="resenia in resenias" :key="resenia.id" class="review-card">
+              <a-flex justify="space-between" align="center">
+                <a-typography-text strong>
+                  {{ resenia.first_name }} {{ resenia.last_name }}
+                </a-typography-text>
+                <a-rate :value="resenia.puntuacion" disabled allow-half />
+              </a-flex>
+              <a-typography-paragraph class="review-text">
+                {{ resenia.descripcion }}
+              </a-typography-paragraph>
+              <a-typography-text type="secondary" class="review-date">
+                {{ resenia.created_at ? new Date(resenia.created_at).toLocaleDateString('es-ES') : '' }}
+              </a-typography-text>
+            </div>
+          </template>
+
+          <a-empty v-else description="Este plato aún no tiene comentarios" />
+        </div>
       </div>
 
       <template v-else>
@@ -101,10 +146,18 @@ onUnmounted(() => {
               <button class="carousel-arrow" @click="anterior(categoria.id)">‹</button>
 
               <a-carousel :ref="el => { if (el) referenciasCarrusel[categoria.id] = el }" class="menu-carousel">
-                <div v-for="(grupo, indiceGrupo) in dividirEnGrupos(platosPorCategoria[categoria.id], tarjetasPorSlide)"
-                  :key="indiceGrupo" class="carousel-slide">
-                  <div v-for="(plato, indicePlato) in grupo" :key="indicePlato" class="carousel-card"  :style="{ width: `${100 / tarjetasPorSlide}%` }"
-                    @click="platoSeleccionado = plato">
+                <div
+                  v-for="(grupo, indiceGrupo) in dividirEnGrupos(platosPorCategoria[categoria.id], tarjetasPorSlide)"
+                  :key="indiceGrupo"
+                  class="carousel-slide"
+                >
+                  <div
+                    v-for="(plato, indicePlato) in grupo"
+                    :key="indicePlato"
+                    class="carousel-card"
+                    :style="{ width: `${100 / tarjetasPorSlide}%` }"
+                    @click="seleccionarPlato(plato)"
+                  >
                     <div class="card-img-wrapper">
                       <img draggable="false" :alt="plato.name" :src="'images/plates/' + plato.img_src" />
                     </div>
@@ -119,8 +172,11 @@ onUnmounted(() => {
                         Ingredientes:
                       </a-typography-title>
                       <div class="card-ingredients">
-                        <a-tag v-for="(ingrediente, indiceIngrediente) in plato.ingredients" :key="indiceIngrediente"
-                          class="ingredient-tag">{{ ingrediente }}</a-tag>
+                        <a-tag
+                          v-for="(ingrediente, indiceIngrediente) in plato.ingredients"
+                          :key="indiceIngrediente"
+                          class="ingredient-tag"
+                        >{{ ingrediente }}</a-tag>
                       </div>
                       <a-typography-text strong class="card-price">
                         {{ plato.price }} €
@@ -141,7 +197,9 @@ onUnmounted(() => {
 
   <AppFooter />
 </template>
-<style>.menuContainer{
+
+<style>
+.menuContainer {
   padding: 100px 48px 80px;
   min-height: 100vh;
 }
@@ -298,5 +356,41 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   gap: 16px;
+}
+
+.reviews-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.reviews-header {
+  margin-bottom: 4px;
+}
+
+.review-card {
+  padding: 16px 20px;
+  border: 1px solid var(--border-sutil);
+  border-radius: 12px;
+  background: var(--bg-card, #fff);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: box-shadow 0.2s;
+}
+
+.review-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.review-text {
+  margin: 0 !important;
+  color: var(--text-primary);
+  line-height: 1.6 !important;
+}
+
+.review-date {
+  font-size: 0.78rem !important;
 }
 </style>
