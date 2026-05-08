@@ -14,6 +14,7 @@ import Marketplace from '@/views/Dashboard/marketplace/Marketplace.vue'
 import Review from '@/views/Dashboard/Review/Review.vue'
 import GestionarMesas from '@/views/Dashboard/Administracion/GestionarMesas/GestionarMesas.vue'
 import GestionUsuarios from '@/views/Dashboard/Administracion/GestionarUsuarios/GestionUsuarios.vue'
+import NoAutorizado from '@/views/Dashboard/Administracion/NoAutorizado.vue'
 
 const routes = [
   { path: '/', component: Home },
@@ -41,7 +42,8 @@ const routes = [
   { path: '/marketplace', component: Marketplace },
   { path: '/reviews', component: Review},
   { path: '/gestionarMesas', component: GestionarMesas},
-  {path: '/gestionarUsuarios', component: GestionUsuarios}
+  {path: '/gestionarUsuarios', component: GestionUsuarios},
+  {path: '/noAutorizado', component: NoAutorizado}
 ]
 
 const router = createRouter({

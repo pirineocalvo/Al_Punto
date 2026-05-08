@@ -16,7 +16,8 @@ const tokenInput = ref('');
 const loadingMarket = ref(false);
 const listaPedidos = ref([]);
 
-// onMounted sigue recibiendo un callback, pero lo definimos como función asíncrona normal
+const autorizado = ref(false);
+
 onMounted(async function () {
     const token = localStorage.getItem('loginUserToken');
     if (!token) {
@@ -26,10 +27,13 @@ onMounted(async function () {
 
     try {
         user.value = await userInfo();
-        if (user.value.access_level < 3) {
-            router.push('/dashboard');
+
+        if (user.value.access_level <= 3) {
+            router.push('/noAutorizado');
             return;
         }
+
+        autorizado.value = true;
         await cargarPedidos();
     } catch (err) {
         router.push('/login');
@@ -41,7 +45,7 @@ async function cargarPedidos() {
         const res = await getTodosLosPedidosAdmin();
         listaPedidos.value = res;
     } catch (err) {
-        console.error("Error al cargar pedidos");
+        console.error('Error al cargar pedidos');
     }
 }
 
@@ -80,7 +84,7 @@ async function cambiarEstado(id, estado, recogido = false) {
         message.success(`Pedido #${id} actualizado`);
         await cargarPedidos();
     } catch (err) {
-        message.error("Error de actualización");
+        message.error('Error de actualización');
     }
 }
 
@@ -90,7 +94,7 @@ async function cancelarPedioRealizado(id) {
         message.success(`Pedido #${id} cancelado`);
         await cargarPedidos();
     } catch (err) {
-        message.error("Error de actualización");
+        message.error('Error de actualización');
     }
 }
 </script>
@@ -102,99 +106,103 @@ async function cancelarPedioRealizado(id) {
         <a-layout>
             <Sidebar :collapsed="collapsed" />
 
-            <a-tabs v-model:activeKey="tabActiva" class="colocarContenedorPrincipalDashBoard">
+            <template v-if="autorizado">
+                <a-tabs v-model:activeKey="tabActiva" class="colocarContenedorPrincipalDashBoard">
 
-                <a-tab-pane key="pedidos" tab="Gestión de Pedidos">
-                    <a-row :gutter="[24, 24]">
-                        <a-col :xs="24" :lg="12">
-                            <a-divider orientation="left">PENDIENTES DE COCINA</a-divider>
-                            <a-space direction="vertical" class="todoElAncho" size="middle">
-                                <a-empty v-if="pedidosPendientes.length === 0" />
-                                <a-card v-for="p in pedidosPendientes" :key="p.id" size="small"
-                                    :head-style="{ borderLeft: '4px solid #D97742' }">
-                                    <template #title>
-                                        <strong>Pedido #{{ p.id }}</strong>
-                                        <span class="textoFecha">{{ p.created_at }}</span>
-                                    </template>
-                                    <a-list size="small" :data-source="p.items">
-                                        <template #renderItem="{ item }">
-                                            <a-list-item>{{ item.quantity }}x {{ item.product_name }}</a-list-item>
+                    <a-tab-pane key="pedidos" tab="Gestión de Pedidos">
+                        <a-row :gutter="[24, 24]">
+                            <a-col :xs="24" :lg="12">
+                                <a-divider orientation="left">PENDIENTES DE COCINA</a-divider>
+                                <a-space direction="vertical" class="todoElAncho" size="middle">
+                                    <a-empty v-if="pedidosPendientes.length === 0" />
+                                    <a-card v-for="p in pedidosPendientes" :key="p.id" size="small"
+                                        :head-style="{ borderLeft: '4px solid #D97742' }">
+                                        <template #title>
+                                            <strong>Pedido #{{ p.id }}</strong>
+                                            <span class="textoFecha">{{ p.created_at }}</span>
                                         </template>
-                                    </a-list>
-                                    <a-row :gutter="[12, 12]">
-                                        <a-col :xs="24" :sm="10">
-                                            <a-button type="primary" block @click="cambiarEstado(p.id, 'listo', false)">
-                                                MARCAR COMO LISTO
-                                            </a-button>
-                                        </a-col>
+                                        <a-list size="small" :data-source="p.items">
+                                            <template #renderItem="{ item }">
+                                                <a-list-item>{{ item.quantity }}x {{ item.product_name }}</a-list-item>
+                                            </template>
+                                        </a-list>
+                                        <a-row :gutter="[12, 12]">
+                                            <a-col :xs="24" :sm="10">
+                                                <a-button type="primary" block @click="cambiarEstado(p.id, 'listo', false)">
+                                                    MARCAR COMO LISTO
+                                                </a-button>
+                                            </a-col>
+                                            <a-col :xs="24" :sm="10">
+                                                <a-popconfirm title="¿Estás seguro?" ok-text="Sí" cancel-text="No"
+                                                    @confirm="cancelarPedioRealizado(p.id)">
+                                                    <a-button block>CANCELAR PEDIDO</a-button>
+                                                </a-popconfirm>
+                                            </a-col>
+                                        </a-row>
+                                    </a-card>
+                                </a-space>
+                            </a-col>
 
-                                        <a-col :xs="24" :sm="10">
-                                            <a-popconfirm title="¿Estás seguro?" ok-text="Sí" cancel-text="No"
-                                                @confirm="cancelarPedioRealizado(p.id)">
-                                                <a-button block>CANCELAR PEDIDO</a-button>
-                                            </a-popconfirm>
-                                        </a-col>
-                                    </a-row>
-                                </a-card>
-                            </a-space>
-                        </a-col>
-                        <a-col :xs="24" :lg="12">
-                            <a-divider orientation="left">LISTOS PARA ENTREGA</a-divider>
-                            <a-space direction="vertical" class="todoElAncho" size="middle">
-                                <a-empty v-if="pedidosListos.length === 0" />
-                                <a-card v-for="p in pedidosListos" :key="p.id" size="small"
-                                    :head-style="{ borderLeft: '4px solid #3A9E6F' }">
-                                    <template #title>
-                                        <strong>Pedido #{{ p.id }}</strong> - <span>{{ p.customer }}</span>
-                                    </template>
-                                    <a-typography-text strong>Total: {{ p.total_price }}€</a-typography-text>
-                                    <a-button type="primary" block @click="cambiarEstado(p.id, 'entregado', true)"
-                                        class="btnConfirmar">CONFIRMAR ENTREGA</a-button>
-                                </a-card>
-                            </a-space>
-                        </a-col>
-                    </a-row>
-                </a-tab-pane>
+                            <a-col :xs="24" :lg="12">
+                                <a-divider orientation="left">LISTOS PARA ENTREGA</a-divider>
+                                <a-space direction="vertical" class="todoElAncho" size="middle">
+                                    <a-empty v-if="pedidosListos.length === 0" />
+                                    <a-card v-for="p in pedidosListos" :key="p.id" size="small"
+                                        :head-style="{ borderLeft: '4px solid #3A9E6F' }">
+                                        <template #title>
+                                            <strong>Pedido #{{ p.id }}</strong> - <span>{{ p.customer }}</span>
+                                        </template>
+                                        <a-typography-text strong>Total: {{ p.total_price }}€</a-typography-text>
+                                        <a-button type="primary" block @click="cambiarEstado(p.id, 'entregado', true)"
+                                            class="btnConfirmar">CONFIRMAR ENTREGA</a-button>
+                                    </a-card>
+                                </a-space>
+                            </a-col>
+                        </a-row>
+                    </a-tab-pane>
 
-                <a-tab-pane key="market" tab="Canjear Marketplace">
-                    <a-card title="Validación de Premios">
-                        <a-typography-paragraph>
-                            Introduce el código del cliente para validar el canje del producto.
-                        </a-typography-paragraph>
-                        <a-input-search v-model:value="tokenInput" placeholder="Código:" enter-button="CANJEAR"
-                            size="large" :loading="loadingMarket" @search="cangearProductoMarket" />
-                    </a-card>
-                </a-tab-pane>
-            </a-tabs>
+                    <a-tab-pane key="market" tab="Canjear Marketplace">
+                        <a-card title="Validación de Premios">
+                            <a-typography-paragraph>
+                                Introduce el código del cliente para validar el canje del producto.
+                            </a-typography-paragraph>
+                            <a-input-search v-model:value="tokenInput" placeholder="Código:" enter-button="CANJEAR"
+                                size="large" :loading="loadingMarket" @search="cangearProductoMarket" />
+                        </a-card>
+                    </a-tab-pane>
+
+                </a-tabs>
+            </template>
+
         </a-layout>
 
         <Footer />
     </a-layout>
 </template>
+
 <style scoped>
-.textoFecha{
+.textoFecha {
     float: right;
     font-weight: normal;
     font-size: 12px;
 }
 
-
-
-.btnConfirmar{
+.btnConfirmar {
     margin-top: 10px;
     background-color: #52c41a;
     border: none;
 }
 
-.btnConfirmar:hover{
+.btnConfirmar:hover {
     background-color: #7de748 !important;
 }
 
-.btnConfirmar:active{
+.btnConfirmar:active {
     background-color: #34850c !important;
 }
 
-.todoElAncho{
+.todoElAncho {
     width: 100%;
 }
+
 </style>

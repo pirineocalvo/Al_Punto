@@ -148,6 +148,11 @@ onMounted(async function () {
     }
     try {
         user.value = await userInfo();
+        if (user.value.access_level !== 5) {
+            router.push('/noAutorizado');
+            return;
+        }
+
         await cargarMesas();
     } catch (err) {
         router.push('/login');
@@ -198,7 +203,7 @@ onMounted(async function () {
                                 <a-input-number v-model:value="formActualizarMesa.n_ocupantes" :min="1" :max="999"
                                     :disabled="!mesaSeleccionadaId" class="todoElAncho" />
                             </a-form-item>
-                            <a-alert v-if="mensajeActualizar" :type="mensajeActualizar.tipo" :message="mensajeActualizar.texto" show-icon closable@close="mensajeActualizar = null" />
+                            <a-alert v-if="mensajeActualizar" :type="mensajeActualizar.tipo" :message="mensajeActualizar.texto" show-icon closable @close="mensajeActualizar = null" />
                             <a-button type="primary" html-type="submit" :loading="cargandoActualizar" :disabled="!mesaSeleccionadaId" block>
                                 Actualizar mesa
                             </a-button>
@@ -228,6 +233,7 @@ onMounted(async function () {
         <Footer />
     </a-layout>
 </template>
+
 <style scoped>
 .seccion-mesas {
     padding: 24px;
@@ -255,7 +261,7 @@ onMounted(async function () {
     color: #333;
 }
 
-.todoElAncho{
+.todoElAncho {
     width: 100%;
 }
 </style>
