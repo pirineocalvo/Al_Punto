@@ -1,25 +1,26 @@
-const bcrypt = require('bcrypt'), jwt = require('jsonwebtoken'), jwtKey = process.env.JWT_SECRET_KEY;
-function encrypt(c) {
-    const d = jwt['sign']({ 'data': c }, jwtKey, { 'expiresIn': '1h' });
-    return d;
-}
-function decrypt(d) {
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
+const jwtKey = process.env.SHARED_JWT_SECRET || process.env.JWT_SECRET_KEY;
+
+/**
+ * Verifica un token JWT emitido por el authService.
+ * Devuelve el payload { id, email, nombre, apellido, ... } o null si inválido.
+ */
+function verifyToken(token) {
     try {
-        const e = jwt['verify'](d, jwtKey);
-        return e['data'];
-    } catch (f) {
+        return jwt.verify(token, jwtKey);
+    } catch {
         return null;
     }
 }
-function hashPassword(b) {
-    return bcrypt['hashSync'](b, 0xa);
+
+function hashPassword(password) {
+    return bcrypt.hashSync(password, 10);
 }
-function comparePassword(c, d) {
-    return bcrypt['compareSync'](c, d);
+
+function comparePassword(password, hash) {
+    return bcrypt.compareSync(password, hash);
 }
-module['exports'] = {
-    'encrypt': encrypt,
-    'decrypt': decrypt,
-    'hashPassword': hashPassword,
-    'comparePassword': comparePassword
-};
+
+module.exports = { verifyToken, hashPassword, comparePassword };
