@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { MenuOutlined, LogoutOutlined, StarFilled } from '@ant-design/icons-vue';
+import { MenuOutlined, LogoutOutlined } from '@ant-design/icons-vue';
 import { funcinalidadSidebar } from '../../Components/componenteDashboard/js/ocultarSidebar';
 
 

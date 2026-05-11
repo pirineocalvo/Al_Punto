@@ -4,6 +4,7 @@ import AppHeader from '../../../Components/cabeceraYpiePrincipal/Header.vue';
 import AppFooter from '../../../Components/cabeceraYpiePrincipal/Footer.vue';
 import PlateCard from '../../../Components/componenteMenu/PlateCard.vue';
 import { getMenu, getCategories, getReviewsByDish } from '../../../Services/api';
+import { RightOutlined, LeftOutlined} from '@ant-design/icons-vue';
 
 const categorias = ref([]);
 const menu = ref(null);
@@ -80,115 +81,122 @@ onUnmounted(() => {
   window.removeEventListener('resize', actualizarAncho);
 });
 </script>
-
 <template>
   <AppHeader />
 
-  <a-layout class="menuContainer">
-
-    <a-spin v-if="!menu" size="large">
-      <template #tip>
-        <a-typography-text type="secondary">Cargando Menú...</a-typography-text>
-      </template>
-    </a-spin>
+  <a-layout class="contenedorMenu">
+    <a-flex v-if="!menu" vertical align="center" justify="center">
+      <a-spin size="large" />
+      <a-typography-text type="secondary">Cargando Menú...</a-typography-text>
+    </a-flex>
 
     <template v-else>
       <a-typography-title :level="1">Menú</a-typography-title>
 
-      <div v-if="platoSeleccionado" class="plate-card-container">
-        <a-button @click="platoSeleccionado = null">← Volver</a-button>
-        <PlateCard :item="platoSeleccionado" />
-
-        <!-- Sección de reseñas -->
-        <div class="reviews-section">
-          <a-flex align="center" gap="middle" class="reviews-header">
-            <a-typography-title :level="3" style="margin: 0 !important;">
-              Comentarios
-            </a-typography-title>
-            <div class="menu-section-line" />
+      <div v-if="platoSeleccionado">
+        <a-flex vertical gap="large">
+          <a-flex>
+            <a-button @click="platoSeleccionado = null"><LeftOutlined /> Volver</a-button>
+          </a-flex>
+          <a-flex justify="center">
+            <PlateCard :item="platoSeleccionado" />
           </a-flex>
 
-          <a-spin v-if="cargandoResenias" />
+          <div class="seccionResenias">
+            <a-divider orientation="left">
+              <a-typography-title :level="3">Opiniones de nuestros clientes</a-typography-title>
+            </a-divider>
 
-          <template v-else-if="resenias.length">
-            <div v-for="resenia in resenias" :key="resenia.id" class="review-card">
-              <a-flex justify="space-between" align="center">
-                <a-typography-text strong>
-                  {{ resenia.first_name }} {{ resenia.last_name }}
-                </a-typography-text>
-                <a-rate :value="resenia.puntuacion" disabled allow-half />
-              </a-flex>
-              <a-typography-paragraph class="review-text">
-                {{ resenia.descripcion }}
-              </a-typography-paragraph>
-              <a-typography-text type="secondary" class="review-date">
-                {{ resenia.created_at ? new Date(resenia.created_at).toLocaleDateString('es-ES') : '' }}
-              </a-typography-text>
-            </div>
-          </template>
+            <a-flex v-if="cargandoResenias" justify="center">
+              <a-spin />
+            </a-flex>
 
-          <a-empty v-else description="Este plato aún no tiene comentarios" />
-        </div>
+            <a-row v-else-if="resenias.length" :gutter="[0, 16]">
+              <a-col :span="24" v-for="resenia in resenias" :key="resenia.id">
+                <div class="tarjetaResenia">
+                  <a-flex align="center" gap="small">
+                    <div class="avatarResenia">
+                      {{ resenia.first_name?.[0] }}{{ resenia.last_name?.[0] }}
+                    </div>
+                    <div>
+                      <a-typography-text strong>
+                        {{ resenia.first_name }} {{ resenia.last_name }}
+                      </a-typography-text>
+                      <br />
+                      <a-typography-text type="secondary">
+                        {{ resenia.created_at ? new Date(resenia.created_at).toLocaleDateString('es-ES') : '' }}
+                      </a-typography-text>
+                    </div>
+                  </a-flex>
+                  
+                  <a-rate :value="resenia.puntuacion" disabled allow-half/>
+                  
+                  <hr class="divisorResenia" />
+                  
+                  <a-typography-paragraph>
+                    {{ resenia.descripcion }}
+                  </a-typography-paragraph>
+                </div>
+              </a-col>
+            </a-row>
+
+            <a-empty v-else description="Este plato aún no tiene comentarios. ¡Sé el primero!" />
+          </div>
+        </a-flex>
       </div>
 
       <template v-else>
-        <div v-for="categoria in categorias" :key="categoria.id" class="menu-section">
+        <div v-for="categoria in categorias" :key="categoria.id" class="seccionMenu">
           <template v-if="platosPorCategoria[categoria.id]?.length">
+            
+            <a-divider orientation="left">
+              <a-typography-title :level="3">{{ categoria.name }}</a-typography-title>
+            </a-divider>
 
-            <a-flex align="center" gap="middle">
-              <a-typography-title :level="3">
-                {{ categoria.name }}
-              </a-typography-title>
-              <div class="menu-section-line" />
-            </a-flex>
+            <div class="envoltorioCarrusel">
+              <button class="flechaCarrusel" @click="anterior(categoria.id)"><LeftOutlined /></button>
 
-            <div class="carousel-wrapper">
-              <button class="carousel-arrow" @click="anterior(categoria.id)">‹</button>
-
-              <a-carousel :ref="el => { if (el) referenciasCarrusel[categoria.id] = el }" class="menu-carousel">
-                <div
-                  v-for="(grupo, indiceGrupo) in dividirEnGrupos(platosPorCategoria[categoria.id], tarjetasPorSlide)"
-                  :key="indiceGrupo"
-                  class="carousel-slide"
-                >
-                  <div
-                    v-for="(plato, indicePlato) in grupo"
-                    :key="indicePlato"
-                    class="carousel-card"
-                    :style="{ width: `${100 / tarjetasPorSlide}%` }"
-                    @click="seleccionarPlato(plato)"
-                  >
-                    <div class="card-img-wrapper">
-                      <img draggable="false" :alt="plato.name" :src="'images/plates/' + plato.img_src" />
-                    </div>
-                    <div class="card-body">
-                      <a-typography-title :level="5" class="card-title">
-                        {{ plato.name }}
-                      </a-typography-title>
-                      <a-typography-paragraph type="secondary" class="card-description">
-                        {{ plato.description }}
-                      </a-typography-paragraph>
-                      <a-typography-title strong :level="5">
-                        Ingredientes:
-                      </a-typography-title>
-                      <div class="card-ingredients">
-                        <a-tag
-                          v-for="(ingrediente, indiceIngrediente) in plato.ingredients"
-                          :key="indiceIngrediente"
-                          class="ingredient-tag"
-                        >{{ ingrediente }}</a-tag>
+              <a-carousel :ref="el => { if (el) referenciasCarrusel[categoria.id] = el }" class="carruselMenu" :dots="false">
+                <div v-for="(grupo, indiceGrupo) in dividirEnGrupos(platosPorCategoria[categoria.id], tarjetasPorSlide)" :key="indiceGrupo">
+                  
+                  <a-flex gap="middle" align="stretch" :style="{ padding: '10px 5px 30px' }">
+                    <a-card
+                      v-for="(plato, indicePlato) in grupo"
+                      :key="indicePlato"
+                      hoverable
+                      :style="{ width: `${100 / tarjetasPorSlide}%`, display: 'flex', flexDirection: 'column' }"
+                      @click="seleccionarPlato(plato)"
+                    >
+                      <template #cover>
+                        <img :alt="plato.name" :src="'images/plates/' + plato.img_src" class="imagenTarjeta" />
+                      </template>
+                      
+                      <div class="cuerpoTarjeta" :style="{ flex: 1, display: 'flex', flexDirection: 'column' }">
+                        <a-typography-title :level="5" class="tituloTarjeta">
+                          {{ plato.name }}
+                        </a-typography-title>
+                        <a-typography-paragraph type="secondary" class="descripcionTarjeta">
+                          {{ plato.description }}
+                        </a-typography-paragraph>
+                        
+                        <div :style="{ marginTop: 'auto' }">
+                          <a-typography-text strong size="small">Ingredientes:</a-typography-text>
+                          <div class="ingredientesTarjeta">
+                            <a-tag v-for="ing in plato.ingredients" :key="ing" class="etiquetaIngrediente">{{ ing }}</a-tag>
+                          </div>
+                          <a-typography-text strong class="precioTarjeta">
+                            {{ plato.price }} €
+                          </a-typography-text>
+                        </div>
                       </div>
-                      <a-typography-text strong class="card-price">
-                        {{ plato.price }} €
-                      </a-typography-text>
-                    </div>
-                  </div>
+                    </a-card>
+                  </a-flex>
+
                 </div>
               </a-carousel>
 
-              <button class="carousel-arrow" @click="siguiente(categoria.id)">›</button>
+              <button class="flechaCarrusel" @click="siguiente(categoria.id)"><RightOutlined /></button>
             </div>
-
           </template>
         </div>
       </template>
@@ -199,198 +207,126 @@ onUnmounted(() => {
 </template>
 
 <style>
-.menuContainer {
+.contenedorMenu {
   padding: 100px 48px 80px;
   min-height: 100vh;
 }
 
-.menu-section {
+.seccionMenu {
   width: 100%;
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-.menu-section-line {
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(to right, var(--color-primary) 0%, transparent 100%);
-  opacity: 0.35;
-}
-
-.carousel-wrapper {
+.envoltorioCarrusel {
   display: flex;
   align-items: center;
   gap: 12px;
   width: 100%;
 }
 
-.menu-carousel {
+.carruselMenu {
   flex: 1;
   min-width: 0;
 }
 
-.carousel-slide {
-  display: flex !important;
-  gap: 20px;
-  padding: 4px 2px 24px;
-}
-
-.carousel-card {
-  flex: 1;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  background: transparent;
-  min-width: 0;
-}
-
-.carousel-arrow {
+.flechaCarrusel {
   flex-shrink: 0;
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  border: 1px solid var(--border-sutil);
-  background: var(--bg-card);
-  color: var(--text-primary);
+  border: 1px solid grey;
+  background: white;
   font-size: 1.6rem;
   line-height: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background 0.2s, border-color 0.2s;
-  padding: 0;
   margin-bottom: 20px;
 }
 
-.card-img-wrapper {
+.imagenTarjeta {
   width: 100%;
   height: 190px;
-  overflow: hidden;
-  background: var(--bg-secondary);
-  border-radius: 12px 12px 0 0;
-  flex-shrink: 0;
-  border: 1px solid var(--border-sutil);
-  border-bottom: none;
-  transition: border-color 0.25s, box-shadow 0.25s;
-}
-
-.card-img-wrapper img {
-  width: 100%;
-  height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform 0.4s ease;
 }
 
-.carousel-card:hover .card-img-wrapper img {
-  transform: scale(1.05);
-}
-
-.carousel-card:hover .card-img-wrapper {
-  border-color: var(--color-primary);
-  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.06);
-}
-
-.card-body {
+.cuerpoTarjeta {
   padding: 18px;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  background: #ffffff;
-  border: 1px solid var(--border-sutil);
-  border-top: none;
-  border-radius: 0 0 12px 12px;
+  background: var( #fff);
   flex: 1;
-  transition: border-color 0.25s, box-shadow 0.25s;
 }
 
-.carousel-card:hover .card-body {
-  border-color: var(--color-primary);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-}
-
-.card-title {
+.tituloTarjeta {
   margin: 0 !important;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  color: var(--text-primary) !important;
 }
 
-.card-description {
+.descripcionTarjeta {
   font-size: 0.83rem !important;
   margin: 0 !important;
   line-height: 1.45 !important;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
 }
 
-.card-ingredients {
+.ingredientesTarjeta {
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
 }
 
-.ingredient-tag {
+.etiquetaIngrediente {
   font-size: 0.72rem !important;
   border-radius: 999px !important;
-  background: var(--bg-secondary) !important;
-  color: var(--text-secondary) !important;
-  border-color: var(--border-sutil) !important;
   white-space: nowrap;
   margin: 0 !important;
 }
 
-.card-price {
+.precioTarjeta {
   font-size: 1.1rem !important;
-  color: var(--color-primary) !important;
   margin-top: 4px;
+  display: block;
 }
 
-.plate-card-container {
-  width: 100%;
+.seccionResenias {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
+  margin-top: 16px;
 }
 
-.reviews-section {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  margin-top: 8px;
-}
-
-.reviews-header {
-  margin-bottom: 4px;
-}
-
-.review-card {
-  padding: 16px 20px;
-  border: 1px solid var(--border-sutil);
-  border-radius: 12px;
+.tarjetaResenia {
   background: var(--bg-card, #fff);
+  border-radius: 0 12px 12px 0;
+  padding: 16px 20px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  transition: box-shadow 0.2s;
+  gap: 10px;
 }
 
-.review-card:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+.avatarResenia {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #FFF3E8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 500;
+
+  flex-shrink: 0;
 }
 
-.review-text {
-  margin: 0 !important;
-  color: var(--text-primary);
-  line-height: 1.6 !important;
-}
-
-.review-date {
-  font-size: 0.78rem !important;
+.divisorResenia {
+  border: none;
+  margin: 2px 0;
 }
 </style>
