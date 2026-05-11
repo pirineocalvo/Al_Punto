@@ -15,7 +15,12 @@ const route = useRoute();
 
 const menuActual = ref(null)
 const pantallaPeque = ref(window.innerWidth < 768);
-const actualizarTamano = () => { pantallaPeque.value = window.innerWidth < 768; };
+const actualizarTamano = () => {
+    pantallaPeque.value = window.innerWidth < 768;
+    if (!pantallaPeque.value) {
+        sidebarAbierto.value = false;
+    }
+};
 
 onMounted(() => window.addEventListener('resize', actualizarTamano));
 onUnmounted(() => window.removeEventListener('resize', actualizarTamano));
@@ -92,7 +97,9 @@ onMounted(async () => {
 
 const navegar = ({ key }) => {
     router.push(key);
-    cambiarEstadoSidebar();
+    if (pantallaPeque.value) {
+        cambiarEstadoSidebar();
+    }
 };
 </script>
 

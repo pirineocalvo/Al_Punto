@@ -19,31 +19,30 @@ const logout = () => router.push('/logout');
 </script>
 
 <template>
-    <a-layout-header class="contenedorHeader headerDashboard">
-        <a-row>
-            <a-col :lg="18">
-                <a-button v-if="pantallaPeque" type="text" class="botonMenuMovil" @click="cambiarEstadoSidebar">
-                    <MenuOutlined />
-                </a-button>
-                <a-typography-title :level="4" v-else style="margin: 0; color: #E8C9A0">
-                    Bienvenido, {{ user?.first_name || 'Invitado' }}
-                </a-typography-title>
+    <a-layout-header class="headerContainer headerDashboard">
+        <a-row type="flex" justify="space-between" align="middle" style="width: 100%;">
+
+            <a-col :flex="1">
+                <div class="headerLeft">
+                    <a-button v-if="pantallaPeque" type="text" class="mobileMenuButton" @click="cambiarEstadoSidebar">
+                        <MenuOutlined style="color: #E8C9A0;" />
+                    </a-button>
+
+                    <a-typography-title v-else :level="4" style="margin: 0; color: #E8C9A0;">
+                        Bienvenido, {{ user?.first_name || 'Invitado' }}
+                    </a-typography-title>
+                </div>
             </a-col>
 
-            <a-col :lg="6">
-                <a-row>
-                    <a-col v-if="!pantallaPeque">
-                        <a-tag color="gold" class="puntos-tag">
-                            <StarFilled /> {{ user?.points || 0 }} Puntos
-                        </a-tag>
-                    </a-col>
-                    <a-col>
+            <a-col>
+                <div class="headerRight">
                     <a-dropdown :trigger="['click']" placement="bottomRight">
-                        <div class="">
-                            <a-avatar style="background-color: #D97742; cursor: pointer;">
+                        <div class="avatarContainer">
+                            <a-avatar class="userAvatar">
                                 {{ user?.first_name?.charAt(0).toUpperCase() }}
                             </a-avatar>
                         </div>
+
                         <template #overlay>
                             <a-menu>
                                 <a-menu-item key="logout" danger @click="logout">
@@ -55,14 +54,45 @@ const logout = () => router.push('/logout');
                             </a-menu>
                         </template>
                     </a-dropdown>
-                    </a-col>
-                </a-row>
+                </div>
             </a-col>
+
         </a-row>
     </a-layout-header>
 </template>
+
 <style scoped>
 .headerDashboard {
     background-color: var(--color-menu-fondo);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+}
+
+.headerLeft {
+    display: flex;
+    align-items: center;
+}
+
+.headerRight {
+    display: flex;
+    align-items: center;
+}
+
+.avatarContainer {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.userAvatar {
+    background-color: #D97742;
+    border: 1px solid rgba(232, 201, 160, 0.3);
+}
+
+.mobileMenuButton {
+    padding: 0;
+    width: 32px;
+    height: 32px;
 }
 </style>

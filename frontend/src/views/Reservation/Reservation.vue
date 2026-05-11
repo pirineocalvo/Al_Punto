@@ -64,7 +64,9 @@ async function alCambiarOcupantes() {
             ...mesa,
             horasDisponibles: mesa.horasDisponibles.filter(h => !horasOcupadas.includes(h))
         };
-    }).filter(mesa => mesa.horasDisponibles.length > 0);
+    }).filter(mesa => mesa.horasDisponibles.length > 0)
+    console.log(mesasDia.value);
+    ;
 }
 
 function filtrarHorario() {
@@ -91,7 +93,7 @@ async function guardarReserva() {
     <a-layout class="reservasMain">
         <a-typography-title :level="2">Reservas</a-typography-title>
 
-        <a-row>
+        <a-row :gutter="[32,16]">
             <a-col :xs="24" :lg="16">
                 <a-card class="cardCalendario">
                     <a-calendar :model:value="fechasCalendario" @panelChange="onPanelChange" @select="onSelect"
@@ -117,7 +119,7 @@ async function guardarReserva() {
                             <a-select v-model:value="datosForm.mesa" placeholder="Selecciona una mesa"
                                 @change="filtrarHorario" size="large">
                                 <a-select-option v-for="mesa in mesasDia" :key="mesa.id" :value="mesa.id">
-                                    Mesa {{ mesa.numero }} — capacidad {{ mesa.capacidad }}
+                                    {{ mesa.name}}
                                 </a-select-option>
                             </a-select>
                         </a-form-item>
