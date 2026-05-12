@@ -3,10 +3,6 @@ const jwt = require('jsonwebtoken');
 
 const jwtKey = process.env.SHARED_JWT_SECRET || process.env.JWT_SECRET_KEY;
 
-/**
- * Verifica un token JWT emitido por el authService.
- * Devuelve el payload { id, email, nombre, apellido, ... } o null si inválido.
- */
 function verifyToken(token) {
     try {
         return jwt.verify(token, jwtKey);

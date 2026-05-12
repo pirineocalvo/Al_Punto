@@ -1,16 +1,2 @@
 node_modules
-
-# Variables de entorno
-#.env
-.env.local
-.env.*.local
-
-# SQLite (la BD vive en producción / local; el repo solo guarda seed.sql)
-#*.db
-#*.db-wal
-#*.db-shm
-#*.sqlite
-#*.sqlite3
-
-# Logs
-*.log
+db.db

@@ -1,7 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const { encrypt, decrypt, hashPassword, comparePassword } = require('../utils/crypto');
+const jwt = require('jsonwebtoken');
+const { verifyToken, hashPassword, comparePassword } = require('../utils/crypto');
 const db = require('../utils/db');
+
+const jwtKey = process.env.SHARED_JWT_SECRET || process.env.JWT_SECRET_KEY;
 
 function getTokenUserId(req, res) {
     const authHeader = req.headers['authorization'];
@@ -10,12 +13,12 @@ function getTokenUserId(req, res) {
         return null;
     }
     const token = authHeader.split(' ')[1];
-    const userId = decrypt(token);
-    if (!userId) {
+    const payload = verifyToken(token);
+    if (!payload) {
         res.status(401).json({ error: 'Token inválido' });
         return null;
     }
-    return userId;
+    return payload.id;
 }
 
 //Login
@@ -38,7 +41,12 @@ router.post('/login', (req, res) => {
         if (!isValid)
             return res.status(401).json({ error: 'Contraseña incorrecta' });
 
-        const token = encrypt(user.id);
+        const token = jwt.sign(
+            { id: user.id, email: user.email },
+            jwtKey,
+            { expiresIn: '7d' }
+        );
+
         const userInfo = {
             first_name: user.first_name,
             last_name: user.last_name,
@@ -135,7 +143,7 @@ router.get('/transactions', (req, res) => {
     });
 });
 
-//Get levels
+//GET levels
 router.get('/levels', (req, res) => {
     const query = 'SELECT id, name, min_points, max_points, hex_bkg, hex_text FROM Levels ORDER BY min_points ASC';
 
@@ -146,7 +154,7 @@ router.get('/levels', (req, res) => {
     });
 });
 
-//Put perfil
+//PUT perfil
 router.put('/perfil', (req, res) => {
     const userId = getTokenUserId(req, res);
     if (!userId) return;
@@ -167,7 +175,7 @@ router.put('/perfil', (req, res) => {
     );
 });
 
-//Put password
+//PUT password
 router.put('/password', (req, res) => {
     const userId = getTokenUserId(req, res);
     if (!userId) return;
@@ -201,7 +209,7 @@ router.put('/password', (req, res) => {
     });
 });
 
-//Post claim-birthday
+//POST claim-birthday
 router.post('/claim-birthday', (req, res) => {
     const userId = getTokenUserId(req, res);
     if (!userId) return;
