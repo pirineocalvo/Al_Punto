@@ -1,114 +1,241 @@
-const express=require('express');
-const router=express.Router();
-const{verifyToken}=require('../utils/crypto');
-const _d=require('../utils/db');
-const _m=(_q,_s,_n)=>{
-const _h=_q.headers.authorization;
-if(!_h||!_h.startsWith('Bearer '))return _s.status(401).json({error:'Token no proporcionado o formato inválido'});
-const _x=verifyToken(_h.split(' ')[1]);
-if(!_x)return _s.status(401).json({error:'Token inválido'});
-_q.user=_x;
-_n();
+const express = require('express');
+const router  = express.Router();
+const { decrypt } = require('../utils/crypto');
+const db          = require('../utils/db');
+
+//Middlewares
+function getTokenUserId(req, res) {
+    const authHeader = req.headers['authorization'];
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        res.status(401).json({ error: 'Token no proporcionado o formato inválido' });
+        return null;
+    }
+    const token  = authHeader.split(' ')[1];
+    const userId = decrypt(token);
+    if (!userId) {
+        res.status(401).json({ error: 'Token inválido' });
+        return null;
+    }
+    return userId;
+}
+
+const waiterMiddleware = (req, res, next) => {
+    const userId = getTokenUserId(req, res);
+    if (!userId) return;
+
+    req.userId = userId;
+
+    db.get('SELECT access_level FROM Users WHERE id = ?', [userId], (err, user) => {
+        if (err)
+            return res.status(500).json({ error: 'Error de base de datos' });
+        if (!user || user.access_level < 3)
+            return res.status(403).json({ error: 'Acceso denegado: se requiere nivel Camarero o superior' });
+        next();
+    });
 };
-const _w=(_q,_s,_n)=>{
-const _h=_q.headers.authorization;
-if(!_h||!_h.startsWith('Bearer '))return _s.status(401).json({error:'Token no proporcionado o formato inválido'});
-const _x=verifyToken(_h.split(' ')[1]);
-if(!_x)return _s.status(401).json({error:'Token inválido'});
-_q.user=_x;
-_d.get('SELECT id, access_level FROM Users WHERE auth_user_id = ?',[_x.id],(_e,_u)=>{
-if(_e)return _s.status(500).json({error:'Error de base de datos'});
-if(!_u||_u.access_level<3)return _s.status(403).json({error:'Acceso denegado: se requiere nivel Camarero o superior'});
-_q.localUserId=_u.id;
-_n();
+
+//GET /items
+
+router.get('/items', (req, res) => {
+    const userId = getTokenUserId(req, res);
+    if (!userId) return;
+
+    db.all(
+        `SELECT id FROM Levels
+         WHERE min_points <= (SELECT points FROM Wallet WHERE user_id = ?)
+           AND max_points >= (SELECT points FROM Wallet WHERE user_id = ?)`,
+        [userId, userId],
+        (err, levels) => {
+            if (err)
+                return res.status(500).json({ error: 'Error al consultar la base de datos' });
+            if (!levels || levels.length === 0)
+                return res.status(404).json({ error: 'Nivel no encontrado para el usuario' });
+
+            const levelId = levels[0].id;
+
+            db.all(
+                'SELECT * FROM Marketplace WHERE min_level_id <= ?',
+                [levelId],
+                (err, items) => {
+                    if (err)
+                        return res.status(500).json({ error: 'Error al consultar la base de datos' });
+                    res.json(items);
+                }
+            );
+        }
+    );
 });
-};
-const _g=(_a)=>new Promise((_y,_j)=>{
-_d.get('SELECT id FROM Users WHERE auth_user_id = ?',[_a],(_e,_r)=>{
-if(_e)return _j(_e);
-if(!_r)return _j(new Error('Usuario local no encontrado'));
-_y(_r.id);
+
+//GET /mypocket
+router.get('/mypocket', (req, res) => {
+    const userId = getTokenUserId(req, res);
+    if (!userId) return;
+
+    const query = `
+        SELECT p.id AS pocket_id, p.is_used, p.added_at, p.used_at, p.token_url,
+               m.id AS product_id, m.name, m.description, m.img_src, m.points_price
+        FROM Pocket p
+        INNER JOIN Marketplace m ON p.product_id = m.id
+        WHERE p.user_id = ?
+        ORDER BY p.is_used ASC, p.added_at DESC
+    `;
+
+    db.all(query, [userId], (err, rows) => {
+        if (err)
+            return res.status(500).json({ error: 'Error al consultar la base de datos' });
+        res.json(rows);
+    });
 });
+
+//POST /comprar/:id
+router.post('/comprar/:id', (req, res) => {
+    const userId = getTokenUserId(req, res);
+    if (!userId) return;
+
+    const { id: productId } = req.params;
+
+    db.all('SELECT points_price FROM Marketplace WHERE id = ?', [productId], (err, product) => {
+        if (err)
+            return res.status(500).json({ error: 'Error al consultar la base de datos' });
+
+        const pointsPrice = product[0].points_price;
+
+        db.all('SELECT id, points FROM Wallet WHERE user_id = ?', [userId], (err, walletRows) => {
+            if (err)
+                return res.status(500).json({ error: 'Error al consultar la base de datos' });
+
+            const walletPoints = walletRows[0].points;
+            const walletId     = walletRows[0].id;
+
+            if (walletPoints < pointsPrice)
+                return res.status(400).json({ error: 'No tienes suficientes puntos' });
+
+            db.run(
+                'UPDATE Wallet SET points = points - ? WHERE user_id = ?',
+                [pointsPrice, userId],
+                function (err) {
+                    if (err)
+                        return res.status(500).json({ error: 'Error al actualizar wallet' });
+
+                    const tokenUrl = `${userId}-${productId}-${Date.now()}`;
+
+                    db.run(
+                        'INSERT INTO Pocket (user_id, product_id, token_url) VALUES (?, ?, ?)',
+                        [userId, productId, tokenUrl],
+                        function (err) {
+                            if (err)
+                                return res.status(500).json({ error: 'Error al insertar en pocket' });
+
+                            db.run(
+                                `INSERT INTO Point_transactions (user_id, wallet_id, amount_transaction, type)
+                                 VALUES (?, ?, ?, ?)`,
+                                [userId, walletId, pointsPrice, 'buy market'],
+                                function (err) {
+                                    if (err)
+                                        return res.status(500).json({ error: 'Error al insertar en point_transactions' });
+                                    res.status(200).json({ message: 'Item comprado con exito' });
+                                }
+                            );
+                        }
+                    );
+                }
+            );
+        });
+    });
 });
-router.get('/items',_m,async(_q,_s)=>{
-try{
-const _u=await _g(_q.user.id);
-_d.all('SELECT id FROM Levels WHERE min_points <= (SELECT points FROM Wallet WHERE user_id = ?) AND max_points >= (SELECT points FROM Wallet WHERE user_id = ?)',[_u,_u],(_e,_r)=>{
-if(_e)return _s.status(500).json({error:'Error al consultar la base de datos'});
-if(!_r||_r.length===0)return _s.status(404).json({error:'Nivel no encontrado para el usuario'});
-const _l=_r[0].id;
-_d.all('SELECT * FROM Marketplace WHERE min_level_id <= ?',[_l],(_e,_mr)=>{
-if(_e)return _s.status(500).json({error:'Error al consultar la base de datos'});
-_s.json(_mr);
+
+//GET /pocket/:userId/use/:tokenUrl
+router.get('/pocket/:userId/use/:tokenUrl', waiterMiddleware, (req, res) => {
+    const { userId, tokenUrl } = req.params;
+    const tokenParts = tokenUrl.split('-');
+
+    if (tokenParts.length !== 3)
+        return res.status(400).json({ error: 'Formato de token inválido' });
+    if (tokenParts[0] !== String(userId))
+        return res.status(400).json({ error: 'El token no corresponde a este usuario' });
+
+    const query = `
+        SELECT
+            p.id AS pocket_id, p.is_used, p.used_at, p.expires_at, p.added_at,
+            m.id AS product_id, m.name AS product_name, m.description AS product_description, m.img_src,
+            u.id AS user_id, u.first_name, u.last_name, u.email
+        FROM Pocket p
+        INNER JOIN Marketplace m ON p.product_id = m.id
+        INNER JOIN Users u ON p.user_id = u.id
+        WHERE p.token_url = ? AND p.user_id = ?
+    `;
+
+    db.get(query, [tokenUrl, userId], (err, pocket) => {
+        if (err)
+            return res.status(500).json({ error: 'Error al consultar la base de datos' });
+        if (!pocket)
+            return res.status(404).json({ error: 'Token no encontrado' });
+        if (pocket.expires_at && new Date(pocket.expires_at) < new Date())
+            return res.status(410).json({
+                error:      'Token expirado',
+                expired:    true,
+                expires_at: pocket.expires_at,
+            });
+
+        res.json({
+            valid:        pocket.is_used === 0,
+            already_used: pocket.is_used === 1,
+            used_at:      pocket.used_at,
+            pocket_id:    pocket.pocket_id,
+            product: {
+                id:          pocket.product_id,
+                name:        pocket.product_name,
+                description: pocket.product_description,
+                img_src:     pocket.img_src,
+            },
+            user: {
+                id:         pocket.user_id,
+                first_name: pocket.first_name,
+                last_name:  pocket.last_name,
+                email:      pocket.email,
+            },
+        });
+    });
 });
+
+//POST /pocket/:userId/use/:tokenUrl
+router.post('/pocket/:userId/use/:tokenUrl', waiterMiddleware, (req, res) => {
+    const { userId, tokenUrl } = req.params;
+    const tokenParts = tokenUrl.split('-');
+
+    if (tokenParts.length !== 3)
+        return res.status(400).json({ error: 'Formato de token inválido' });
+    if (tokenParts[0] !== String(userId))
+        return res.status(400).json({ error: 'El token no corresponde a este usuario' });
+
+    db.get(
+        'SELECT id, is_used, expires_at FROM Pocket WHERE token_url = ? AND user_id = ?',
+        [tokenUrl, userId],
+        (err, pocket) => {
+            if (err)
+                return res.status(500).json({ error: 'Error al consultar la base de datos' });
+            if (!pocket)
+                return res.status(404).json({ error: 'Token no encontrado' });
+            if (pocket.is_used)
+                return res.status(409).json({ error: 'Este artículo ya fue canjeado' });
+            if (pocket.expires_at && new Date(pocket.expires_at) < new Date())
+                return res.status(410).json({ error: 'Token expirado' });
+
+            const usedAt = new Date().toISOString();
+
+            db.run(
+                'UPDATE Pocket SET is_used = 1, used_at = ? WHERE id = ? AND is_used = 0',
+                [usedAt, pocket.id],
+                function (err) {
+                    if (err)
+                        return res.status(500).json({ error: 'Error al canjear artículo' });
+                    if (this.changes === 0)
+                        return res.status(409).json({ error: 'Este artículo ya fue canjeado' });
+                    res.json({ message: 'Artículo canjeado con éxito', used_at: usedAt });
+                }
+            );
+        }
+    );
 });
-}catch(_e){_s.status(500).json({error:_e.message});}
-});
-router.get('/mypocket',_m,async(_q,_s)=>{
-try{
-const _u=await _g(_q.user.id);
-_d.all(`SELECT p.id as pocket_id, p.is_used, p.added_at, p.used_at, p.token_url, m.id as product_id, m.name, m.description, m.img_src, m.points_price FROM Pocket p INNER JOIN Marketplace m ON p.product_id = m.id WHERE p.user_id = ? ORDER BY p.is_used ASC, p.added_at DESC`,[_u],(_e,_r)=>{
-if(_e)return _s.status(500).json({error:'Error al consultar la base de datos'});
-_s.json(_r);
-});
-}catch(_e){_s.status(500).json({error:_e.message});}
-});
-router.post('/comprar/:id',_m,async(_q,_s)=>{
-try{
-const _u=await _g(_q.user.id);
-const{id}=_q.params;
-_d.all('SELECT points_price FROM Marketplace WHERE id = ?',[id],(_e,_r)=>{
-if(_e)return _s.status(500).json({error:'Error al consultar la base de datos'});
-const _p=_r[0].points_price;
-_d.all('SELECT id, points FROM Wallet WHERE user_id = ?',[_u],(_e,_r)=>{
-if(_e)return _s.status(500).json({error:'Error al consultar la base de datos'});
-const _pt=_r[0].points;
-const _wi=_r[0].id;
-if(_pt<_p)return _s.status(400).json({error:'No tienes suficientes puntos'});
-_d.run('UPDATE Wallet SET points = points - ? WHERE user_id = ?',[_p,_u],function(_e){
-if(_e)return _s.status(500).json({error:'Error al actualizar wallet'});
-const _tk=_u+'-'+id+'-'+Date.now();
-_d.run('INSERT INTO Pocket (user_id, product_id, token_url) VALUES (?,?, ?)',[_u,id,_tk],function(_e){
-if(_e)return _s.status(500).json({error:'Error al insertar en pocket'});
-_d.run('INSERT INTO Point_transactions (user_id, wallet_id, amount_transaction, type) VALUES (?,?, ?, ?)',[_u,_wi,_p,'buy market'],function(_e){
-if(_e)return _s.status(500).json({error:'Error al insertar en point_transactions'});
-_s.status(200).json({message:'Item comprado con exito'});
-});
-});
-});
-});
-});
-}catch(_e){_s.status(500).json({error:_e.message});}
-});
-router.get('/pocket/:userId/use/:tokenUrl',_w,(_q,_s)=>{
-const{userId,tokenUrl}=_q.params;
-const _pa=tokenUrl.split('-');
-if(_pa.length!==3)return _s.status(400).json({error:'Formato de token inválido'});
-if(_pa[0]!==String(userId))return _s.status(400).json({error:'El token no corresponde a este usuario'});
-const _sq=`SELECT p.id as pocket_id, p.is_used, p.used_at, p.expires_at, p.added_at, m.id as product_id, m.name as product_name, m.description as product_description, m.img_src, u.id as user_id, u.first_name, u.last_name, u.email FROM Pocket p INNER JOIN Marketplace m ON p.product_id = m.id INNER JOIN Users u ON p.user_id = u.id WHERE p.token_url = ? AND p.user_id = ?`;
-_d.get(_sq,[tokenUrl,userId],(_e,_r)=>{
-if(_e)return _s.status(500).json({error:'Error al consultar la base de datos'});
-if(!_r)return _s.status(404).json({error:'Token no encontrado'});
-if(_r.expires_at&&new Date(_r.expires_at)<new Date())return _s.status(410).json({error:'Token expirado',expired:true});
-_s.json({valid:_r.is_used===0,already_used:_r.is_used===1,used_at:_r.used_at,pocket_id:_r.pocket_id,product:{id:_r.product_id,name:_r.product_name,description:_r.product_description,img_src:_r.img_src},user:{id:_r.user_id,first_name:_r.first_name,last_name:_r.last_name,email:_r.email}});
-});
-});
-router.post('/pocket/:userId/use/:tokenUrl',_w,(_q,_s)=>{
-const{userId,tokenUrl}=_q.params;
-const _pa=tokenUrl.split('-');
-if(_pa.length!==3)return _s.status(400).json({error:'Formato de token inválido'});
-if(_pa[0]!==String(userId))return _s.status(400).json({error:'El token no corresponde a este usuario'});
-_d.get('SELECT id, is_used, expires_at FROM Pocket WHERE token_url = ? AND user_id = ?',[tokenUrl,userId],(_e,_p)=>{
-if(_e)return _s.status(500).json({error:'Error al consultar la base de datos'});
-if(!_p)return _s.status(404).json({error:'Token no encontrado'});
-if(_p.is_used)return _s.status(409).json({error:'Este artículo ya fue canjeado'});
-if(_p.expires_at&&new Date(_p.expires_at)<new Date())return _s.status(410).json({error:'Token expirado'});
-const _n=new Date().toISOString();
-_d.run('UPDATE Pocket SET is_used = 1, used_at = ? WHERE id = ? AND is_used = 0',[_n,_p.id],function(_e){
-if(_e)return _s.status(500).json({error:'Error al canjear artículo'});
-if(this.changes===0)return _s.status(409).json({error:'Este artículo ya fue canjeado'});
-_s.json({message:'Artículo canjeado con éxito',used_at:_n});
-});
-});
-});
-module.exports=router;
+
+module.exports = router;
