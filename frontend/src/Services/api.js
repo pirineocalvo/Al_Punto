@@ -222,6 +222,46 @@ export const todasLasReservas = async () => {
   }
 };
 
+// Obtener TODAS las reservas (para el panel de staff/admin)
+export const obtenerTodasLasReservasAdmin = async () => {
+  try {
+    const token = getAuthToken();
+    const config = {
+      headers: { authorization: `Bearer ${token}` },
+    };
+    const response = await axios.get(`${API_URL}/api/reservas/admin/allReserve`, config);
+    return response.data;
+  } catch (error) {
+    if (error.response?.status === 401) {
+      logoutUser();
+    }
+    console.error('Error al obtener todas las reservas:', error);
+    throw error;
+  }
+};
+
+// Actualizar el estado de una reserva (confirmed | cancel)
+export const actualizarEstadoReservaAdmin = async (id, status) => {
+  try {
+    const token = getAuthToken();
+    const config = {
+      headers: { authorization: `Bearer ${token}` },
+    };
+    const response = await axios.patch(
+      `${API_URL}/api/reservas/admin/${id}/status`,
+      { status },
+      config
+    );
+    return response.data;
+  } catch (error) {
+    if (error.response?.status === 401) {
+      logoutUser();
+    }
+    console.error('Error al actualizar estado de reserva:', error);
+    throw error;
+  }
+};
+
 /*
 ################# MESAS ENDPOINTS ########################
 */

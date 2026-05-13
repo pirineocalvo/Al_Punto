@@ -29,7 +29,7 @@ router.post('/', (req, res) => {
 
                 db.run(
                     `INSERT INTO Point_transactions (user_id, wallet_id, amount_transaction, type)
-                     VALUES (?, ?, ?, 'add resenia')`,
+                    VALUES (?, ?, ?, 'add resenia')`,
                     [userId, walletId, REVIEW_POINTS],
                     (err) => {
                         if (err) console.error(err);
