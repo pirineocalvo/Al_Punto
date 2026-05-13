@@ -1,26 +1,11 @@
 const express = require('express');
 const router  = express.Router();
-const { decrypt } = require('../utils/crypto');
+const { getUserIdFromToken } = require('../utils/crypto');
 const db          = require('../utils/db');
-
-function getTokenUserId(req, res) {
-    const authHeader = req.headers['authorization'];
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        res.status(401).json({ error: 'Token no proporcionado o formato inválido' });
-        return null;
-    }
-    const token  = authHeader.split(' ')[1];
-    const userId = decrypt(token);
-    if (!userId) {
-        res.status(401).json({ error: 'Token inválido' });
-        return null;
-    }
-    return userId;
-}
 
 //Post reseña
 router.post('/', (req, res) => {
-    const userId = getTokenUserId(req, res);
+    const userId = getUserIdFromToken(req, res);
     if (!userId) return;
 
     const { id_plato, descripcion, puntuacion } = req.body;
@@ -70,7 +55,7 @@ router.post('/', (req, res) => {
 
 //GET /my-reviews
 router.get('/my-reviews', (req, res) => {
-    const userId = getTokenUserId(req, res);
+    const userId = getUserIdFromToken(req, res);
     if (!userId) return;
 
     const query = `

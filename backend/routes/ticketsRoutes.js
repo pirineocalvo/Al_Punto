@@ -4,7 +4,7 @@ const multer   = require('multer');
 const path     = require('path');
 const fs       = require('fs');
 const Tesseract = require('tesseract.js');
-const { decrypt }             = require('../utils/crypto');
+const { verifyToken, getUserIdFromToken } = require('../utils/crypto');
 const db                      = require('../utils/db.js');
 const { createNotification }  = require('../utils/notifications');
 
@@ -19,9 +19,10 @@ const storage = multer.diskStorage({
     },
     filename: (req, file, cb) => {
         try {
-            const token  = req.headers['authorization'];
-            const userId = decrypt(token?.split(' ')[1]);
-            const now    = new Date();
+            const token   = req.headers['authorization'];
+            const payload = verifyToken(token?.split(' ')[1]);
+            const userId  = payload?.id ?? payload?.userId ?? payload?.sub;
+            const now     = new Date();
 
             const yyyy = now.getFullYear();
             const MM   = String(now.getMonth() + 1).padStart(2, '0');
@@ -63,24 +64,9 @@ function calcularPuntos(text) {
     return match ? parseFloat(match[1]) * 100 : 0;
 }
 
-function getTokenUserId(req, res) {
-    const authHeader = req.headers['authorization'];
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        res.status(401).json({ error: 'Token no proporcionado o formato inválido' });
-        return null;
-    }
-    const token  = authHeader.split(' ')[1];
-    const userId = decrypt(token);
-    if (!userId) {
-        res.status(401).json({ error: 'Token inválido' });
-        return null;
-    }
-    return userId;
-}
-
 //Post Upload
 router.post('/upload', upload.single('imagen'), async (req, res) => {
-    const userId = getTokenUserId(req, res);
+    const userId = getUserIdFromToken(req, res);
     if (!userId) return;
 
     if (!req.file)
@@ -127,7 +113,6 @@ router.post('/upload', upload.single('imagen'), async (req, res) => {
                                     if (err)
                                         return res.status(500).json({ error: 'Error al insertar ticket history' });
 
-                                    // Notificación de puntos ganados
                                     if (ticketData.points > 0) {
                                         createNotification(
                                             ticketData.userId,
@@ -136,7 +121,6 @@ router.post('/upload', upload.single('imagen'), async (req, res) => {
                                         );
                                     }
 
-                                    // Notificación de subida de nivel
                                     db.all(
                                         'SELECT name, min_points, max_points FROM Levels ORDER BY min_points ASC',
                                         [],
@@ -179,7 +163,7 @@ router.post('/upload', upload.single('imagen'), async (req, res) => {
 
 //Get tickets
 router.get('/mytickets', async (req, res) => {
-    const userId = getTokenUserId(req, res);
+    const userId = getUserIdFromToken(req, res);
     if (!userId) return;
 
     try {

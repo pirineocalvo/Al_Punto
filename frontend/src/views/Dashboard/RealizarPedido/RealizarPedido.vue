@@ -135,12 +135,10 @@ async function guardarCarrito() {
 </script>
 
 <template>
-
     <a-layout class="dashboardMainLayout">
         <HeaderDashboard :user="user" />
         <a-layout>
             <Sidebar></Sidebar>
-
 
             <a-row class="colocarContenedorPrincipalDashBoard">
 
@@ -170,10 +168,11 @@ async function guardarCarrito() {
                                                     </a-tag>
                                                 </a-space>
 
-                                                <a-typography-paragraph :ellipsis="{ rows: 1 }"
-                                                    class="productoDescription">
-                                                    {{ producto.description }}
-                                                </a-typography-paragraph>
+                                                <a-typography-paragraph
+                                                    :ellipsis="{ rows: 1 }"
+                                                    :content="producto.description"
+                                                    class="productoDescription"
+                                                />
 
                                                 <a-typography-text type="secondary" class="productoSecondary">
                                                     {{ producto.ingredients }}
@@ -194,7 +193,6 @@ async function guardarCarrito() {
                                 </a-col>
                             </a-row>
                         </a-col>
-
                     </a-row>
                 </a-col>
 
@@ -263,6 +261,7 @@ async function guardarCarrito() {
     </a-layout>
     <Footer></Footer>
 </template>
+
 <style scoped>
 .totalPedido {
     display: flex;
@@ -379,7 +378,6 @@ async function guardarCarrito() {
     }
 
     .detallePedido {
-
         justify-content: center;
         gap: 5px;
     }

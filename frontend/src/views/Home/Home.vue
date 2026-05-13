@@ -52,7 +52,7 @@ function irAReservas() {
         <a-col class="colTarjeta">
           <a-card class="tarjeta" hoverable>
             <div class="imagenTarjeta">
-              <img src="/images/huevosRotos.png" />
+              <img src="../../../public/images/huevosRotos.png" />
             </div>
             <div class="infoTarjeta">
               <h2>Huevos rotos</h2>
@@ -64,7 +64,7 @@ function irAReservas() {
         <a-col class="colTarjeta">
           <a-card class="tarjeta" hoverable>
             <div class="imagenTarjeta">
-              <img src="/images/espagueti.png" />
+              <img src="../../../public/images/espagueti.png" />
             </div>
             <div class="infoTarjeta">
               <h2>Pasta a la boloñesa</h2>
@@ -76,7 +76,7 @@ function irAReservas() {
         <a-col class="colTarjeta">
           <a-card class="tarjeta" hoverable>
             <div class="imagenTarjeta">
-              <img src="/images/tartaQueso.png" />
+              <img src="../../../public/images/tartaQueso.png" />
             </div>
             <div class="infoTarjeta">
               <h2>Tarta de queso</h2>

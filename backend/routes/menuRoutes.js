@@ -1,6 +1,6 @@
 const express = require('express');
 const router  = express.Router();
-const { decrypt } = require('../utils/crypto');
+const { verifyToken } = require('../utils/crypto');
 const db          = require('../utils/db');
 
 //GET / 

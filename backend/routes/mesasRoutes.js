@@ -1,6 +1,6 @@
 const express = require('express');
 const router  = express.Router();
-const { decrypt } = require('../utils/crypto');
+const { getUserIdFromToken } = require('../utils/crypto');
 const db          = require('../utils/db');
 
 //Constantes
@@ -20,15 +20,8 @@ const HORARIOS = [
 
 //Middlewares
 const authMiddleware = (req, res, next) => {
-    const authHeader = req.headers['authorization'];
-    if (!authHeader || !authHeader.startsWith('Bearer '))
-        return res.status(401).json({ error: 'Token no proporcionado o formato inválido' });
-
-    const token  = authHeader.split(' ')[1];
-    const userId = decrypt(token);
-    if (!userId)
-        return res.status(401).json({ error: 'Token inválido' });
-
+    const userId = getUserIdFromToken(req, res);
+    if (!userId) return;
     req.userId = userId;
     next();
 };
@@ -37,7 +30,7 @@ const adminMiddleware = (req, res, next) => {
     db.get('SELECT access_level FROM Users WHERE id = ?', [req.userId], (err, user) => {
         if (err)
             return res.status(500).json({ error: 'Error de base de datos' });
-        if (!user || user.access_level <= 3)
+        if (!user || user.access_level != 5)
             return res.status(403).json({ error: 'Acceso denegado: se requiere nivel Staff/Admin' });
         next();
     });
@@ -69,18 +62,16 @@ router.get('/disponibilidad-mes', authMiddleware, (req, res) => {
             if (err)
                 return res.status(500).json({ error: 'Error al consultar las reservas' });
 
-            // Construir mapa: { fecha: { idMesa: [horas ocupadas] } }
             const ocupacion = {};
             for (const reserva of reservas) {
                 const { reserve_date: fecha, id_mesa, reserve_hour: hora } = reserva;
                 if (!HORARIOS.includes(hora)) continue;
-                if (!ocupacion[fecha])         ocupacion[fecha] = {};
+                if (!ocupacion[fecha])          ocupacion[fecha] = {};
                 if (!ocupacion[fecha][id_mesa]) ocupacion[fecha][id_mesa] = [];
                 if (!ocupacion[fecha][id_mesa].includes(hora))
                     ocupacion[fecha][id_mesa].push(hora);
             }
 
-            // Para cada día, indicar si todas las mesas están llenas en todos los horarios
             const mesaIds = mesas.map(m => m.id);
             const disponibilidad = {};
             for (const fecha of Object.keys(ocupacion)) {
@@ -127,7 +118,6 @@ router.get('/disponibilidad-dia', authMiddleware, (req, res) => {
             if (err)
                 return res.status(500).json({ error: 'Error al consultar las reservas' });
 
-            // Construir mapa: { idMesa: [horas ocupadas] }
             const horasOcupadas = {};
             for (const reserva of reservas) {
                 if (!HORARIOS.includes(reserva.reserve_hour)) continue;
@@ -161,7 +151,7 @@ router.post('/reservar', authMiddleware, (req, res) => {
         'SELECT id, reserve_date, reserve_hour FROM Reservations WHERE id = ? AND user_id = ?',
         [idReserva, req.userId],
         (err, reserva) => {
-            if (err)  return res.status(500).json({ error: 'Error de base de datos' });
+            if (err)      return res.status(500).json({ error: 'Error de base de datos' });
             if (!reserva) return res.status(404).json({ error: 'Reserva no encontrada o no pertenece al usuario' });
 
             db.get(

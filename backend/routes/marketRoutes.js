@@ -1,6 +1,6 @@
 const express = require('express');
 const router  = express.Router();
-const { decrypt } = require('../utils/crypto');
+const { verifyToken } = require('../utils/crypto');
 const db          = require('../utils/db');
 
 //Middlewares
@@ -10,13 +10,13 @@ function getTokenUserId(req, res) {
         res.status(401).json({ error: 'Token no proporcionado o formato inválido' });
         return null;
     }
-    const token  = authHeader.split(' ')[1];
-    const userId = decrypt(token);
-    if (!userId) {
+    const token   = authHeader.split(' ')[1];
+    const payload = verifyToken(token);
+    if (!payload) {
         res.status(401).json({ error: 'Token inválido' });
         return null;
     }
-    return userId;
+    return payload.id ?? payload.userId ?? payload.sub; 
 }
 
 const waiterMiddleware = (req, res, next) => {

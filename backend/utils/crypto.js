@@ -19,4 +19,19 @@ function comparePassword(password, hash) {
     return bcrypt.compareSync(password, hash);
 }
 
-module.exports = { verifyToken, hashPassword, comparePassword };
+function getUserIdFromToken(req, res) {
+    const authHeader = req.headers['authorization'];
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        if (res) res.status(401).json({ error: 'Token no proporcionado o formato inválido' });
+        return null;
+    }
+    const token   = authHeader.split(' ')[1];
+    const payload = verifyToken(token);
+    if (!payload) {
+        if (res) res.status(401).json({ error: 'Token inválido' });
+        return null;
+    }
+    return payload.id ?? payload.userId ?? payload.sub;
+}
+
+module.exports = { verifyToken, hashPassword, comparePassword, getUserIdFromToken };

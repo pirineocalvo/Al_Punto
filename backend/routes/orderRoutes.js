@@ -1,20 +1,13 @@
 const express = require('express');
 const router  = express.Router();
-const { decrypt }            = require('../utils/crypto');
-const db                     = require('../utils/db');
-const { createNotification } = require('../utils/notifications');
+const { getUserIdFromToken }     = require('../utils/crypto');
+const db                         = require('../utils/db');
+const { createNotification }     = require('../utils/notifications');
 
 //Middlewares
 const authMiddleware = (req, res, next) => {
-    const authHeader = req.headers['authorization'];
-    if (!authHeader || !authHeader.startsWith('Bearer '))
-        return res.status(401).json({ error: 'Token no proporcionado o formato inválido' });
-
-    const token  = authHeader.split(' ')[1];
-    const userId = decrypt(token);
-    if (!userId)
-        return res.status(401).json({ error: 'Token inválido' });
-
+    const userId = getUserIdFromToken(req, res);
+    if (!userId) return;
     req.userId = userId;
     next();
 };
@@ -29,16 +22,10 @@ const adminMiddleware = (req, res, next) => {
     });
 };
 
-//POST /create 
+//POST /create
 router.post('/create', (req, res) => {
-    const authHeader = req.headers['authorization'];
-    if (!authHeader || !authHeader.startsWith('Bearer '))
-        return res.status(401).json({ error: 'Token no proporcionado o formato inválido' });
-
-    const token  = authHeader.split(' ')[1];
-    const userId = decrypt(token);
-    if (!userId)
-        return res.status(401).json({ error: 'Token inválido' });
+    const userId = getUserIdFromToken(req, res);
+    if (!userId) return;
 
     const { items, total_price } = req.body;
 
@@ -46,8 +33,7 @@ router.post('/create', (req, res) => {
         return res.status(400).json({ error: 'No hay items en el pedido' });
 
     db.run(
-        `INSERT INTO Orders (user_id, total_price, status, is_picked_up)
-         VALUES (?, ?, ?, ?)`,
+        'INSERT INTO Orders (user_id, total_price, status, is_picked_up) VALUES (?, ?, ?, ?)',
         [userId, total_price, 'pendiente', 0],
         function (err) {
             if (err) {
@@ -57,16 +43,13 @@ router.post('/create', (req, res) => {
 
             const orderId = this.lastID;
 
-            // Insertar los items de forma recursiva (preserva el orden y el control de errores)
             function insertItem(index) {
                 if (index >= items.length)
                     return res.json({ message: 'Pedido creado correctamente', orderId });
 
                 const item = items[index];
-
                 db.run(
-                    `INSERT INTO Order_items (order_id, product_id, quantity, price_at_time)
-                     VALUES (?, ?, ?, ?)`,
+                    'INSERT INTO Order_items (order_id, product_id, quantity, price_at_time) VALUES (?, ?, ?, ?)',
                     [orderId, item.product_id, item.quantity, item.price_at_time],
                     (err) => {
                         if (err) {
@@ -84,20 +67,14 @@ router.post('/create', (req, res) => {
 });
 
 //GET /mis-pedidos
-
 router.get('/mis-pedidos', (req, res) => {
-    const authHeader = req.headers['authorization'];
-    if (!authHeader || !authHeader.startsWith('Bearer '))
-        return res.status(401).json({ error: 'Token no proporcionado o formato inválido' });
-
-    const token  = authHeader.split(' ')[1];
-    const userId = decrypt(token);
-    if (!userId)
-        return res.status(401).json({ error: 'Token inválido' });
+    const userId = getUserIdFromToken(req, res);
+    if (!userId) return;
 
     const query = `
         SELECT Orders.id, Orders.total_price, Orders.status, Orders.created_at, Orders.is_picked_up,
                Order_items.id AS item_id, Order_items.quantity, Order_items.price_at_time,
+               Order_items.product_id,
                Menu.name AS product_name, Menu.img_src
         FROM Orders
         LEFT JOIN Order_items ON Orders.id = Order_items.order_id
@@ -126,11 +103,12 @@ router.get('/mis-pedidos', (req, res) => {
             }
             if (row.item_id) {
                 ordersMap[row.id].items.push({
-                    id:             row.item_id,
-                    quantity:       row.quantity,
-                    price_at_time:  row.price_at_time,
-                    product_name:   row.product_name,
-                    img_src:        row.img_src,
+                    id:            row.item_id,
+                    product_id:    row.product_id,
+                    quantity:      row.quantity,
+                    price_at_time: row.price_at_time,
+                    product_name:  row.product_name,
+                    img_src:       row.img_src,
                 });
             }
         });
@@ -139,22 +117,15 @@ router.get('/mis-pedidos', (req, res) => {
     });
 });
 
-//DELETE /cancelar/:id 
+//DELETE /cancelar/:id
 router.delete('/cancelar/:id', (req, res) => {
-    const authHeader = req.headers['authorization'];
-    if (!authHeader || !authHeader.startsWith('Bearer '))
-        return res.status(401).json({ error: 'Token no proporcionado o formato inválido' });
-
-    const token  = authHeader.split(' ')[1];
-    const userId = decrypt(token);
-    if (!userId)
-        return res.status(401).json({ error: 'Token inválido' });
+    const userId = getUserIdFromToken(req, res);
+    if (!userId) return;
 
     const { id } = req.params;
 
     db.run(
-        `UPDATE Orders SET status = "cancelado"
-         WHERE id = ? AND user_id = ? AND status = "pendiente"`,
+        'UPDATE Orders SET status = "cancelado" WHERE id = ? AND user_id = ? AND status = "pendiente"',
         [id, userId],
         function (err) {
             if (err) {
@@ -218,8 +189,8 @@ router.get('/admin/todos', authMiddleware, adminMiddleware, (req, res) => {
 
 //PATCH /admin/:id/status
 router.patch('/admin/:id/status', authMiddleware, adminMiddleware, (req, res) => {
-    const { id }                    = req.params;
-    const { status, is_picked_up }  = req.body;
+    const { id }                   = req.params;
+    const { status, is_picked_up } = req.body;
 
     db.get('SELECT user_id FROM Orders WHERE id = ?', [id], (err, order) => {
         if (err || !order)
@@ -235,9 +206,9 @@ router.patch('/admin/:id/status', authMiddleware, adminMiddleware, (req, res) =>
                     return res.status(404).json({ error: 'Pedido no encontrado' });
 
                 if (status === 'listo')
-                    createNotification(order.user_id, `🛎️ Tu pedido #${id} está listo para recoger`, 'order');
+                    createNotification(order.user_id, `Tu pedido #${id} está listo para recoger`, 'order');
                 else if (status === 'entregado')
-                    createNotification(order.user_id, `✅ Tu pedido #${id} ha sido entregado. ¡Gracias!`, 'order');
+                    createNotification(order.user_id, `Tu pedido #${id} ha sido entregado. ¡Gracias!`, 'order');
 
                 res.json({ message: 'Pedido actualizado correctamente' });
             }

@@ -1,27 +1,11 @@
 const express = require('express');
 const router  = express.Router();
-const { decrypt } = require('../utils/crypto');
+const { getUserIdFromToken } = require('../utils/crypto');
 const db          = require('../utils/db');
-
-
-function getTokenUserId(req, res) {
-    const authHeader = req.headers['authorization'];
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        res.status(401).json({ error: 'Token no proporcionado o formato inválido' });
-        return null;
-    }
-    const token  = authHeader.split(' ')[1];
-    const userId = decrypt(token);
-    if (!userId) {
-        res.status(401).json({ error: 'Token inválido' });
-        return null;
-    }
-    return userId;
-}
 
 //Post addReserve
 router.post('/addreserve', (req, res) => {
-    const userId = getTokenUserId(req, res);
+    const userId = getUserIdFromToken(req, res);
     if (!userId) return;
 
     const { fecha, hora, comensales } = req.body;
@@ -42,7 +26,7 @@ router.post('/addreserve', (req, res) => {
 
 //Get userReserve
 router.get('/userReserve', (req, res) => {
-    const userId = getTokenUserId(req, res);
+    const userId = getUserIdFromToken(req, res);
     if (!userId) return;
 
     const query = `
@@ -61,9 +45,9 @@ router.get('/userReserve', (req, res) => {
     });
 });
 
-//DELETE /cancelar/:id 
+//DELETE /cancelar/:id
 router.delete('/cancelar/:id', (req, res) => {
-    const userId = getTokenUserId(req, res);
+    const userId = getUserIdFromToken(req, res);
     if (!userId) return;
 
     const { id } = req.params;
