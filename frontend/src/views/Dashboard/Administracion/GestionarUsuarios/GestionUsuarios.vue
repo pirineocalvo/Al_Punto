@@ -1,8 +1,9 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
+import { CalendarOutlined, ClockCircleOutlined, TeamOutlined, NumberOutlined } from '@ant-design/icons-vue';
 import { useRouter } from 'vue-router';
-import { usarProductoMarket, userInfo, getTodosLosPedidosAdmin, updateOrderStatus, cancelarPedido } from '../../../../Services/api';
-import { message } from 'ant-design-vue';
+import { usarProductoMarket, userInfo, getTodosLosPedidosAdmin, updateOrderStatus, cancelarPedido, actualizarEstadoReservaAdmin, obtenerTodasLasReservasAdmin } from '../../../../Services/api';
+import { notification } from 'ant-design-vue';
 import HeaderDashboard from '@/Components/componenteDashboard/HeaderDashboard.vue';
 import Footer from '@/Components/cabeceraYpiePrincipal/Footer.vue';
 import Sidebar from '../../../../Components/componenteDashboard/Sidebar.vue';
@@ -11,10 +12,11 @@ const router = useRouter();
 const user = ref(null);
 const collapsed = ref(false);
 
-const tabActiva = ref('pedidos');
+const tabActiva = ref('reservas');
 const tokenInput = ref('');
 const loadingMarket = ref(false);
 const listaPedidos = ref([]);
+const listaReservas = ref([]);
 
 const autorizado = ref(false);
 
@@ -35,6 +37,7 @@ onMounted(async function () {
 
         autorizado.value = true;
         await cargarPedidos();
+        await cargarReservas();
     } catch (err) {
         router.push('/login');
     }
@@ -44,23 +47,48 @@ async function cargarPedidos() {
     try {
         const res = await getTodosLosPedidosAdmin();
         listaPedidos.value = res;
+        console.log(listaPedidos.value);
+        
     } catch (err) {
         console.error('Error al cargar pedidos');
     }
 }
 
+async function cargarReservas() {
+    try {
+        const res = await obtenerTodasLasReservasAdmin();
+        listaReservas.value = res;
+
+    } catch (err) {
+        console.error('Error al cargar las reservas');
+    }
+}
+
+
 async function cangearProductoMarket() {
     if (!tokenInput.value.trim()) {
-        return message.warning('Introduce un código');
+        return notification.warning({
+            message: '¡Advertencia!',
+            description: 'Introduce un código valido.',
+            placement: 'topRight'
+        });
     }
     loadingMarket.value = true;
     try {
         const [userId] = tokenInput.value.split('-');
         await usarProductoMarket(userId, tokenInput.value.trim());
-        message.success('Canje realizado');
+        notification.success({
+            message: 'Cangeo de producto marketplace',
+            description: 'El producto '+tokenInput.value.trim()+' fue cangeado.',
+            placement: 'topRight'
+        });
         tokenInput.value = '';
     } catch (err) {
-        message.error('Error al validar');
+        notification.error({
+            message: 'Cangeo de producto marketplace',
+            description: 'El producto '+tokenInput.value.trim()+' no pudo ser canjeado, le recomendamos que revise si fue bien escrito o si ya fue canjeado.',
+            placement: 'topRight'
+        });
     } finally {
         loadingMarket.value = false;
     }
@@ -81,22 +109,61 @@ const pedidosListos = computed(function () {
 async function cambiarEstado(id, estado, recogido = false) {
     try {
         await updateOrderStatus(id, estado, recogido);
-        message.success(`Pedido #${id} actualizado`);
+        notification.success({
+            message: 'Pedido actualizado',
+            description: `Pedido #${id} actualizado correctamente.`,
+            placement: 'topRight'
+        });
         await cargarPedidos();
     } catch (err) {
-        message.error('Error de actualización');
+        notification.error({
+            message: 'Error de actualización',
+            description: `No se pudo actualizar el pedido #${id}.`,
+            placement: 'topRight'
+        });
+    }
+}
+
+async function actualizarReserva(id, estado) {
+    try {
+        await actualizarEstadoReservaAdmin(id, estado);
+        await cargarReservas();
+        notification.success({
+            message: 'Reserva actualizada',
+            description: `Reserva #${id} actualizada correctamente.`,
+            placement: 'topRight'
+        });
+    } catch (error) {
+        notification.error({
+            message: 'Error de actualización',
+            description: `No se pudo actualizar la reserva #${id}.`,
+            placement: 'topRight'
+        });
     }
 }
 
 async function cancelarPedioRealizado(id) {
     try {
         await cancelarPedido(id);
-        message.success(`Pedido #${id} cancelado`);
+        notification.success({
+            message: 'Pedido cancelado',
+            description: `Pedido #${id} cancelado correctamente.`,
+            placement: 'topRight'
+        });
         await cargarPedidos();
     } catch (err) {
-        message.error('Error de actualización');
+        notification.error({
+            message: 'Error de cancelación',
+            description: `No se pudo cancelar el pedido #${id}.`,
+            placement: 'topRight'
+        });
     }
 }
+
+const formatearFecha = (fechaStr) => {
+    const opciones = { weekday: 'long', day: 'numeric', month: 'long' };
+    return new Date(fechaStr).toLocaleDateString('es-ES', opciones);
+};
 </script>
 
 <template>
@@ -108,7 +175,75 @@ async function cancelarPedioRealizado(id) {
 
             <template v-if="autorizado">
                 <a-tabs v-model:activeKey="tabActiva" class="colocarContenedorPrincipalDashBoard">
+                    <a-tab-pane key="reservas" tab="Gestionar Reservas">
+                        <a-row :gutter="[10, 24]" justify="space-around">
+                            <a-col :xl="11":lg="16" :md="20" :xs="24" v-for="reserva in listaReservas.reservations" :key="reserva.id" size="small">
+                                <a-card class="card-reserva">
+                                    <template #title>
+                                        <div class="header-reserva">
+                                            <a-avatar :style="{ backgroundColor: '#D97742' }">
+                                                {{ reserva.user_name.charAt(0) }}
+                                            </a-avatar>
+                                            <div class="info-header">
+                                                <span class="nombre-cliente">{{ reserva.user_name }}</span>
+                                                <span class="email-cliente">{{ reserva.user_email }}</span>
+                                            </div>
+                                        </div>
+                                    </template>
 
+                                    <template #extra>
+                                        <a-tag :color="reserva.attended ? 'green' : 'blue'">
+                                            {{ reserva.attended ? 'ATENDIDO' : 'PENDIENTE' }}
+                                        </a-tag>
+                                    </template>
+
+                                    <div class="cuerpo-reserva">
+                                        <a-row>
+                                            <a-col :span="12">
+                                                <div class="dato-item">
+                                                    <calendar-outlined />
+                                                    <strong>Fecha:</strong> {{ formatearFecha(reserva.reserve_date) }}
+                                                </div>
+                                                <div class="dato-item">
+                                                    <clock-circle-outlined />
+                                                    <strong>Hora:</strong> {{ reserva.reserve_hour.substring(0, 5) }}
+                                                </div>
+                                            </a-col>
+                                            <a-col :span="12">
+                                                <div class="dato-item">
+                                                    <team-outlined />
+                                                    <strong>Personas:</strong> {{ reserva.guests }}
+                                                </div>
+                                                <div class="dato-item">
+                                                    <number-outlined />
+                                                    <strong>ID Reserva:</strong> #{{ reserva.id }}
+                                                </div>
+                                            </a-col>
+                                        </a-row>
+                                    </div>
+
+                                    <a-divider />
+
+                                    <div class="acciones-reserva">
+                                        <a-space style="width: 100%; justify-content: space-between;">
+                                            <a-popconfirm title="¿Marcar como confirmado?"
+                                                @confirm="actualizarReserva(reserva.id, 'confirmed')">
+                                                <a-button type="primary" size="small"
+                                                    :disabled="reserva.attended === 1">
+                                                    MARCAR ASISTENCIA
+                                                </a-button>
+                                            </a-popconfirm>
+
+                                            <a-popconfirm title="¿Cancelar reserva?" ok-text="Sí" cancel-text="No"
+                                                @confirm="actualizarReserva(reserva.id, 'cancel')">
+                                                <a-button type="link" danger size="small">Cancelar</a-button>
+                                            </a-popconfirm>
+                                        </a-space>
+                                    </div>
+                                </a-card>
+                            </a-col>
+                        </a-row>
+                    </a-tab-pane>
                     <a-tab-pane key="pedidos" tab="Gestión de Pedidos">
                         <a-row :gutter="[24, 24]">
                             <a-col :xs="24" :lg="12">
@@ -127,12 +262,13 @@ async function cancelarPedioRealizado(id) {
                                             </template>
                                         </a-list>
                                         <a-row :gutter="[12, 12]">
-                                            <a-col :xs="24" :sm="10">
-                                                <a-button type="primary" block @click="cambiarEstado(p.id, 'listo', false)">
+                                            <a-col :xs="24" :md="24" :xl="10">
+                                                <a-button type="primary" block
+                                                    @click="cambiarEstado(p.id, 'listo', false)">
                                                     MARCAR COMO LISTO
                                                 </a-button>
                                             </a-col>
-                                            <a-col :xs="24" :sm="10">
+                                            <a-col :xs="24" :md="24" :xl="10">
                                                 <a-popconfirm title="¿Estás seguro?" ok-text="Sí" cancel-text="No"
                                                     @confirm="cancelarPedioRealizado(p.id)">
                                                     <a-button block>CANCELAR PEDIDO</a-button>
@@ -205,4 +341,49 @@ async function cancelarPedioRealizado(id) {
     width: 100%;
 }
 
+.card-reserva {
+    margin-bottom: 16px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s;
+}
+
+.card-reserva:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.header-reserva {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.info-header {
+    display: flex;
+    flex-direction: column;
+}
+
+.nombre-cliente {
+    font-size: 14px;
+    font-weight: 600;
+    color: #262626;
+    line-height: 1.2;
+}
+
+.email-cliente {
+    font-size: 11px;
+    color: #8c8c8c;
+}
+
+.dato-item {
+    font-size: 13px;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.cuerpo-reserva {
+    padding: 4px 0;
+}
 </style>
