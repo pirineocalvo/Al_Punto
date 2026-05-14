@@ -3,63 +3,88 @@ import Footer from '../../../Components/cabeceraYpiePrincipal/Footer.vue';
 import HeaderDashboard from '../../../Components/componenteDashboard/HeaderDashboard.vue';
 import Sidebar from '../../../Components/componenteDashboard/Sidebar.vue';
 import { listaProductosMarketplace, cangearProductoMarkePlace, userInfo } from '../../../Services/api';
+import { notification } from 'ant-design-vue';
 import { onMounted, ref, computed } from 'vue';
-import { useRouter } from 'vue-router'; 
+import { useRouter } from 'vue-router';
 
-const user = ref(null); 
-const router = useRouter(); 
+const user = ref(null);
+const router = useRouter();
 const listaProductos = ref([]);
-const nivelUsuario = ref(2);
+
+function generarNotificacion(tipo, titulo, texto) {
+    notification[tipo]({
+        message: titulo,
+        description: texto,
+        placement: 'topRight'
+    });
+}
 
 onMounted(async () => {
-    const token = localStorage.getItem('loginUserToken'); 
-    if (!token) { router.push('/login'); return; }        
-    try {                                                  
-        user.value = await userInfo();                    
-    } catch (err) {                                        
-        router.push('/login');                             
-    }                                                      
-
-    listaProductos.value = await listaProductosMarketplace();
+    const token = localStorage.getItem('loginUserToken');
+    if (!token) { router.push('/login'); return; }
+    try {
+        user.value = await userInfo();
+        listaProductos.value = await listaProductosMarketplace();
+    } catch (err) {
+        router.push('/login');
+    }
 });
 
 const productosFiltrados = computed(() => listaProductos.value);
 
 function estaDesbloqueado(producto) {
-    return nivelUsuario.value >= producto.min_level_id;
+    if (!user.value) return false;
+    
+    return user.value.level_id >= producto.min_level_id;
 }
 
 async function adquirirProducto(producto) {
     if (!estaDesbloqueado(producto)) return;
-    await cangearProductoMarkePlace(producto.id);
+    try {
+        await cangearProductoMarkePlace(producto.id);
+        user.value = await userInfo();
+
+        generarNotificacion('success', 'Canjeo de producto', 'El producto fue canjeado con éxito. Tus puntos se han actualizado.');
+    } catch (error) {
+        generarNotificacion('error', '¡Advertencia!', 'Hubo un error al canjear el producto. Verifique si tiene puzntos suficientes.');
+    }
 }
 </script>
 
 <template>
     <a-layout>
-        <HeaderDashboard :user="user" /> 
+        <HeaderDashboard :user="user" />
         <a-layout class="dashboardMainLayout">
             <Sidebar />
             <a-layout-content class="tarjetaContenido">
-                <a-typography-title :level="1">Tienda de recompensas</a-typography-title>
-                <a-typography-title :level="3">Canjea tus puntos por premios exclusivos</a-typography-title>
+
+                <a-divider orientation="left">
+                    <a-typography-title :level="2">Tienda de recompensas</a-typography-title>
+                </a-divider>
+                <a-typography-title :level="5">Canjea tus puntos por premios exclusivos</a-typography-title>
 
                 <a-row :gutter="[16, 16]">
-                    <a-col v-for="producto in productosFiltrados" :key="producto.id" :xs="24" :lg="10" :xl="6">
-                        <a-card :class="{ mpCardLocked: !estaDesbloqueado(producto) }">
+                    <a-col v-for="producto in productosFiltrados" :key="producto.id" :xs="24" :xl="6">
+                        <a-card :class="{ mpCardLocked: !estaDesbloqueado(producto) }" class="mpCard">
+                            <div class="mpCardBody">
+                                <a-card-meta :title="producto.name" :description="producto.description" />
 
-                            <a-card-meta :title="producto.name" :description="producto.description" />
+                                <div class="mpCardFooter">
+                                    <div class="colocarNivelYPuntos">
+                                        <a-tag>Nivel {{ producto.min_level_id }}+</a-tag>
+                                        <span class="mpPts"><strong>{{ producto.points_price }} pts</strong></span>
+                                    </div>
 
-                            <div class="tajetaFooter">
-                                <a-tag>Nivel {{ producto.min_level_id }}+</a-tag>
-                                <span class="mpPts">{{ producto.points_price }} pts</span>
+                                    <a-popconfirm :disabled="!estaDesbloqueado(producto)"
+                                        title="¿Seguro que desea adquirir este producto?" ok-text="Sí" cancel-text="No"
+                                        @confirm="adquirirProducto(producto)">
+                                        <a-button block :type="estaDesbloqueado(producto) ? 'primary' : 'default'"
+                                            :disabled="!estaDesbloqueado(producto)">
+                                            {{ estaDesbloqueado(producto) ? 'Canjear' : 'Nivel insuficiente' }}
+                                        </a-button>
+                                    </a-popconfirm>
+                                </div>
                             </div>
-
-                            <a-popconfirm :disabled="!estaDesbloqueado(producto)" title="¿Seguro que desea adquirir este producto?" ok-text="Sí" cancel-text="No" @confirm="adquirirProducto(producto)">
-                                <a-button block :disabled="!estaDesbloqueado(producto)">
-                                    {{ estaDesbloqueado(producto) ? 'Canjear' : 'Bloqueado' }}
-                                </a-button>
-                            </a-popconfirm>
                         </a-card>
                     </a-col>
                 </a-row>
@@ -69,31 +94,55 @@ async function adquirirProducto(producto) {
         <Footer />
     </a-layout>
 </template>
+
 <style scoped>
+.colocarNivelYPuntos {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
 .tarjetaContenido {
     padding: 24px;
 }
 
 .mpCardLocked {
-    opacity: 0.55;
+    opacity: 0.6;
+    filter: grayscale(0.5);
 }
 
-.puntos {
-    font-weight: 500;
+.mpPts {
+    font-size: 1.1rem;
 }
 
-.ant-card {
+.mpCard {
+    height: 100%;
+    transition: transform 0.3s ease;
+}
+
+.mpCard:hover:not(.mpCardLocked) {
+    transform: translateY(-5px);
+}
+
+.mpCard :deep(.ant-card-body) {
     height: 100%;
     display: flex;
-    flex: 1;
     flex-direction: column;
+    padding: 16px;
 }
 
-.ant-card-body {
-    flex: 1;
+.mpCardBody {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    height: 100%;
+    gap: 12px;
+}
+
+.mpCardFooter {
+    margin-top: auto;
     display: flex;
     flex-direction: column;
+    gap: 10px;
 }
-
 </style>

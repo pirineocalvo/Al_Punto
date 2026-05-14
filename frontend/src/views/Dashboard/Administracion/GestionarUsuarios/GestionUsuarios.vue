@@ -20,6 +20,14 @@ const listaReservas = ref([]);
 
 const autorizado = ref(false);
 
+function generarNotificacion(tipo, titulo, texto) {
+    notification[tipo]({
+        message: titulo,
+        description: texto,
+        placement: 'topRight'
+    });
+}
+
 onMounted(async function () {
     const token = localStorage.getItem('loginUserToken');
     if (!token) {
@@ -47,8 +55,6 @@ async function cargarPedidos() {
     try {
         const res = await getTodosLosPedidosAdmin();
         listaPedidos.value = res;
-        console.log(listaPedidos.value);
-        
     } catch (err) {
         console.error('Error al cargar pedidos');
     }
@@ -58,37 +64,24 @@ async function cargarReservas() {
     try {
         const res = await obtenerTodasLasReservasAdmin();
         listaReservas.value = res;
-
     } catch (err) {
         console.error('Error al cargar las reservas');
     }
 }
 
-
 async function cangearProductoMarket() {
     if (!tokenInput.value.trim()) {
-        return notification.warning({
-            message: '¡Advertencia!',
-            description: 'Introduce un código valido.',
-            placement: 'topRight'
-        });
+        generarNotificacion('warning', '¡Advertencia!', 'Introduce un código válido.');
+        return;
     }
     loadingMarket.value = true;
     try {
         const [userId] = tokenInput.value.split('-');
         await usarProductoMarket(userId, tokenInput.value.trim());
-        notification.success({
-            message: 'Cangeo de producto marketplace',
-            description: 'El producto '+tokenInput.value.trim()+' fue cangeado.',
-            placement: 'topRight'
-        });
+        generarNotificacion('success', 'Canje de producto marketplace', `El producto ${tokenInput.value.trim()} fue canjeado.`);
         tokenInput.value = '';
     } catch (err) {
-        notification.error({
-            message: 'Cangeo de producto marketplace',
-            description: 'El producto '+tokenInput.value.trim()+' no pudo ser canjeado, le recomendamos que revise si fue bien escrito o si ya fue canjeado.',
-            placement: 'topRight'
-        });
+        generarNotificacion('error', 'Canje de producto marketplace', `El producto ${tokenInput.value.trim()} no pudo ser canjeado. Revise si fue bien escrito o si ya fue canjeado.`);
     } finally {
         loadingMarket.value = false;
     }
@@ -109,18 +102,10 @@ const pedidosListos = computed(function () {
 async function cambiarEstado(id, estado, recogido = false) {
     try {
         await updateOrderStatus(id, estado, recogido);
-        notification.success({
-            message: 'Pedido actualizado',
-            description: `Pedido #${id} actualizado correctamente.`,
-            placement: 'topRight'
-        });
+        generarNotificacion('success', 'Pedido actualizado', `Pedido #${id} actualizado correctamente.`);
         await cargarPedidos();
     } catch (err) {
-        notification.error({
-            message: 'Error de actualización',
-            description: `No se pudo actualizar el pedido #${id}.`,
-            placement: 'topRight'
-        });
+        generarNotificacion('error', 'Error de actualización', `No se pudo actualizar el pedido #${id}.`);
     }
 }
 
@@ -128,35 +113,19 @@ async function actualizarReserva(id, estado) {
     try {
         await actualizarEstadoReservaAdmin(id, estado);
         await cargarReservas();
-        notification.success({
-            message: 'Reserva actualizada',
-            description: `Reserva #${id} actualizada correctamente.`,
-            placement: 'topRight'
-        });
+        generarNotificacion('success', 'Reserva actualizada', `Reserva #${id} actualizada correctamente.`);
     } catch (error) {
-        notification.error({
-            message: 'Error de actualización',
-            description: `No se pudo actualizar la reserva #${id}.`,
-            placement: 'topRight'
-        });
+        generarNotificacion('error', 'Error de actualización', `No se pudo actualizar la reserva #${id}.`);
     }
 }
 
 async function cancelarPedioRealizado(id) {
     try {
         await cancelarPedido(id);
-        notification.success({
-            message: 'Pedido cancelado',
-            description: `Pedido #${id} cancelado correctamente.`,
-            placement: 'topRight'
-        });
+        generarNotificacion('success', 'Pedido cancelado', `Pedido #${id} cancelado correctamente.`);
         await cargarPedidos();
     } catch (err) {
-        notification.error({
-            message: 'Error de cancelación',
-            description: `No se pudo cancelar el pedido #${id}.`,
-            placement: 'topRight'
-        });
+        generarNotificacion('error', 'Error de cancelación', `No se pudo cancelar el pedido #${id}.`);
     }
 }
 
@@ -173,11 +142,17 @@ const formatearFecha = (fechaStr) => {
         <a-layout>
             <Sidebar :collapsed="collapsed" />
 
-            <template v-if="autorizado">
+            <a-layout-content class="colocarContenedorPrincipalDashBoard" v-if="autorizado">
+                <a-divider orientation="left">
+                    <a-typography-title :level="2">Gestor Usuarios</a-typography-title>
+                </a-divider>
                 <a-tabs v-model:activeKey="tabActiva" class="colocarContenedorPrincipalDashBoard">
                     <a-tab-pane key="reservas" tab="Gestionar Reservas">
                         <a-row :gutter="[10, 24]" justify="space-around">
-                            <a-col :xl="11":lg="16" :md="20" :xs="24" v-for="reserva in listaReservas.reservations" :key="reserva.id" size="small">
+                            <a-empty v-if="listaReservas.reservations == 0"
+                                description="No se encontraron reservas pendientes de gestionar" />
+                            <a-col :xl="11" :lg="16" :md="20" :xs="24" v-for="reserva in listaReservas.reservations"
+                                :key="reserva.id">
                                 <a-card class="card-reserva">
                                     <template #title>
                                         <div class="header-reserva">
@@ -226,7 +201,7 @@ const formatearFecha = (fechaStr) => {
 
                                     <div class="acciones-reserva">
                                         <a-space style="width: 100%; justify-content: space-between;">
-                                            <a-popconfirm title="¿Marcar como confirmado?"
+                                            <a-popconfirm title="¿Marcar como confirmado?" ok-text="Sí" cancel-text="No"
                                                 @confirm="actualizarReserva(reserva.id, 'confirmed')">
                                                 <a-button type="primary" size="small"
                                                     :disabled="reserva.attended === 1">
@@ -244,12 +219,14 @@ const formatearFecha = (fechaStr) => {
                             </a-col>
                         </a-row>
                     </a-tab-pane>
+
                     <a-tab-pane key="pedidos" tab="Gestión de Pedidos">
                         <a-row :gutter="[24, 24]">
                             <a-col :xs="24" :lg="12">
                                 <a-divider orientation="left">PENDIENTES DE COCINA</a-divider>
                                 <a-space direction="vertical" class="todoElAncho" size="middle">
-                                    <a-empty v-if="pedidosPendientes.length === 0" />
+                                    <a-empty v-if="pedidosPendientes.length === 0"
+                                        description="No hay productos pendientes en la cocina" />
                                     <a-card v-for="p in pedidosPendientes" :key="p.id" size="small"
                                         :head-style="{ borderLeft: '4px solid #D97742' }">
                                         <template #title>
@@ -282,7 +259,8 @@ const formatearFecha = (fechaStr) => {
                             <a-col :xs="24" :lg="12">
                                 <a-divider orientation="left">LISTOS PARA ENTREGA</a-divider>
                                 <a-space direction="vertical" class="todoElAncho" size="middle">
-                                    <a-empty v-if="pedidosListos.length === 0" />
+                                    <a-empty v-if="pedidosListos.length === 0"
+                                        description="No hay productos listos para la entrega" />
                                     <a-card v-for="p in pedidosListos" :key="p.id" size="small"
                                         :head-style="{ borderLeft: '4px solid #3A9E6F' }">
                                         <template #title>
@@ -308,8 +286,7 @@ const formatearFecha = (fechaStr) => {
                     </a-tab-pane>
 
                 </a-tabs>
-            </template>
-
+            </a-layout-content>
         </a-layout>
 
         <Footer />
@@ -317,6 +294,7 @@ const formatearFecha = (fechaStr) => {
 </template>
 
 <style scoped>
+/* Estilos mantenidos igual */
 .textoFecha {
     float: right;
     font-weight: normal;

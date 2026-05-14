@@ -64,6 +64,15 @@ function calcularPuntos(text) {
     return match ? parseFloat(match[1]) * 100 : 0;
 }
 
+function extraerNombreRestaurante(text) {
+    const conocidos = ['Al Punto'];
+    const limpio = text
+        .toUpperCase()
+        .replace(/[\[\](){}|<>*#@!¡?¿"'\\\/\-_=+~^]/g, ' ')
+        .replace(/\s+/g, ' ');
+    
+    return conocidos.find(n => limpio.includes(n.toUpperCase())) ?? null;
+}
 //Post Upload
 router.post('/upload', upload.single('imagen'), async (req, res) => {
     const userId = getUserIdFromToken(req, res);
@@ -77,6 +86,10 @@ router.post('/upload', upload.single('imagen'), async (req, res) => {
 
     try {
         const ocrText = await analyzeTicket(imagePath);
+        const restaurante = extraerNombreRestaurante(ocrText); 
+        if (!restaurante) {
+            return res.status(400).json({ error: 'El ticket no pertenece a Al Punto' });
+}
         const points  = calcularPuntos(ocrText);
         const status  = points === 0 ? 'review' : 'ok';
 
@@ -84,7 +97,7 @@ router.post('/upload', upload.single('imagen'), async (req, res) => {
 
         db.run(
             `INSERT INTO Tickets (user_id, image_url, json_content, points_awarded, status)
-             VALUES (?, ?, ?, ?, ?)`,
+            VALUES (?, ?, ?, ?, ?)`,
             [ticketData.userId, ticketData.fileName, ticketData.text, ticketData.points, status],
             function (err) {
                 if (err)
@@ -107,7 +120,7 @@ router.post('/upload', upload.single('imagen'), async (req, res) => {
 
                             db.run(
                                 `INSERT INTO Point_transactions (user_id, wallet_id, amount_transaction, type)
-                                 VALUES (?, ?, ?, ?)`,
+                                VALUES (?, ?, ?, ?)`,
                                 [ticketData.userId, wallet.id, ticketData.points, 'add ticket'],
                                 function (err) {
                                     if (err)

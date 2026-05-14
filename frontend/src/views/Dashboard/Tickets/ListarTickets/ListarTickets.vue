@@ -123,11 +123,9 @@ const columnasProductos = [
 
             <a-row class="colocarContenedorPrincipalDashBoard">
                 <a-col :xs="24" :md="20" :lg="24">
-                    <a-flex justify="center">
-                        <a-typography-title :level="2">
-                            Mis Tickets
-                        </a-typography-title>
-                    </a-flex>
+                <a-divider orientation="left">
+                    <a-typography-title :level="2">Mis tickets</a-typography-title>
+                </a-divider>
 
                     <a-spin :spinning="cargando">
                         <a-empty v-if="tickets.length === 0" description="No tienes tickets todavía" />
