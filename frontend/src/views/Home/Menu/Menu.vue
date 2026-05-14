@@ -116,7 +116,7 @@ onUnmounted(() => {
                 <div class="tarjetaResenia">
                   <a-flex align="center" gap="small">
                     <div class="avatarResenia">
-                      {{ resenia.first_name?.[0] }}{{ resenia.last_name?.[0] }}
+                      {{ resenia.first_name?.[0] }}
                     </div>
                     <div>
                       <a-typography-text strong>

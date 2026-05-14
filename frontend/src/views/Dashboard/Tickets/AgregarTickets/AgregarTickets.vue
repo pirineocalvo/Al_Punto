@@ -2,12 +2,11 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { InboxOutlined } from '@ant-design/icons-vue';
-import { message } from 'ant-design-vue';
+import { notification } from 'ant-design-vue';
 import { uploadTickets, userInfo } from '../../../../Services/api';
 import HeaderDashboard from '@/Components/componenteDashboard/HeaderDashboard.vue';
 import Footer from '@/Components/cabeceraYpiePrincipal/Footer.vue';
 import Sidebar from '../../../../Components/componenteDashboard/Sidebar.vue';
-
 
 const router = useRouter();
 const user = ref(null);
@@ -15,6 +14,14 @@ const collapsed = ref(false);
 const cargando = ref(false);
 const archivo = ref(null);
 const ticketInfo = ref(null);
+
+function generarNotificacion(tipo, titulo, texto) {
+    notification[tipo]({
+        message: titulo,
+        description: texto,
+        placement: 'topRight'
+    });
+}
 
 onMounted(async () => {
     const token = localStorage.getItem('loginUserToken');
@@ -34,7 +41,7 @@ const antesDeSubir = (file) => {
 
 const subirTicket = async () => {
     if (!archivo.value) {
-        message.error('Selecciona una imagen primero');
+        generarNotificacion('warning', '¡Advertencia!', 'Debe de subir una imagen clara de su ticket.');
         return;
     }
     cargando.value = true;
@@ -42,11 +49,13 @@ const subirTicket = async () => {
         const formData = new FormData();
         formData.append('imagen', archivo.value);
         const data = await uploadTickets(formData);
+
         ticketInfo.value = parsearTicket(data.text);
+
         archivo.value = null;
-        message.success('¡Ticket subido! Tus puntos serán acreditados');
+        generarNotificacion('success', '¡Ticket subido!', 'Los puntos del ticket fueron añadidos a su cuenta, para verificarlo acceda a su zona personal.');
     } catch {
-        message.error('Error al subir el ticket, inténtalo de nuevo');
+        generarNotificacion('error', 'Error al subir el ticket', 'Verifique que la imagen es nitida y que pertenece al restaurante.');
     } finally {
         cargando.value = false;
     }
@@ -114,22 +123,21 @@ const resetear = () => {
                     <div class="content-wrapper">
 
                         <template v-if="!ticketInfo">
-                            <a-typography-title :level="2">Sube tu ticket y gana puntos</a-typography-title>
-                            <a-typography-paragraph type="secondary">
+                            <a-divider orientation="left">
+                                <a-typography-title :level="2">Subir Ticket</a-typography-title>
+                            </a-divider>
+                            <a-typography-title :level="5">
                                 Sube una foto clara de tu ticket para validar tu compra.
-                            </a-typography-paragraph>
+                            </a-typography-title>
 
-                            <a-row justify="center" style="margin-top: 2rem;">
-
+                            <a-row justify="center">
                                 <a-col :xs="24" :sm="18" :md="16" :lg="8">
-
                                     <a-card class="ticket-card">
                                         <a-row :gutter="[24, 24]" justify="center" align="middle">
-
                                             <a-col :span="24">
                                                 <a-upload-dragger name="file" accept="image/*" :max-count="1"
                                                     :before-upload="antesDeSubir" list-type="picture"
-                                                    :file-list="archivo ? [archivo] : []">
+                                                    :file-list="archivo ? [archivo] : []" @remove="resetear">
                                                     <p class="ant-upload-drag-icon">
                                                         <inbox-outlined></inbox-outlined>
                                                     </p>
@@ -137,22 +145,21 @@ const resetear = () => {
                                                         subirla</p>
                                                     <p class="ant-upload-hint">
                                                         Solo se admiten tickets de este establecimiento, recuerde que la
-                                                        imagen
-                                                        se debe de poder leer su contenido
+                                                        imagen se debe de poder leer su contenido
                                                     </p>
                                                 </a-upload-dragger>
                                             </a-col>
 
-                                            <a-col :span="24" style="text-align: center;">
-                                                <a-button type="primary" size="large" :disabled="!archivo"
-                                                    @click="subirTicket" style="min-width: 180px;">
-                                                    Subir Ticket
-                                                </a-button>
+                                            <a-col :span="24">
+                                                <a-flex justify="center">
+                                                    <a-button type="primary" size="large" :disabled="!archivo"
+                                                        @click="subirTicket">
+                                                        Subir Ticket
+                                                    </a-button>
+                                                </a-flex>
                                             </a-col>
-
                                         </a-row>
                                     </a-card>
-
                                 </a-col>
                             </a-row>
                         </template>
@@ -185,7 +192,6 @@ const resetear = () => {
 
                                 <a-divider>Productos</a-divider>
 
-
                                 <a-table :data-source="ticketInfo.productos" :pagination="false" row-key="nombre"
                                     size="middle">
                                     <a-table-column title="Producto" data-index="nombre" />
@@ -209,14 +215,13 @@ const resetear = () => {
 
                     </div>
                 </a-spin>
-
             </a-layout-content>
         </a-layout>
     </a-layout>
     <Footer />
 </template>
-<style scoped>
 
+<style scoped>
 .ticket-card {
     border-radius: 16px !important;
     box-shadow: 0 4px 20px rgba(58, 46, 42, 0.07) !important;

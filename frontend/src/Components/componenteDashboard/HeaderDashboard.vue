@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { MenuOutlined, LogoutOutlined } from '@ant-design/icons-vue';
+import { MenuOutlined } from '@ant-design/icons-vue';
 import { funcinalidadSidebar } from '../../Components/componenteDashboard/js/ocultarSidebar';
 
 
@@ -20,15 +20,15 @@ const logout = () => router.push('/logout');
 
 <template>
     <a-layout-header class="headerContainer headerDashboard">
-        <a-row type="flex" justify="space-between" align="middle" style="width: 100%;">
+        <a-row type="flex" justify="space-between" align="middle" class="cabeceraAlCien">
 
             <a-col :flex="1">
                 <div class="headerLeft">
                     <a-button v-if="pantallaPeque" type="text" class="mobileMenuButton" @click="cambiarEstadoSidebar">
-                        <MenuOutlined style="color: #E8C9A0;" />
+                        <MenuOutlined class="colorBtnMenu" />
                     </a-button>
 
-                    <a-typography-title v-else :level="4" style="margin: 0; color: #E8C9A0;">
+                    <a-typography-title v-else :level="4" class="tituloCabeceraDashBoard">
                         Bienvenido, {{ user?.first_name || 'Invitado' }}
                     </a-typography-title>
                 </div>
@@ -45,10 +45,7 @@ const logout = () => router.push('/logout');
 
                         <template #overlay>
                             <a-menu>
-                                <a-menu-item key="logout" danger @click="logout">
-                                    <template #icon>
-                                        <LogoutOutlined />
-                                    </template>
+                                <a-menu-item key="logout" @click="logout">
                                     Cerrar sesión
                                 </a-menu-item>
                             </a-menu>
@@ -62,6 +59,19 @@ const logout = () => router.push('/logout');
 </template>
 
 <style scoped>
+.cabeceraAlCien {
+    width: 100%;
+}
+
+.colorBtnMenu {
+    color: #E8C9A0;
+}
+
+.tituloCabeceraDashBoard {
+    margin: 0;
+    color: #E8C9A0;
+}
+
 .headerDashboard {
     background-color: var(--color-menu-fondo);
     padding: 0 24px;

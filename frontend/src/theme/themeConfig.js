@@ -127,11 +127,14 @@ export const themeTokens = {
         colorBgElevated: "#ffffff",
       },
       Popover: {
-        colorBgElevated: "#fcf4ee",
+        colorBgElevated: "#ffffff",
       },
       Message: {
         colorBgElevated: "#FFFFFF",
       },
+      Notification: {
+            colorBgElevated: '#ffffff',
+          },
     },
   }
 };

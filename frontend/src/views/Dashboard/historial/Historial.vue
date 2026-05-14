@@ -1,10 +1,19 @@
 <script setup>
 import { ref, onMounted } from 'vue';
+import { QuestionCircleOutlined } from '@ant-design/icons-vue';
 import HeaderDashboard from '@/Components/componenteDashboard/HeaderDashboard.vue';
 import Footer from '@/Components/cabeceraYpiePrincipal/Footer.vue';
 import Sidebar from '../../../Components/componenteDashboard/Sidebar.vue';
-import { getProductosCompradosCliente, cancelarPedido, misReservas, pedidosRealizadosMarketPlace, cancelarReserva, userInfo } from '../../../Services/api';
+import {
+    getProductosCompradosCliente,
+    cancelarPedido,
+    misReservas,
+    pedidosRealizadosMarketPlace,
+    cancelarReserva,
+    userInfo
+} from '../../../Services/api';
 import { useRouter } from 'vue-router';
+import { notification } from 'ant-design-vue';
 
 const user = ref(null);
 const collapsed = ref(false);
@@ -17,135 +26,189 @@ const listaReservas = ref([]);
 const listaPedidos = ref([]);
 const listaMarketPlaceReclamado = ref([]);
 
+
+function generarNotificacion(tipo, titulo, texto) {
+    notification[tipo]({
+        message: titulo,
+        description: texto,
+        placement: 'topRight'
+    });
+}
+
 onMounted(async () => {
     const token = localStorage.getItem('loginUserToken');
     if (!token) { router.push('/login'); return; }
+
     try {
         user.value = await userInfo();
+
+        const [pedidos, reservas, marketplace] = await Promise.all([
+            getProductosCompradosCliente(),
+            misReservas(),
+            pedidosRealizadosMarketPlace()
+        ]);
+
+        listaPedidos.value = pedidos;
+        listaReservas.value = reservas;
+        listaMarketPlaceReclamado.value = marketplace;
+
     } catch (err) {
+        console.error("Error cargando datos iniciales:", err);
+        generarNotificacion('error', 'Error de carga', 'No se pudieron obtener tus datos.');
         router.push('/login');
     }
-
-    listaPedidos.value = await getProductosCompradosCliente();
-    listaReservas.value = await misReservas();
-    listaMarketPlaceReclamado.value = await pedidosRealizadosMarketPlace();
 });
 
-
 async function eliminarPedido(pedido) {
-    await cancelarPedido(pedido.id);
-    listaPedidos.value = await getProductosCompradosCliente();
+    try {
+        await cancelarPedido(pedido.id);
+        generarNotificacion('success', 'Pedido cancelado', `El pedido del ${pedido.created_at} ha sido cancelado correctamente.`);
+        listaPedidos.value = await getProductosCompradosCliente();
+    } catch (err) {
+        console.error("Error al cancelar pedido:", err);
+        generarNotificacion('error', 'Error al cancelar', 'No se pudo cancelar el pedido. Inténtalo más tarde.');
+    }
 }
 
 async function pararReserva(reserva) {
-    await cancelarReserva(reserva.id);
-    listaReservas.value = await misReservas();
+    try {
+        await cancelarReserva(reserva.id);
+        generarNotificacion('success', 'Reserva cancelada', `Tu reserva para el día ${reserva.reserve_date} ha sido anulada.`);
+        listaReservas.value = await misReservas();
+    } catch (err) {
+        console.error("Error al cancelar reserva:", err);
+        generarNotificacion('error', 'Error al cancelar', 'Hubo un problema al cancelar tu reserva.');
+    }
 }
 </script>
+
 <template>
     <a-layout>
         <HeaderDashboard :user="user" />
 
         <a-layout class="dashboardMainLayout">
             <Sidebar :collapsed="collapsed" />
+            <a-layout-content class="colocarContenedorPrincipalDashBoard">
+                <a-divider orientation="left">
+                    <a-typography-title :level="2">Historial</a-typography-title>
+                </a-divider>
+                <a-typography-title :level="5">
+                    Consulte sus reservas, pedidos y los productos del marketplace canjeados
+                </a-typography-title>
+                <a-tabs v-model:activeKey="tabActiva">
 
-            <a-tabs v-model:activeKey="tabActiva" class="colocarContenedorPrincipalDashBoard">
-
-                <a-tab-pane key="reservas" tab="Reservas">
-                    <a-collapse v-model:activeKey="acordeonActivo" accordion>
-                        <a-collapse-panel v-for="reserva in listaReservas" :key="reserva.id">
-                            <template #header>
-                                <a-row class="datosTituloAcordeon" :gutter="[6, 12]" justify="space-between">
-                                    <a-col :xs="24" :lg="11">
-                                        <span>{{ reserva.reserve_date }}</span>
-                                    </a-col>
-                                    <a-col :xs="24" :lg="11" class="tagDerecha">
-                                        <a-tag v-if="reserva.status == 'attended'" color="lime">Atendido</a-tag>
-                                        <a-tag v-else-if="reserva.status == null" color="purple">Pendiente</a-tag>
-                                        <a-tag v-else color="red">Cancelado</a-tag>
+                    <a-tab-pane key="reservas" tab="Reservas">
+                        <a-collapse v-model:activeKey="acordeonActivo" accordion>
+                            <a-collapse-panel v-for="reserva in listaReservas" :key="reserva.id">
+                                <template #header>
+                                    <a-row class="datosTituloAcordeon" :gutter="[6, 12]" justify="space-between">
+                                        <a-col :xs="24" :lg="11">
+                                            <span>{{ reserva.reserve_date }}</span>
+                                        </a-col>
+                                        <a-col :xs="24" :lg="11" class="tagDerecha">
+                                            <a-tag v-if="reserva.status == 'attended'" color="lime">Atendido</a-tag>
+                                            <a-tag v-else-if="reserva.status == null" color="purple">Pendiente</a-tag>
+                                            <a-tag v-else color="red">Cancelado</a-tag>
+                                        </a-col>
+                                    </a-row>
+                                </template>
+                                <a-row :gutter="[6, 12]">
+                                    <a-col :xs="24"><a-typography-text strong>Fecha:</a-typography-text> {{
+                                        reserva.reserve_date }}</a-col>
+                                    <a-col :xs="24"><a-typography-text strong>Hora:</a-typography-text> {{
+                                        reserva.reserve_hour }}</a-col>
+                                    <a-col :xs="24"><a-typography-text strong>Asistentes:</a-typography-text> {{
+                                        reserva.guests }}</a-col>
+                                    <a-col :xs="24" v-if="reserva.status == null">
+                                        <a-popconfirm title="¿Cancelar reserva?" @confirm="pararReserva(reserva)" ok-text="Sí" cancel-text="No">
+                                            <template #icon><QuestionCircleOutlined /></template>
+                                            <a-button  type="primary" >Cancelar reserva</a-button>
+                                        </a-popconfirm>
                                     </a-col>
                                 </a-row>
-                            </template>
-                            <a-row :gutter="[6, 12]">
-                                <a-col :xs="24"><span>Fecha:</span> {{ reserva.reserve_date }}</a-col>
-                                <a-col :xs="24"><span>Hora:</span> {{ reserva.reserve_hour }}</a-col>
-                                <a-col :xs="24"><span>Asistentes:</span> {{ reserva.guests }}</a-col>
-                                <a-col :xs="24" v-if="reserva.status == null">
-                                    <a-button @click="pararReserva(reserva)">Cancelar reserva</a-button>
-                                </a-col>
-                            </a-row>
-                        </a-collapse-panel>
-                    </a-collapse>
-                    <a-empty v-if="listaReservas.length === 0" description="No tienes reservas" />
-                </a-tab-pane>
+                            </a-collapse-panel>
+                        </a-collapse>
+                        <a-empty v-if="listaReservas.length === 0" description="No tienes reservas" />
+                    </a-tab-pane>
 
-                <a-tab-pane key="pedidos" tab="Pedidos">
-                    <a-collapse v-model:activeKey="acordeonActivo" accordion>
-                        <a-collapse-panel v-for="pedido in listaPedidos" :key="pedido.id">
-                            <template #header>
-                                <a-row class="datosTituloAcordeon" :gutter="[6, 12]">
-                                    <a-col :xs="24" :lg="11">
-                                        <span>{{ pedido.created_at }}</span>
+                    <a-tab-pane key="pedidos" tab="Pedidos">
+                        <a-collapse v-model:activeKey="acordeonActivo" accordion>
+                            <a-collapse-panel v-for="pedido in listaPedidos" :key="pedido.id">
+                                <template #header>
+                                    <a-row class="datosTituloAcordeon" :gutter="[6, 12]">
+                                        <a-col :xs="24" :lg="11">
+                                            <span>{{ pedido.created_at }}</span>
+                                        </a-col>
+                                        <a-col :xs="24" :lg="11" class="tagDerecha">
+                                            <a-tag color="purple" v-if="pedido.status == 'pendiente'">Pendiente de
+                                                preparación</a-tag>
+                                            <a-tag color="purple" v-else-if="pedido.status == 'listo'">Preparado</a-tag>
+                                            <a-tag color="red"
+                                                v-else-if="pedido.status == 'cancelado'">Cancelado</a-tag>
+                                            <a-tag color="lime" v-else>Entregado</a-tag>
+                                        </a-col>
+                                    </a-row>
+                                </template>
+                                <a-row :gutter="[6, 12]">
+                                    <a-col :xs="24" v-for="producto in pedido.items"
+                                        :key="producto.id ?? producto.product_name">
+                                        <span><a-typography-text strong>Producto:</a-typography-text> {{
+                                            producto.product_name }}</span> |
+                                        <span><a-typography-text strong>Cantidad:</a-typography-text> {{
+                                            producto.quantity }}</span> |
+                                        <span><a-typography-text strong>Precio:</a-typography-text> {{
+                                            producto.price_at_time }}€</span>
                                     </a-col>
-                                    <a-col :xs="24" :lg="11" class="tagDerecha">
-                                        <a-tag color="purple" v-if="pedido.status == 'pendiente'">Pedido pendiente de
-                                            preparación</a-tag>
-                                        <a-tag color="purple" v-else-if="pedido.status == 'listo'">Pedido
-                                            preparado</a-tag>
-                                        <a-tag color="red" v-else-if="pedido.status == 'cancelado'">El pedido fue
-                                            cancelado</a-tag>
-                                        <a-tag color="lime" v-else>El pedido fue entregado</a-tag>
+                                    <a-col :xs="24" v-if="pedido.is_picked_up == 0 && pedido.status == 'pendiente'">
+                                        <a-popconfirm title="¿Cancelar pedido?" @confirm="eliminarPedido(pedido)" ok-text="Sí" cancel-text="No">
+                                            <template #icon><QuestionCircleOutlined /></template>
+                                            <a-button  type="primary" >Cancelar pedido</a-button>
+                                        </a-popconfirm>
                                     </a-col>
                                 </a-row>
-                            </template>
-                            <a-row :gutter="[6, 12]">
-                                <a-col :xs="24" v-for="producto in pedido.items"
-                                    :key="producto.id ?? producto.product_name">
-                                    <span>Producto:</span> {{ producto.product_name }};
-                                    <span>Cantidad:</span> {{ producto.quantity }};
-                                    <span>Precio unidad:</span> {{ producto.price_at_time }}
-                                </a-col>
-                                <a-col :xs="24" v-if="pedido.is_picked_up == 0 && pedido.status == 'pendiente'" >
-                                    <a-button @click.stop="eliminarPedido(pedido)">Cancelar pedido</a-button>
-                                </a-col>
-                            </a-row>
-                        </a-collapse-panel>
-                    </a-collapse>
-                    <a-empty v-if="listaPedidos.length === 0" description="No tienes pedidos" />
-                </a-tab-pane>
+                            </a-collapse-panel>
+                        </a-collapse>
+                        <a-empty v-if="listaPedidos.length === 0" description="No tienes pedidos" />
+                    </a-tab-pane>
 
-                <a-tab-pane key="marketplace" tab="Marketplace">
-                    <a-collapse v-model:activeKey="acordeonActivo" accordion>
-                        <a-collapse-panel v-for="market in listaMarketPlaceReclamado" :key="market.id">
-                            <template #header>
-                                <a-row class="datosTituloAcordeon" :gutter="[6, 12]">
-                                    <a-col :xs="24" :lg="11">
-                                        <span>{{ market.name }}</span>
-                                    </a-col>
-                                    <a-col :xs="24" :lg="11" class="tagDerecha">
-                                        <a-tag v-if="market.is_used == 0" color="lime">Sin canjear</a-tag>
-                                        <a-tag v-else color="red">Canjeado el {{ market.used_at }}</a-tag>
-                                    </a-col>
+
+                    <a-tab-pane key="marketplace" tab="Marketplace">
+                        <a-collapse v-model:activeKey="acordeonActivo" accordion>
+                            <a-collapse-panel v-for="market in listaMarketPlaceReclamado" :key="market.id">
+                                <template #header>
+                                    <a-row class="datosTituloAcordeon" :gutter="[6, 12]">
+                                        <a-col :xs="24" :lg="11">
+                                            <span>{{ market.name }}</span>
+                                        </a-col>
+                                        <a-col :xs="24" :lg="11" class="tagDerecha">
+                                            <a-tag v-if="market.is_used == 0" color="lime">Sin canjear</a-tag>
+                                            <a-tag v-else color="red">Canjeado el {{ market.used_at }}</a-tag>
+                                        </a-col>
+                                    </a-row>
+                                </template>
+                                <a-row :gutter="[6, 12]">
+                                    <a-col :xs="24"><span>{{ market.description }}</span></a-col>
+                                    <a-col :xs="24"><span>Código: <a-tag><a-typography-text copyable>{{ market.token_url }}</a-typography-text></a-tag></span></a-col>
                                 </a-row>
-                            </template>
-                            <a-row :gutter="[6, 12]">
-                                <a-col :xs="24"><span>{{ market.description }}</span></a-col>
-                                <a-col :xs="24"><span>Código del producto: <a-tag>{{ market.token_url}}</a-tag></span></a-col>
-                            </a-row>
-                        </a-collapse-panel>
-                    </a-collapse>
-                    <a-empty v-if="listaMarketPlaceReclamado.length === 0" description="No tienes reservas" />
-                </a-tab-pane>
+                            </a-collapse-panel>
+                        </a-collapse>
+                        <a-empty v-if="listaMarketPlaceReclamado.length === 0"
+                            description="No tienes productos de marketplace" />
+                    </a-tab-pane>
 
-            </a-tabs>
+                </a-tabs>
+            </a-layout-content>
         </a-layout>
-
         <Footer />
     </a-layout>
 </template>
-<style scoped>
 
-.tagDerecha{
+<style scoped>
+.tagDerecha {
     text-align: right;
+}
+
+.datosTituloAcordeon span {
+    font-weight: 500;
 }
 </style>
