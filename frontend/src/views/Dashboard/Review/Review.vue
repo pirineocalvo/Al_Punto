@@ -136,11 +136,17 @@ const formatearFecha = (fechaStr) => {
         <HeaderDashboard :user="user" />
         <a-layout class="dashboardMainLayout">
             <Sidebar />
-            <a-layout-content class="colocarContenedorPrincipalDashBoard">
-                                <a-divider orientation="left">
+            <a-flex v-if="listaResenias.length == 0 || productosComprados.length == 0 || menuCompleto.length == 0"
+                vertical align="center" justify="center" class="centrarSpin">
+                <a-spin size="large" />
+                <a-typography-text type="secondary">Cargando productos...</a-typography-text>
+            </a-flex>
+            <a-layout-content v-else class="colocarContenedorPrincipalDashBoard">
+                <a-divider orientation="left">
                     <a-typography-title :level="2">Comentarios</a-typography-title>
                 </a-divider>
-                <a-typography-title :level="5">Hecha un vistazo a tus comentarios o comenta un nuevo plato que hayas probado</a-typography-title>
+                <a-typography-title :level="5">Hecha un vistazo a tus comentarios o comenta un nuevo plato que hayas
+                    probado</a-typography-title>
                 <a-tabs v-model:activeKey="keyLab">
                     <a-tab-pane key="1" tab="Mis Reseñas Realizadas">
                         <a-row :gutter="[16, 16]">
@@ -236,7 +242,8 @@ const formatearFecha = (fechaStr) => {
 .mpCard {
     height: 100%;
 }
-.separarBtn{
+
+.separarBtn {
     margin-top: 15px;
 }
 </style>

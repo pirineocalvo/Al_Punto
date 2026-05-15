@@ -120,12 +120,15 @@ const columnasProductos = [
         <HeaderDashboard :user="user" />
         <a-layout class="dashboardMainLayout">
             <Sidebar :collapsed="collapsed" />
-
-            <a-row class="colocarContenedorPrincipalDashBoard">
+            <a-flex v-if="tickets.length == 0" vertical align="center" justify="center" class="centrarSpin">
+                <a-spin size="large" />
+                <a-typography-text type="secondary">Cargando productos...</a-typography-text>
+            </a-flex>
+            <a-row v-else class="colocarContenedorPrincipalDashBoard">
                 <a-col :xs="24" :md="20" :lg="24">
-                <a-divider orientation="left">
-                    <a-typography-title :level="2">Mis tickets</a-typography-title>
-                </a-divider>
+                    <a-divider orientation="left">
+                        <a-typography-title :level="2">Mis tickets</a-typography-title>
+                    </a-divider>
 
                     <a-spin :spinning="cargando">
                         <a-empty v-if="tickets.length === 0" description="No tienes tickets todavía" />
@@ -135,22 +138,22 @@ const columnasProductos = [
                                 <template #header>
                                     <a-space size="middle" wrap>
                                         <a-typography-text>
-                                            <calendar-outlined  />
+                                            <calendar-outlined />
                                             {{ separarFechaHora(ticket.created_at).fecha }}
                                         </a-typography-text>
 
                                         <a-typography-text type="secondary">
-                                            <clock-circle-outlined  />
+                                            <clock-circle-outlined />
                                             {{ separarFechaHora(ticket.created_at).hora }}
                                         </a-typography-text>
 
                                         <a-typography-text strong>
-                                            <euro-circle-outlined  />
+                                            <euro-circle-outlined />
                                             {{ ticket.parsed.total?.toFixed(2) || '0.00' }} €
                                         </a-typography-text>
 
                                         <a-typography-text type="warning">
-                                            <star-outlined  />
+                                            <star-outlined />
                                             {{ ticket.points_awarded || 0 }} pts
                                         </a-typography-text>
                                     </a-space>

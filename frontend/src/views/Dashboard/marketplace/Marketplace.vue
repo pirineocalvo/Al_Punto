@@ -33,9 +33,16 @@ onMounted(async () => {
 const productosFiltrados = computed(() => listaProductos.value);
 
 function estaDesbloqueado(producto) {
+    let nivelUser = 0
     if (!user.value) return false;
-    
-    return user.value.level_id >= producto.min_level_id;
+    if (user.value.levelName === 'Oro') {
+        nivelUser = 3;
+    } else if (user.value.levelName === 'Plata') {
+        nivelUser = 2;
+    } else {
+        nivelUser = 1
+    }
+    return nivelUser >= producto.min_level_id;
 }
 
 async function adquirirProducto(producto) {
@@ -56,7 +63,11 @@ async function adquirirProducto(producto) {
         <HeaderDashboard :user="user" />
         <a-layout class="dashboardMainLayout">
             <Sidebar />
-            <a-layout-content class="tarjetaContenido">
+            <a-flex v-if="listaProductos.length == 0" vertical align="center" justify="center" class="centrarSpin">
+                <a-spin size="large" />
+                <a-typography-text type="secondary">Cargando productos...</a-typography-text>
+            </a-flex>
+            <a-layout-content v-else class="tarjetaContenido">
 
                 <a-divider orientation="left">
                     <a-typography-title :level="2">Tienda de recompensas</a-typography-title>

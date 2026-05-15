@@ -27,10 +27,14 @@ const generarCodigoQR = (userId) => {
 };
 
 onMounted(async () => {
-    await fetchUser();
-    await fetchReserve();
-    await generarQR();
-    renderChart();
+    try {
+        await fetchUser();
+        await fetchReserve();
+        await generarQR();
+        renderChart();
+    } catch (error) {
+
+    }
 });
 
 const fetchUser = async () => {
@@ -57,8 +61,12 @@ const generarQR = async () => {
 
     const code = generarCodigoQR(user.value.id);
     const url = `https://tudominio.com/checkin?code=${code}`;
+    try {
+        qr.value = await QRCode.toDataURL(url);
+    } catch (error) {
 
-    qr.value = await QRCode.toDataURL(url);
+    }
+
 };
 
 const chartData = computed(() => [
@@ -68,7 +76,12 @@ const chartData = computed(() => [
 ]);
 
 const renderChart = async () => {
-    await nextTick();
+    try {
+        await nextTick();
+    } catch (error) {
+
+    }
+
 
     if (!chartRef.value) return;
 
@@ -82,7 +95,7 @@ const renderChart = async () => {
         seriesField: 'name',
         legend: false,
         color: ['#D97742', '#B85F34', '#97522D'],
-        autoFit: true, 
+        autoFit: true,
         label: {
             position: 'right'
         },
@@ -103,8 +116,11 @@ const renderChart = async () => {
         <HeaderDashboard :user="user" />
         <a-layout class="dashboardMainLayout">
             <Sidebar :collapsed="collapsed" />
-
-            <a-layout-content class="colocarContenedorPrincipalDashBoard">
+            <a-flex v-if="reserveInfo.length == 0" vertical align="center" justify="center" class="centrarSpin">
+                <a-spin size="large" />
+                <a-typography-text type="secondary">Cargando productos...</a-typography-text>
+            </a-flex>
+            <a-layout-content v-else class="colocarContenedorPrincipalDashBoard">
                 <div class="content-wrapper">
                     <div class="header-section">
                         <a-typography-title class="dashboard-titulo">
@@ -169,7 +185,6 @@ const renderChart = async () => {
     </a-layout>
 </template>
 <style scoped>
-
 .content-wrapper {
     width: 100%;
     max-width: 1100px;
@@ -178,8 +193,15 @@ const renderChart = async () => {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .header-section {
@@ -248,17 +270,17 @@ const renderChart = async () => {
 }
 
 
-.qr-card{
-    text-align:center; 
-    margin-bottom:20px;
+.qr-card {
+    text-align: center;
+    margin-bottom: 20px;
 }
 
-.qr-card img{
-    width:200px; 
-    margin:10px auto;
+.qr-card img {
+    width: 200px;
+    margin: 10px auto;
 }
 
-.ant-card{
+.ant-card {
     height: auto !important;
 }
 </style>

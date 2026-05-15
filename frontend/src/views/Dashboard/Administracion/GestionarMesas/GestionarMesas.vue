@@ -159,76 +159,80 @@ onMounted(async function () {
         <HeaderDashboard :user="user" />
         <a-layout class="dashboardMainLayout">
             <Sidebar />
-            <a-layout-content class="colocarContenedorPrincipalDashBoard">
+            <a-flex v-if="mesas.length == 0" vertical align="center" justify="center" class="centrarSpin">
+                <a-spin size="large" />
+                <a-typography-text type="secondary">Cargando productos...</a-typography-text>
+            </a-flex>
+            <a-layout-content v-else class="colocarContenedorPrincipalDashBoard">
                 <a-divider orientation="left">
                     <a-typography-title :level="2">Gestor Mesas</a-typography-title>
                 </a-divider>
-            <a-tabs v-model:activeKey="tabActiva">
-                <a-tab-pane key="crear" tab="Crear mesa">
-                    <a-card>
-                        <a-form layout="vertical" @submit.prevent="nuevaMesa">
-                            <a-form-item label="Nombre de la mesa">
-                                <a-input v-model:value="formNuevaMesa.name" placeholder="Ej: Mesa 1, Terraza A..."
-                                    :maxlength="50" allow-clear />
-                            </a-form-item>
-                            <a-form-item label="Número de ocupantes">
-                                <a-input-number v-model:value="formNuevaMesa.n_ocupantes" :min="1" :max="999"
-                                    placeholder="Ej: 4" class="todoElAncho" />
-                            </a-form-item>
-                            <a-button type="primary" html-type="submit" :loading="cargandoCrear" block>Crear
-                                mesa</a-button>
-                        </a-form>
-                    </a-card>
-                </a-tab-pane>
+                <a-tabs v-model:activeKey="tabActiva">
+                    <a-tab-pane key="crear" tab="Crear mesa">
+                        <a-card>
+                            <a-form layout="vertical" @submit.prevent="nuevaMesa">
+                                <a-form-item label="Nombre de la mesa">
+                                    <a-input v-model:value="formNuevaMesa.name" placeholder="Ej: Mesa 1, Terraza A..."
+                                        :maxlength="50" allow-clear />
+                                </a-form-item>
+                                <a-form-item label="Número de ocupantes">
+                                    <a-input-number v-model:value="formNuevaMesa.n_ocupantes" :min="1" :max="999"
+                                        placeholder="Ej: 4" class="todoElAncho" />
+                                </a-form-item>
+                                <a-button type="primary" html-type="submit" :loading="cargandoCrear" block>Crear
+                                    mesa</a-button>
+                            </a-form>
+                        </a-card>
+                    </a-tab-pane>
 
-                <a-tab-pane key="actualizar" tab="Actualizar mesa">
-                    <a-card>
-                        <a-form layout="vertical" @submit.prevent="actualizarUnaMesaExistente">
-                            <a-form-item label="Selecciona una mesa">
-                                <a-select v-model:value="mesaSeleccionadaId" placeholder="Elige una mesa..."
-                                    :loading="cargandoMesas" class="todoElAncho" @change="onSeleccionarMesa">
-                                    <a-select-option v-for="mesa in mesas.filter(m => m.activo)" :key="mesa.id"
-                                        :value="mesa.id">
-                                        {{ mesa.name }}
-                                    </a-select-option>
-                                </a-select>
-                            </a-form-item>
-                            <a-form-item label="Nombre de la mesa">
-                                <a-input v-model:value="formActualizarMesa.name" :maxlength="50"
-                                    :disabled="!mesaSeleccionadaId" allow-clear />
-                            </a-form-item>
-                            <a-form-item label="Número de ocupantes">
-                                <a-input-number v-model:value="formActualizarMesa.n_ocupantes" :min="1" :max="999"
-                                    :disabled="!mesaSeleccionadaId" class="todoElAncho" />
-                            </a-form-item>
-                            <a-button type="primary" html-type="submit" :loading="cargandoActualizar"
-                                :disabled="!mesaSeleccionadaId" block>
-                                Actualizar mesa
-                            </a-button>
-                        </a-form>
-                    </a-card>
-                </a-tab-pane>
+                    <a-tab-pane key="actualizar" tab="Actualizar mesa">
+                        <a-card>
+                            <a-form layout="vertical" @submit.prevent="actualizarUnaMesaExistente">
+                                <a-form-item label="Selecciona una mesa">
+                                    <a-select v-model:value="mesaSeleccionadaId" placeholder="Elige una mesa..."
+                                        :loading="cargandoMesas" class="todoElAncho" @change="onSeleccionarMesa">
+                                        <a-select-option v-for="mesa in mesas.filter(m => m.activo)" :key="mesa.id"
+                                            :value="mesa.id">
+                                            {{ mesa.name }}
+                                        </a-select-option>
+                                    </a-select>
+                                </a-form-item>
+                                <a-form-item label="Nombre de la mesa">
+                                    <a-input v-model:value="formActualizarMesa.name" :maxlength="50"
+                                        :disabled="!mesaSeleccionadaId" allow-clear />
+                                </a-form-item>
+                                <a-form-item label="Número de ocupantes">
+                                    <a-input-number v-model:value="formActualizarMesa.n_ocupantes" :min="1" :max="999"
+                                        :disabled="!mesaSeleccionadaId" class="todoElAncho" />
+                                </a-form-item>
+                                <a-button type="primary" html-type="submit" :loading="cargandoActualizar"
+                                    :disabled="!mesaSeleccionadaId" block>
+                                    Actualizar mesa
+                                </a-button>
+                            </a-form>
+                        </a-card>
+                    </a-tab-pane>
 
-                <a-tab-pane key="eliminar" tab="Eliminar mesa">
-                    <a-card>
-                        <a-form layout="vertical" @submit.prevent="eliminarMesa">
-                            <a-form-item label="Selecciona una mesa">
-                                <a-select v-model:value="mesaEliminarId" placeholder="Elige una mesa..."
-                                    :loading="cargandoMesas" class="todoElAncho">
-                                    <a-select-option v-for="mesa in mesas.filter(m => m.activo)" :key="mesa.id"
-                                        :value="mesa.id">
-                                        {{ mesa.name }}
-                                    </a-select-option>
-                                </a-select>
-                            </a-form-item>
-                            <a-button type="primary" html-type="submit" :loading="cargandoEliminar"
-                                :disabled="!mesaEliminarId" block>
-                                Eliminar mesa
-                            </a-button>
-                        </a-form>
-                    </a-card>
-                </a-tab-pane>
-            </a-tabs>
+                    <a-tab-pane key="eliminar" tab="Eliminar mesa">
+                        <a-card>
+                            <a-form layout="vertical" @submit.prevent="eliminarMesa">
+                                <a-form-item label="Selecciona una mesa">
+                                    <a-select v-model:value="mesaEliminarId" placeholder="Elige una mesa..."
+                                        :loading="cargandoMesas" class="todoElAncho">
+                                        <a-select-option v-for="mesa in mesas.filter(m => m.activo)" :key="mesa.id"
+                                            :value="mesa.id">
+                                            {{ mesa.name }}
+                                        </a-select-option>
+                                    </a-select>
+                                </a-form-item>
+                                <a-button type="primary" html-type="submit" :loading="cargandoEliminar"
+                                    :disabled="!mesaEliminarId" block>
+                                    Eliminar mesa
+                                </a-button>
+                            </a-form>
+                        </a-card>
+                    </a-tab-pane>
+                </a-tabs>
             </a-layout-content>
         </a-layout>
         <Footer />
