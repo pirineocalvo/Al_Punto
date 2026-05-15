@@ -141,8 +141,11 @@ const formatearFecha = (fechaStr) => {
 
         <a-layout>
             <Sidebar :collapsed="collapsed" />
-
-            <a-layout-content class="colocarContenedorPrincipalDashBoard" v-if="autorizado">
+ <a-flex v-if="listaReservas.length == 0 || listaPedidos.length == 0" vertical align="center" justify="center" class="centrarSpin">
+                <a-spin size="large" />
+                <a-typography-text type="secondary">Cargando productos...</a-typography-text>
+            </a-flex>
+            <a-layout-content v-else class="colocarContenedorPrincipalDashBoard" v-if="autorizado">
                 <a-divider orientation="left">
                     <a-typography-title :level="2">Gestor Usuarios</a-typography-title>
                 </a-divider>

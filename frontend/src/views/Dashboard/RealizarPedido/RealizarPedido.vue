@@ -137,8 +137,11 @@ async function guardarCarrito() {
         <HeaderDashboard :user="user" />
         <a-layout>
             <Sidebar></Sidebar>
-
-            <a-row class="colocarContenedorPrincipalDashBoard" justify="space-between">
+            <a-flex v-if="menu.length == 0" vertical align="center" justify="center" class="centrarSpin">
+                <a-spin size="large" />
+                <a-typography-text type="secondary">Cargando productos...</a-typography-text>
+            </a-flex>
+            <a-row v-else class="colocarContenedorPrincipalDashBoard" justify="space-between">
                 <a-divider orientation="left"><a-typography-title :level="1">Realizar un pedido</a-typography-title></a-divider>
                 
                 <a-col :xl="24" :xxl="16">
@@ -274,4 +277,5 @@ async function guardarCarrito() {
     width: 100%;
     margin-top: 10px;
 }
+
 </style>

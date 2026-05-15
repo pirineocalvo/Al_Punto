@@ -1,9 +1,10 @@
 <script setup>
 import AppHeader from '../../Components/cabeceraYpiePrincipal/Header.vue';
 import AppFooter from '../../Components/cabeceraYpiePrincipal/Footer.vue';
-import { getDisponibilidadMes, todasLasMesasLibresPorDia, addReservation, misReservas } from '../../Services/api';
+import { getDisponibilidadMes, todasLasMesasLibresPorDia, addReservation, misReservas, vincularMesaReserva } from '../../Services/api';
 import { ref, onMounted } from 'vue';
 import dayjs from 'dayjs';
+import { notification } from 'ant-design-vue';
 
 const fechasCalendario = ref(dayjs());
 const diasBloqueados = ref({});
@@ -20,18 +21,39 @@ const datosForm = ref({
 const opcionesOcupantes = ref([1, 2, 3, 4, 5, 6]);
 
 onMounted(async () => {
-    await cargarMes(fechasCalendario.value.year(), fechasCalendario.value.month() + 1);
+    try {
+        await cargarMes(fechasCalendario.value.year(), fechasCalendario.value.month() + 1);
+    } catch (error) {
+
+    }
+
 });
 
+function generarNotificacion(tipo, titulo, texto) {
+    notification[tipo]({
+        message: titulo,
+        description: texto,
+        placement: 'topRight'
+    });
+}
+
 async function onSelect(date) {
-    const fecha = date.format('YYYY-MM-DD');
-    mesasDia.value = await todasLasMesasLibresPorDia(fecha, null);
-    fechaSeleccionada.value = fecha;
+    try {
+        const fecha = date.format('YYYY-MM-DD');
+        mesasDia.value = await todasLasMesasLibresPorDia(fecha, null);
+        fechaSeleccionada.value = fecha;
+    } catch (error) {
+
+    }
 }
 
 async function onPanelChange(value) {
     fechasCalendario.value = value;
-    await cargarMes(value.year(), value.month() + 1);
+    try {
+        await cargarMes(value.year(), value.month() + 1);
+    } catch (error) {
+
+    }
 }
 
 async function cargarMes(year, month) {
@@ -52,21 +74,23 @@ async function alCambiarOcupantes() {
     datosForm.value.mesa = null;
     datosForm.value.hora = null;
     horario.value = [];
-    let mesasQueVienenDelBack = await todasLasMesasLibresPorDia(fecha, datosForm.value.comensales);
+    try {
+        let mesasQueVienenDelBack = await todasLasMesasLibresPorDia(fecha, datosForm.value.comensales);
+        const todasLasReservas = await misReservas();
 
-    const todasLasReservas = await misReservas();
+        mesasDia.value = mesasQueVienenDelBack.map(mesa => {
+            const reservasDeEstaMesa = todasLasReservas.filter(res => res.id_mesa === mesa.id && res.reserve_date === fecha && res.status !== 'cancel');
+            const horasOcupadas = reservasDeEstaMesa.map(res => res.reserve_hour);
 
-    mesasDia.value = mesasQueVienenDelBack.map(mesa => {
-        const reservasDeEstaMesa = todasLasReservas.filter(res => res.id_mesa === mesa.id && res.reserve_date === fecha && res.status !== 'cancel');
-        const horasOcupadas = reservasDeEstaMesa.map(res => res.reserve_hour);
+            return {
+                ...mesa,
+                horasDisponibles: mesa.horasDisponibles.filter(h => !horasOcupadas.includes(h))
+            };
+        }).filter(mesa => mesa.horasDisponibles.length > 0);
+    } catch (error) {
 
-        return {
-            ...mesa,
-            horasDisponibles: mesa.horasDisponibles.filter(h => !horasOcupadas.includes(h))
-        };
-    }).filter(mesa => mesa.horasDisponibles.length > 0)
-    console.log(mesasDia.value);
-    ;
+    }
+
 }
 
 function filtrarHorario() {
@@ -80,9 +104,18 @@ async function guardarReserva() {
             ...datosForm.value,
             fecha: fechaSeleccionada.value
         };
-        await addReservation(dato);
-        await cargarMes(fechasCalendario.value.year(), fechasCalendario.value.month() + 1);
-        datosForm.value = { comensales: null, mesa: null, hora: null };
+
+        try {
+            const idUltimaReserva = await addReservation(dato);
+            const bodyGuardarMesaReservada = { idReserva: idUltimaReserva.reservationId, idMesa: datosForm.value.mesa };
+            await vincularMesaReserva(bodyGuardarMesaReservada);
+            await cargarMes(fechasCalendario.value.year(), fechasCalendario.value.month() + 1);
+            datosForm.value = { comensales: null, mesa: null, hora: null };
+            generarNotificacion('success', '¡Reserva realizada!', 'Su reserva esta lista, ¡Te esperamos!.');
+        } catch (error) {
+            generarNotificacion('error', 'Error al realizar la reserva', 'Si el error persiste contacte con el establecimiento.');
+        }
+
     }
 }
 </script>
@@ -93,7 +126,7 @@ async function guardarReserva() {
     <a-layout class="reservasMain">
         <a-typography-title :level="2">Reservas</a-typography-title>
 
-        <a-row :gutter="[32,16]">
+        <a-row :gutter="[32, 16]">
             <a-col :xs="24" :lg="16">
                 <a-card class="cardCalendario">
                     <a-calendar :model:value="fechasCalendario" @panelChange="onPanelChange" @select="onSelect"
@@ -119,7 +152,7 @@ async function guardarReserva() {
                             <a-select v-model:value="datosForm.mesa" placeholder="Selecciona una mesa"
                                 @change="filtrarHorario" size="large">
                                 <a-select-option v-for="mesa in mesasDia" :key="mesa.id" :value="mesa.id">
-                                    {{ mesa.name}}
+                                    {{ mesa.name }}
                                 </a-select-option>
                             </a-select>
                         </a-form-item>
@@ -159,5 +192,4 @@ async function guardarReserva() {
     border-radius: 18px !important;
     box-shadow: 0 10px 28px rgba(58, 46, 42, 0.08) !important;
 }
-
 </style>
