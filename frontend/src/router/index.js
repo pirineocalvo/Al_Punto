@@ -1,54 +1,131 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Home from '../views/Home/Home.vue'
-import Login from '../views/Login/Login.vue'
-import Register from '../views/Register/Register.vue'
-import Logout from '../views/Logout/Logout.vue'
-import Menu from '../views/Home/Menu/Menu.vue'
-import Reservation from '@/views/Reservation/Reservation.vue'
-import Dashboard from '../views/Dashboard/Dashboard.vue'
-import AgregarTickets from '@/views/Dashboard/Tickets/AgregarTickets/AgregarTickets.vue'
-import ListarTickets from '@/views/Dashboard/Tickets/ListarTickets/ListarTickets.vue'
-import Historial from '@/views/Dashboard/historial/Historial.vue'
-import RealizarPedido from '../views/Dashboard/RealizarPedido/RealizarPedido.vue'
-import Marketplace from '@/views/Dashboard/marketplace/Marketplace.vue'
-import Review from '@/views/Dashboard/Review/Review.vue'
-import GestionarMesas from '@/views/Dashboard/Administracion/GestionarMesas/GestionarMesas.vue'
-import GestionUsuarios from '@/views/Dashboard/Administracion/GestionarUsuarios/GestionUsuarios.vue'
-import NoAutorizado from '@/views/Dashboard/Administracion/NoAutorizado.vue'
+import { userInfo } from '@/Services/api'
+import { ACCESS_LEVELS } from '@/composables/useAuth'
 
+// ─── Rutas ───────────────────────────────────────────────────────────────────
 const routes = [
-  { path: '/', component: Home },
-  { path: '/login', component: Login },
-  { path: '/register', component: Register },
-  { path: '/logout', component: Logout },
-  { path: '/menu', component: Menu },
+
+  // ── Rutas públicas ────────────────────────────────────
+  {
+    path: '/',
+    component: () => import('@/views/Home/Home.vue'),
+  },
+  {
+    path: '/login',
+    component: () => import('@/views/Login/Login.vue'),
+  },
+  {
+    path: '/register',
+    component: () => import('@/views/Register/Register.vue'),
+  },
+  {
+    path: '/logout',
+    component: () => import('@/views/Logout/Logout.vue'),
+  },
+  {
+    path: '/menu',
+    component: () => import('@/views/Home/Menu/Menu.vue'),
+  },
+  {
+    path: '/noAutorizado',
+    component: () => import('@/views/Dashboard/Administracion/NoAutorizado.vue'),
+  },
+
+  // ── Rutas protegidas: cualquier usuario autenticado ───────────────────────
   {
     path: '/reservas',
-    component: Reservation,
-    beforeEnter: (to, from, next) => {
-      const token = localStorage.getItem('loginUserToken'); 
-      if (token) {
-        next()
-      } else {
-        next('/login')
-      }
-    }
+    component: () => import('@/views/Reservation/Reservation.vue'),
+    meta: { requiereAut: true },
   },
-  { path: '/zonaPersonal', component: Dashboard },
-  { path: '/agregarTickets', component: AgregarTickets },
-  { path: '/listarTickets', component: ListarTickets },
-  { path: '/realizarPedido', component: RealizarPedido },
-  { path: '/historial', component: Historial },
-  { path: '/marketplace', component: Marketplace },
-  { path: '/reviews', component: Review},
-  { path: '/gestionarMesas', component: GestionarMesas},
-  {path: '/gestionarUsuarios', component: GestionUsuarios},
-  {path: '/noAutorizado', component: NoAutorizado}
+  {
+    path: '/zonaPersonal',
+    component: () => import('@/views/Dashboard/Dashboard.vue'),
+    meta: { requiereAut: true },
+  },
+  {
+    path: '/historial',
+    component: () => import('@/views/Dashboard/historial/Historial.vue'),
+    meta: { requiereAut: true },
+  },
+  {
+    path: '/realizarPedido',
+    component: () => import('@/views/Dashboard/RealizarPedido/RealizarPedido.vue'),
+    meta: { requiereAut: true },
+  },
+  {
+    path: '/marketplace',
+    component: () => import('@/views/Dashboard/marketplace/Marketplace.vue'),
+    meta: { requiereAut: true },
+  },
+  {
+    path: '/reviews',
+    component: () => import('@/views/Dashboard/Review/Review.vue'),
+    meta: { requiereAut: true },
+  },
+  {
+    path: '/listarTickets',
+    component: () => import('@/views/Dashboard/Tickets/ListarTickets/ListarTickets.vue'),
+    meta: { requiereAut: true },
+  },
+  {
+    path: '/agregarTickets',
+    component: () => import('@/views/Dashboard/Tickets/AgregarTickets/AgregarTickets.vue'),
+    meta: { requiereAut: true },
+  },
+
+  // ── Rutas protegidas: empleados y administradores (nivel >= 3) ─────────────────
+  {
+    path: '/gestionarUsuarios',
+    component: () => import('@/views/Dashboard/Administracion/GestionarUsuarios/GestionUsuarios.vue'),
+    meta: { requiereAut: true, minAccessLevel: ACCESS_LEVELS.EMPLEADO },
+  },
+
+  // ── Rutas protegidas: solo administradores (nivel = 5) ────────────────────
+  {
+    path: '/gestionarMesas',
+    component: () => import('@/views/Dashboard/Administracion/GestionarMesas/GestionarMesas.vue'),
+    meta: { requiereAut: true, minAccessLevel: ACCESS_LEVELS.ADMIN },
+  },
 ]
 
+//web history mejora la navegacion guardando por donde se mueve o por donde queria ir el usuario
 const router = createRouter({
   history: createWebHistory(),
   routes,
 })
 
-export default router
+let rutaUsuarioCacheada = null;  
+
+router.beforeEach(async (to) => {
+
+  if (!to.meta.requiereAut) return true;
+
+  const token = localStorage.getItem('loginUserToken');
+  if (!token) {
+    return { path: '/login', query: { redirect: to.fullPath } };
+  }
+
+  if (to.meta.minAccessLevel) {
+    try {
+      if (!rutaUsuarioCacheada) {
+        rutaUsuarioCacheada = await userInfo();
+      }
+
+      if (rutaUsuarioCacheada.access_level < to.meta.minAccessLevel) {
+        return { path: '/noAutorizado' };
+      }
+    } catch {
+      rutaUsuarioCacheada = null;
+      localStorage.removeItem('loginUserToken');
+      return { path: '/login', query: { redirect: to.fullPath } };
+    }
+  }
+
+  return true;
+})
+
+export const clearRouterUserCache = () => {
+  rutaUsuarioCacheada = null;
+}
+
+export default router;

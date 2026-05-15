@@ -3,12 +3,14 @@ import Footer from '../../../Components/cabeceraYpiePrincipal/Footer.vue';
 import HeaderDashboard from '../../../Components/componenteDashboard/HeaderDashboard.vue';
 import Sidebar from '../../../Components/componenteDashboard/Sidebar.vue';
 import { getMyReviews, userInfo, getProductosCompradosCliente, addReview, getMenu } from '../../../Services/api';
-import { onMounted, ref, computed } from 'vue';
-import { useRouter } from 'vue-router';
-import { notification } from 'ant-design-vue';
+import { onMounted, ref, computed, watch } from 'vue';
+import { message, notification } from 'ant-design-vue';
+import { useAuth, ACCESS_LEVELS } from '@/composables/useAuth';
 
-const user = ref(null);
-const router = useRouter();
+const cargado = ref(false);
+
+const { user, usuarioListo } = useAuth({ minAccessLevel: ACCESS_LEVELS.EMPLEADO });
+
 const listaResenias = ref([]);
 const productosComprados = ref([]);
 const menuCompleto = ref([]);
@@ -90,6 +92,10 @@ onMounted(async () => {
     const token = localStorage.getItem('loginUserToken');
     if (!token) { router.push('/login'); return; }
 
+
+});
+
+watch(usuarioListo, async () => {
     try {
         [user.value, listaResenias.value, productosComprados.value, menuCompleto.value] = await Promise.all([
             userInfo(),
@@ -98,9 +104,12 @@ onMounted(async () => {
             getMenu()
         ]);
     } catch (err) {
-        console.error("Error cargando datos:", err);
+        message.error("Error cargando datos:", err);
+    }finally{
+        cargado.value = true;
     }
-});
+
+}, { immediate: true });
 
 const reseniasHechas = computed(() => listaResenias.value);
 
@@ -136,7 +145,7 @@ const formatearFecha = (fechaStr) => {
         <HeaderDashboard :user="user" />
         <a-layout class="dashboardMainLayout">
             <Sidebar />
-            <a-flex v-if="listaResenias.length == 0 || productosComprados.length == 0 || menuCompleto.length == 0"
+            <a-flex v-if="!cargado"
                 vertical align="center" justify="center" class="centrarSpin">
                 <a-spin size="large" />
                 <a-typography-text type="secondary">Cargando productos...</a-typography-text>

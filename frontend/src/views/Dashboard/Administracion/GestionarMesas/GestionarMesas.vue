@@ -1,19 +1,22 @@
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import { userInfo, crearMesa, todasLasMesas, actualizarMesa, desactivarMesa } from '../../../../Services/api';
+import { ref, watch } from 'vue';
+import {  crearMesa, todasLasMesas, actualizarMesa, desactivarMesa } from '../../../../Services/api';
 import HeaderDashboard from '@/Components/componenteDashboard/HeaderDashboard.vue';
-import { notification } from 'ant-design-vue';
+import { notification, message } from 'ant-design-vue';
 import Footer from '@/Components/cabeceraYpiePrincipal/Footer.vue';
 import Sidebar from '../../../../Components/componenteDashboard/Sidebar.vue';
+import { useAuth, ACCESS_LEVELS } from '@/composables/useAuth';
 
-const router = useRouter();
-const user = ref(null);
+const cargado = ref(false);
+
+const { user, usuarioListo } = useAuth({ minAccessLevel: ACCESS_LEVELS.ADMIN });
+
+
+
 
 const tabActiva = ref('crear');
 
 const mesas = ref([]);
-const cargandoMesas = ref(false);
 
 const formNuevaMesa = ref({ name: '', n_ocupantes: null });
 const cargandoCrear = ref(false);
@@ -27,13 +30,18 @@ const cargandoEliminar = ref(false);
 
 
 async function cargarMesas() {
-    cargandoMesas.value = true;
     try {
         mesas.value = await todasLasMesas();
+    } catch{
+        message.error('Error al cargar las mesas');
     } finally {
-        cargandoMesas.value = false;
+        cargado.value = true;
     }
 }
+
+watch(usuarioListo, () => {
+        cargarMesas();
+}, { immediate: true });
 
 function onSeleccionarMesa(id) {
     const mesa = mesas.value.find(m => m.id === id);
@@ -134,24 +142,6 @@ async function eliminarMesa() {
     }
 }
 
-onMounted(async function () {
-    const token = localStorage.getItem('loginUserToken');
-    if (!token) {
-        router.push('/login');
-        return;
-    }
-    try {
-        user.value = await userInfo();
-        if (user.value.access_level !== 5) {
-            router.push('/noAutorizado');
-            return;
-        }
-
-        await cargarMesas();
-    } catch (err) {
-        router.push('/login');
-    }
-});
 </script>
 
 <template>
@@ -159,7 +149,7 @@ onMounted(async function () {
         <HeaderDashboard :user="user" />
         <a-layout class="dashboardMainLayout">
             <Sidebar />
-            <a-flex v-if="mesas.length == 0" vertical align="center" justify="center" class="centrarSpin">
+            <a-flex v-if="cargado == false" vertical align="center" justify="center" class="centrarSpin">
                 <a-spin size="large" />
                 <a-typography-text type="secondary">Cargando productos...</a-typography-text>
             </a-flex>
@@ -179,8 +169,7 @@ onMounted(async function () {
                                     <a-input-number v-model:value="formNuevaMesa.n_ocupantes" :min="1" :max="999"
                                         placeholder="Ej: 4" class="todoElAncho" />
                                 </a-form-item>
-                                <a-button type="primary" html-type="submit" :loading="cargandoCrear" block>Crear
-                                    mesa</a-button>
+                                <a-button type="primary" html-type="submit" :loading="cargandoCrear" block>Crear mesa</a-button>
                             </a-form>
                         </a-card>
                     </a-tab-pane>
@@ -190,7 +179,7 @@ onMounted(async function () {
                             <a-form layout="vertical" @submit.prevent="actualizarUnaMesaExistente">
                                 <a-form-item label="Selecciona una mesa">
                                     <a-select v-model:value="mesaSeleccionadaId" placeholder="Elige una mesa..."
-                                        :loading="cargandoMesas" class="todoElAncho" @change="onSeleccionarMesa">
+                                        :loading="!cargado" class="todoElAncho" @change="onSeleccionarMesa">
                                         <a-select-option v-for="mesa in mesas.filter(m => m.activo)" :key="mesa.id"
                                             :value="mesa.id">
                                             {{ mesa.name }}
@@ -218,7 +207,7 @@ onMounted(async function () {
                             <a-form layout="vertical" @submit.prevent="eliminarMesa">
                                 <a-form-item label="Selecciona una mesa">
                                     <a-select v-model:value="mesaEliminarId" placeholder="Elige una mesa..."
-                                        :loading="cargandoMesas" class="todoElAncho">
+                                        :loading="!cargado" class="todoElAncho">
                                         <a-select-option v-for="mesa in mesas.filter(m => m.activo)" :key="mesa.id"
                                             :value="mesa.id">
                                             {{ mesa.name }}
