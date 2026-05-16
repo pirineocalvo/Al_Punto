@@ -1,18 +1,21 @@
 <script setup>
-import { ref, onMounted, computed, nextTick } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, computed, nextTick, watch } from 'vue';
 import Sidebar from '../../Components/componenteDashboard/Sidebar.vue';
-import { misReservas, userInfo } from '../../Services/api';
+import { misReservas } from '../../Services/api';
 import { Bar } from '@antv/g2plot';
 import { UserOutlined, TrophyOutlined, FileTextOutlined } from '@ant-design/icons-vue';
 import QRCode from 'qrcode';
 import HeaderDashboard from '@/Components/componenteDashboard/HeaderDashboard.vue';
 import Footer from '@/Components/cabeceraYpiePrincipal/Footer.vue';
+import { useAuth, ACCESS_LEVELS } from '@/composables/useAuth';
+import { message } from 'ant-design-vue';
 
-const user = ref(null);
+const cargado = ref(false);
+
+const { user, usuarioListo } = useAuth({ minAccessLevel: ACCESS_LEVELS.EMPLEADO });
+
 const reserveInfo = ref([]);
 const collapsed = ref(false);
-const router = useRouter();
 
 const chartRef = ref(null);
 let chartInstance = null;
@@ -26,32 +29,24 @@ const generarCodigoQR = (userId) => {
     return btoa(`${userId}:${secret}`);
 };
 
-onMounted(async () => {
+watch(usuarioListo, async () => {
     try {
-        await fetchUser();
         await fetchReserve();
         await generarQR();
         renderChart();
     } catch (error) {
-
+        message.error('Error al cargar los datos del usuario');
+    }finally{
+        cargado.value = true;
     }
-});
 
-const fetchUser = async () => {
-    const token = localStorage.getItem('loginUserToken');
-    if (!token) { router.push('/login'); return; }
-    try {
-        user.value = await userInfo();
-    } catch (err) {
-        router.push('/login');
-    }
-};
+}, { immediate: true });
 
 const fetchReserve = async () => {
     try {
         reserveInfo.value = await misReservas();
     } catch (err) {
-        console.error(err);
+        message.error('Error al consultar las reservas');
     }
 };
 
@@ -116,7 +111,7 @@ const renderChart = async () => {
         <HeaderDashboard :user="user" />
         <a-layout class="dashboardMainLayout">
             <Sidebar :collapsed="collapsed" />
-            <a-flex v-if="reserveInfo.length == 0" vertical align="center" justify="center" class="centrarSpin">
+            <a-flex v-if="!cargado" vertical align="center" justify="center" class="centrarSpin">
                 <a-spin size="large" />
                 <a-typography-text type="secondary">Cargando productos...</a-typography-text>
             </a-flex>

@@ -1,15 +1,17 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { CalendarOutlined, ClockCircleOutlined, TeamOutlined, NumberOutlined } from '@ant-design/icons-vue';
-import { useRouter } from 'vue-router';
-import { usarProductoMarket, userInfo, getTodosLosPedidosAdmin, updateOrderStatus, cancelarPedido, actualizarEstadoReservaAdmin, obtenerTodasLasReservasAdmin } from '../../../../Services/api';
-import { notification } from 'ant-design-vue';
+import { usarProductoMarket, getTodosLosPedidosAdmin, updateOrderStatus, cancelarPedido, actualizarEstadoReservaAdmin, obtenerTodasLasReservasAdmin } from '../../../../Services/api';
+import { notification, message } from 'ant-design-vue';
 import HeaderDashboard from '@/Components/componenteDashboard/HeaderDashboard.vue';
 import Footer from '@/Components/cabeceraYpiePrincipal/Footer.vue';
 import Sidebar from '../../../../Components/componenteDashboard/Sidebar.vue';
+import { useAuth, ACCESS_LEVELS } from '@/composables/useAuth';
 
-const router = useRouter();
-const user = ref(null);
+const cargado = ref(false);
+
+const { user, usuarioListo } = useAuth({ minAccessLevel: ACCESS_LEVELS.EMPLEADO });
+
 const collapsed = ref(false);
 
 const tabActiva = ref('reservas');
@@ -18,7 +20,6 @@ const loadingMarket = ref(false);
 const listaPedidos = ref([]);
 const listaReservas = ref([]);
 
-const autorizado = ref(false);
 
 function generarNotificacion(tipo, titulo, texto) {
     notification[tipo]({
@@ -28,35 +29,13 @@ function generarNotificacion(tipo, titulo, texto) {
     });
 }
 
-onMounted(async function () {
-    const token = localStorage.getItem('loginUserToken');
-    if (!token) {
-        router.push('/login');
-        return;
-    }
-
-    try {
-        user.value = await userInfo();
-
-        if (user.value.access_level <= 3) {
-            router.push('/noAutorizado');
-            return;
-        }
-
-        autorizado.value = true;
-        await cargarPedidos();
-        await cargarReservas();
-    } catch (err) {
-        router.push('/login');
-    }
-});
-
 async function cargarPedidos() {
     try {
         const res = await getTodosLosPedidosAdmin();
         listaPedidos.value = res;
+        
     } catch (err) {
-        console.error('Error al cargar pedidos');
+        message.error('Error al cargar pedidos');
     }
 }
 
@@ -65,9 +44,15 @@ async function cargarReservas() {
         const res = await obtenerTodasLasReservasAdmin();
         listaReservas.value = res;
     } catch (err) {
-        console.error('Error al cargar las reservas');
+        message.error('Error al cargar las reservas');
     }
 }
+
+watch(usuarioListo, () => {
+    cargarPedidos();
+    cargarReservas();
+    cargado.value = true;
+}, { immediate: true });
 
 async function cangearProductoMarket() {
     if (!tokenInput.value.trim()) {
@@ -141,11 +126,12 @@ const formatearFecha = (fechaStr) => {
 
         <a-layout>
             <Sidebar :collapsed="collapsed" />
- <a-flex v-if="listaReservas.length == 0 || listaPedidos.length == 0" vertical align="center" justify="center" class="centrarSpin">
+            <a-flex v-if="!cargado" vertical align="center"
+                justify="center" class="centrarSpin">
                 <a-spin size="large" />
                 <a-typography-text type="secondary">Cargando productos...</a-typography-text>
             </a-flex>
-            <a-layout-content v-else class="colocarContenedorPrincipalDashBoard" v-if="autorizado">
+            <a-layout-content v-else class="colocarContenedorPrincipalDashBoard">
                 <a-divider orientation="left">
                     <a-typography-title :level="2">Gestor Usuarios</a-typography-title>
                 </a-divider>
@@ -297,7 +283,6 @@ const formatearFecha = (fechaStr) => {
 </template>
 
 <style scoped>
-/* Estilos mantenidos igual */
 .textoFecha {
     float: right;
     font-weight: normal;

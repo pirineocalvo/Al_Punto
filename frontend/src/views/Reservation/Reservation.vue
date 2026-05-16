@@ -4,7 +4,7 @@ import AppFooter from '../../Components/cabeceraYpiePrincipal/Footer.vue';
 import { getDisponibilidadMes, todasLasMesasLibresPorDia, addReservation, misReservas, vincularMesaReserva } from '../../Services/api';
 import { ref, onMounted } from 'vue';
 import dayjs from 'dayjs';
-import { notification } from 'ant-design-vue';
+import { message, notification } from 'ant-design-vue';
 
 const fechasCalendario = ref(dayjs());
 const diasBloqueados = ref({});
@@ -24,9 +24,8 @@ onMounted(async () => {
     try {
         await cargarMes(fechasCalendario.value.year(), fechasCalendario.value.month() + 1);
     } catch (error) {
-
+        message.error('Error al cargar el mes');
     }
-
 });
 
 function generarNotificacion(tipo, titulo, texto) {
@@ -43,7 +42,7 @@ async function onSelect(date) {
         mesasDia.value = await todasLasMesasLibresPorDia(fecha, null);
         fechaSeleccionada.value = fecha;
     } catch (error) {
-
+        message.error('Error al cargar las mesas');
     }
 }
 
@@ -52,7 +51,7 @@ async function onPanelChange(value) {
     try {
         await cargarMes(value.year(), value.month() + 1);
     } catch (error) {
-
+        message.error('Error al cargar el mes');
     }
 }
 
@@ -60,7 +59,7 @@ async function cargarMes(year, month) {
     try {
         diasBloqueados.value = await getDisponibilidadMes(year, month);
     } catch (error) {
-        console.error('Error al cargar disponibilidad del mes:', error);
+        message.error('Error al cargar disponibilidad del mes');
     }
 }
 
@@ -88,7 +87,7 @@ async function alCambiarOcupantes() {
             };
         }).filter(mesa => mesa.horasDisponibles.length > 0);
     } catch (error) {
-
+        message.error('Error al cargar los datos');
     }
 
 }

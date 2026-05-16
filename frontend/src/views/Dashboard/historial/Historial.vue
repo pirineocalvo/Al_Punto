@@ -1,23 +1,18 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { QuestionCircleOutlined } from '@ant-design/icons-vue';
 import HeaderDashboard from '@/Components/componenteDashboard/HeaderDashboard.vue';
 import Footer from '@/Components/cabeceraYpiePrincipal/Footer.vue';
 import Sidebar from '../../../Components/componenteDashboard/Sidebar.vue';
-import {
-    getProductosCompradosCliente,
-    cancelarPedido,
-    misReservas,
-    pedidosRealizadosMarketPlace,
-    cancelarReserva,
-    userInfo
-} from '../../../Services/api';
-import { useRouter } from 'vue-router';
-import { notification } from 'ant-design-vue';
+import { getProductosCompradosCliente, cancelarPedido, misReservas, pedidosRealizadosMarketPlace, cancelarReserva, userInfo } from '../../../Services/api';
+import { message, notification } from 'ant-design-vue';
+import { useAuth, ACCESS_LEVELS } from '@/composables/useAuth';
 
-const user = ref(null);
+const cargado = ref(false);
+
+const { user, usuarioListo } = useAuth({ minAccessLevel: ACCESS_LEVELS.EMPLEADO });
+
 const collapsed = ref(false);
-const router = useRouter();
 
 const tabActiva = ref('reservas');
 const acordeonActivo = ref(null);
@@ -35,13 +30,8 @@ function generarNotificacion(tipo, titulo, texto) {
     });
 }
 
-onMounted(async () => {
-    const token = localStorage.getItem('loginUserToken');
-    if (!token) { router.push('/login'); return; }
-
+watch(usuarioListo, async () => {
     try {
-        user.value = await userInfo();
-
         const [pedidos, reservas, marketplace] = await Promise.all([
             getProductosCompradosCliente(),
             misReservas(),
@@ -51,14 +41,13 @@ onMounted(async () => {
         listaPedidos.value = pedidos;
         listaReservas.value = reservas;
         listaMarketPlaceReclamado.value = marketplace;
-
     } catch (err) {
-        console.error("Error cargando datos iniciales:", err);
-        generarNotificacion('error', 'Error de carga', 'No se pudieron obtener tus datos.');
-        router.push('/login');
+        message.error("Error cargando datos:", err);
+    } finally {
+        cargado.value = true;
     }
-});
 
+}, { immediate: true });
 async function eliminarPedido(pedido) {
     try {
         await cancelarPedido(pedido.id);
@@ -88,7 +77,8 @@ async function pararReserva(reserva) {
 
         <a-layout class="dashboardMainLayout">
             <Sidebar :collapsed="collapsed" />
-            <a-flex v-if="listaReservas.length == 0 ||listaMarketPlaceReclamado.length == 0 || listaPedidos.length == 0" vertical align="center" justify="center" class="centrarSpin">
+            <a-flex v-if="!cargado"
+                vertical align="center" justify="center" class="centrarSpin">
                 <a-spin size="large" />
                 <a-typography-text type="secondary">Cargando productos...</a-typography-text>
             </a-flex>
@@ -124,9 +114,12 @@ async function pararReserva(reserva) {
                                     <a-col :xs="24"><a-typography-text strong>Asistentes:</a-typography-text> {{
                                         reserva.guests }}</a-col>
                                     <a-col :xs="24" v-if="reserva.status == null">
-                                        <a-popconfirm title="¿Cancelar reserva?" @confirm="pararReserva(reserva)" ok-text="Sí" cancel-text="No">
-                                            <template #icon><QuestionCircleOutlined /></template>
-                                            <a-button  type="primary" >Cancelar reserva</a-button>
+                                        <a-popconfirm title="¿Cancelar reserva?" @confirm="pararReserva(reserva)"
+                                            ok-text="Sí" cancel-text="No">
+                                            <template #icon>
+                                                <QuestionCircleOutlined />
+                                            </template>
+                                            <a-button type="primary">Cancelar reserva</a-button>
                                         </a-popconfirm>
                                     </a-col>
                                 </a-row>
@@ -164,9 +157,12 @@ async function pararReserva(reserva) {
                                             producto.price_at_time }}€</span>
                                     </a-col>
                                     <a-col :xs="24" v-if="pedido.is_picked_up == 0 && pedido.status == 'pendiente'">
-                                        <a-popconfirm title="¿Cancelar pedido?" @confirm="eliminarPedido(pedido)" ok-text="Sí" cancel-text="No">
-                                            <template #icon><QuestionCircleOutlined /></template>
-                                            <a-button  type="primary" >Cancelar pedido</a-button>
+                                        <a-popconfirm title="¿Cancelar pedido?" @confirm="eliminarPedido(pedido)"
+                                            ok-text="Sí" cancel-text="No">
+                                            <template #icon>
+                                                <QuestionCircleOutlined />
+                                            </template>
+                                            <a-button type="primary">Cancelar pedido</a-button>
                                         </a-popconfirm>
                                     </a-col>
                                 </a-row>
@@ -192,7 +188,8 @@ async function pararReserva(reserva) {
                                 </template>
                                 <a-row :gutter="[6, 12]">
                                     <a-col :xs="24"><span>{{ market.description }}</span></a-col>
-                                    <a-col :xs="24"><span>Código: <a-tag><a-typography-text copyable>{{ market.token_url }}</a-typography-text></a-tag></span></a-col>
+                                    <a-col :xs="24"><span>Código: <a-tag><a-typography-text copyable>{{ market.token_url
+                                                    }}</a-typography-text></a-tag></span></a-col>
                                 </a-row>
                             </a-collapse-panel>
                         </a-collapse>

@@ -4,10 +4,13 @@ import HeaderDashboard from '../../../Components/componenteDashboard/HeaderDashb
 import Sidebar from '../../../Components/componenteDashboard/Sidebar.vue';
 import { listaProductosMarketplace, cangearProductoMarkePlace, userInfo } from '../../../Services/api';
 import { notification } from 'ant-design-vue';
-import { onMounted, ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
+import { useAuth, ACCESS_LEVELS } from '@/composables/useAuth';
 
-const user = ref(null);
+const { user, usuarioListo } = useAuth({ minAccessLevel: ACCESS_LEVELS.CLIENTE });
+
+const cargado = ref(false);
 const router = useRouter();
 const listaProductos = ref([]);
 
@@ -19,16 +22,14 @@ function generarNotificacion(tipo, titulo, texto) {
     });
 }
 
-onMounted(async () => {
-    const token = localStorage.getItem('loginUserToken');
-    if (!token) { router.push('/login'); return; }
+watch(usuarioListo, async () => {
     try {
-        user.value = await userInfo();
         listaProductos.value = await listaProductosMarketplace();
+        cargado.value = true;
     } catch (err) {
         router.push('/login');
     }
-});
+}, { immediate: true });
 
 const productosFiltrados = computed(() => listaProductos.value);
 
@@ -49,7 +50,6 @@ async function adquirirProducto(producto) {
     if (!estaDesbloqueado(producto)) return;
     try {
         await cangearProductoMarkePlace(producto.id);
-        user.value = await userInfo();
 
         generarNotificacion('success', 'Canjeo de producto', 'El producto fue canjeado con éxito. Tus puntos se han actualizado.');
     } catch (error) {
@@ -63,7 +63,7 @@ async function adquirirProducto(producto) {
         <HeaderDashboard :user="user" />
         <a-layout class="dashboardMainLayout">
             <Sidebar />
-            <a-flex v-if="listaProductos.length == 0" vertical align="center" justify="center" class="centrarSpin">
+            <a-flex v-if="cargado == false" vertical align="center" justify="center" class="centrarSpin">
                 <a-spin size="large" />
                 <a-typography-text type="secondary">Cargando productos...</a-typography-text>
             </a-flex>
@@ -131,9 +131,6 @@ async function adquirirProducto(producto) {
     transition: transform 0.3s ease;
 }
 
-.mpCard:hover:not(.mpCardLocked) {
-    transform: translateY(-5px);
-}
 
 .mpCard :deep(.ant-card-body) {
     height: 100%;

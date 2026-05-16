@@ -1,15 +1,17 @@
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, watch } from 'vue';
 import { InboxOutlined } from '@ant-design/icons-vue';
 import { notification } from 'ant-design-vue';
-import { uploadTickets, userInfo } from '../../../../Services/api';
+import { uploadTickets } from '../../../../Services/api';
 import HeaderDashboard from '@/Components/componenteDashboard/HeaderDashboard.vue';
 import Footer from '@/Components/cabeceraYpiePrincipal/Footer.vue';
 import Sidebar from '../../../../Components/componenteDashboard/Sidebar.vue';
+import { useAuth, ACCESS_LEVELS } from '@/composables/useAuth';
 
-const router = useRouter();
-const user = ref(null);
+const cargado = ref(false);
+
+const { user, usuarioListo } = useAuth({ minAccessLevel: ACCESS_LEVELS.EMPLEADO });
+
 const collapsed = ref(false);
 const cargando = ref(false);
 const archivo = ref(null);
@@ -23,15 +25,9 @@ function generarNotificacion(tipo, titulo, texto) {
     });
 }
 
-onMounted(async () => {
-    const token = localStorage.getItem('loginUserToken');
-    if (!token) { router.push('/login'); return }
-    try {
-        user.value = await userInfo();
-    } catch {
-        router.push('/login');
-    }
-})
+watch(usuarioListo, () => {
+    cargado.value = true;
+}, { immediate: true });
 
 // evita que Ant Design suba automáticamente
 const antesDeSubir = (file) => {
