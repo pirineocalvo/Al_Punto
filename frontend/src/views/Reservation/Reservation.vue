@@ -18,7 +18,31 @@ const datosForm = ref({
 });
 
 
-const opcionesOcupantes = ref([1, 2, 3, 4, 5, 6]);
+const opcionesOcupantes = ref([]);
+
+function calcularCapacidadMesas() {
+    const filtrarOcupantes = new Set();
+    mesasDia.value.forEach(ocu => {
+        const estaGuardado = filtrarOcupantes.has(ocu);
+        if (!estaGuardado) {
+            filtrarOcupantes.add(ocu.n_ocupantes);
+        }
+    });
+    opcionesOcupantes.value = [...filtrarOcupantes];
+    completarListaCapacidadMesas();
+
+}
+
+function completarListaCapacidadMesas() {
+    opcionesOcupantes.value.sort((a, b) => a - b);
+
+    const min = 1;
+    const max = opcionesOcupantes.value[opcionesOcupantes.value.length - 1];
+
+    opcionesOcupantes.value = Array.from({ length: max }, (_, i) => min + i);
+
+    console.log(opcionesOcupantes.value);
+}
 
 onMounted(async () => {
     try {
@@ -37,9 +61,16 @@ function generarNotificacion(tipo, titulo, texto) {
 }
 
 async function onSelect(date) {
+    datosForm.value.comensales = null;
+    datosForm.value.mesa = null;
+    datosForm.value.hora = null;
+
+    horario.value = [];
     try {
         const fecha = date.format('YYYY-MM-DD');
         mesasDia.value = await todasLasMesasLibresPorDia(fecha, null);
+
+        calcularCapacidadMesas();
         fechaSeleccionada.value = fecha;
     } catch (error) {
         message.error('Error al cargar las mesas');
@@ -149,7 +180,7 @@ async function guardarReserva() {
 
                         <a-form-item v-if="datosForm.comensales" label="Mesa disponible">
                             <a-select v-model:value="datosForm.mesa" placeholder="Selecciona una mesa"
-                                @change="filtrarHorario" size="large">
+                                @change="filtrarHorario" size="large" :notFoundContent="'No se encontraron mesas disponibles para ese número de comensales, pongase en contacto con el establecimiento.'">
                                 <a-select-option v-for="mesa in mesasDia" :key="mesa.id" :value="mesa.id">
                                     {{ mesa.name }}
                                 </a-select-option>
@@ -160,6 +191,7 @@ async function guardarReserva() {
                             <a-select v-model:value="datosForm.hora" placeholder="Seleccione una hora" size="large">
                                 <a-select-option v-for="hora in horario" :key="hora" :value="hora">
                                     {{ hora }}
+
                                 </a-select-option>
                             </a-select>
                         </a-form-item>
