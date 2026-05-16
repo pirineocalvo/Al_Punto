@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, nextTick, watch } from 'vue';
+import { ref, computed, nextTick, watch, onBeforeUnmount } from 'vue';
 import Sidebar from '../../Components/componenteDashboard/Sidebar.vue';
 import { misReservas } from '../../Services/api';
 import { Bar } from '@antv/g2plot';
@@ -25,22 +25,8 @@ const qr = ref('');
 
 
 const generarCodigoQR = (userId) => {
-    const secret = 'mi_clave_secreta_123';
-    return btoa(`${userId}:${secret}`);
+    return encodeURIComponent(userId);
 };
-
-watch(usuarioListo, async () => {
-    try {
-        await fetchReserve();
-        await generarQR();
-        renderChart();
-    } catch (error) {
-        message.error('Error al cargar los datos del usuario');
-    }finally{
-        cargado.value = true;
-    }
-
-}, { immediate: true });
 
 const fetchReserve = async () => {
     try {
@@ -104,6 +90,37 @@ const renderChart = async () => {
     });
     chartInstance.render();
 };
+
+watch(usuarioListo, async () => {
+    try {
+        await fetchReserve();
+    } catch (error) {
+        message.error('Error al cargar los datos del usuario');
+    }finally{
+        cargado.value = true;
+    }
+    try {
+        await generarQR();
+    } catch (error) {
+        message.error('Error al cargar el qr en el watch')
+    }
+
+}, { immediate: true });
+
+//si se pone en el de arriba no carga
+watch(cargado, () => {
+    if (cargado.value) {
+        renderChart();
+    }
+}, { deep: true });
+
+onBeforeUnmount(() => {
+    if (chartInstance) {
+        chartInstance.destroy();
+        chartInstance = null;
+    }
+});
+
 </script>
 
 <template>

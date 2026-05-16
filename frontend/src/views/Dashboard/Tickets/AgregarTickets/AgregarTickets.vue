@@ -202,7 +202,7 @@ const resetear = () => {
 
                                 <a-row justify="end">
                                     <a-col>
-                                        <a-statistic title="Total" :value="ticketInfo.total" precision="2" suffix="€"
+                                        <a-statistic title="Total" :value="ticketInfo.total" :precision="2" suffix="€"
                                             class="ticket-total" />
                                     </a-col>
                                 </a-row>
