@@ -2,14 +2,14 @@
 import Footer from '../../../Components/cabeceraYpiePrincipal/Footer.vue';
 import HeaderDashboard from '../../../Components/componenteDashboard/HeaderDashboard.vue';
 import Sidebar from '../../../Components/componenteDashboard/Sidebar.vue';
-import { ref, computed, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, computed, watch } from 'vue';
 import { QuestionCircleOutlined, EditOutlined, CheckOutlined } from '@ant-design/icons-vue';
-import { getMenu, getCategories, guardarCarritoCompraClientes, userInfo } from '../../../Services/api';
-import { notification } from 'ant-design-vue'; 
+import { getMenu, getCategories, guardarCarritoCompraClientes } from '../../../Services/api';
+import { useAuth, ACCESS_LEVELS } from '@/composables/useAuth';
+import { message, notification } from 'ant-design-vue';
+const { user, usuarioListo } = useAuth({ minAccessLevel: ACCESS_LEVELS.ADMIN });
 
-const user = ref(null);
-const router = useRouter();
+const cargado = ref(false);
 const menu = ref([]);
 const categorias = ref([]);
 const menuClasificado = ref([]);
@@ -21,19 +21,6 @@ function generarNotificacion(tipo, titulo, texto) {
         placement: 'topRight'
     });
 }
-
-onMounted(async () => {
-    const token = localStorage.getItem('loginUserToken');
-    if (!token) { router.push('/login'); return; }
-    try {
-        user.value = await userInfo();
-        menu.value = await getMenu();
-        categorias.value = await getCategories();
-        clasificarMenu();
-    } catch (err) {
-        router.push('/login');
-    }
-});
 
 function clasificarMenu() {
     categorias.value.forEach(catego => {
@@ -57,12 +44,8 @@ const productosElegidos = ref([]);
 function addCarritoProducto(nuevoProducto) {
     const existente = productosElegidos.value.find(pro => pro.name === nuevoProducto.name);
     if (existente) {
-        productosElegidos.value.map(pro => {
-            if (pro.name === nuevoProducto.name) {
-                pro.cantidad += 1;
-                pro.precioTotal = pro.price * pro.cantidad;
-            }
-        });
+        existente.cantidad += 1;
+        existente.precioTotal = existente.price * existente.cantidad
     } else {
         const crearNuevoProducto = {
             ...nuevoProducto,
@@ -75,25 +58,24 @@ function addCarritoProducto(nuevoProducto) {
 }
 
 function activarEdicionCantidad(nombreProducto) {
-    productosElegidos.value.map(pro => {
-        if (pro.name === nombreProducto) {
-            pro.edicion = !pro.edicion;
-        }
-    });
+    const producto = productosElegidos.value.find(pro =>{return pro.name == nombreProducto});
+    if(producto){
+        producto.edicion = !producto.edicion;
+    }
 }
 
 function guardarCambios(nuevoProducto) {
-    productosElegidos.value.map(pro => {
-        if (pro.name === nuevoProducto.name) {
-            if (nuevoProducto.cantidad <= 0) {
-                eliminarProductoCarrito(nuevoProducto);
-            } else {
-                pro.cantidad = nuevoProducto.cantidad;
-                pro.precioTotal = pro.cantidad * pro.price;
-                pro.edicion = false;
-            }
+    const producto = productosElegidos.value.find(pro =>{return pro.name == nuevoProducto.name});
+    
+    if(producto){
+        if (nuevoProducto.cantidad <= 0) {
+            eliminarProductoCarrito(nuevoProducto);
+        } else {
+            producto.cantidad = nuevoProducto.cantidad;
+            producto.precioTotal = pro.cantidad * pro.price;
+            producto.edicion = false;
         }
-    });
+    }
 }
 
 function eliminarProductoCarrito(productoEliminar) {
@@ -130,6 +112,17 @@ async function guardarCarrito() {
         }
     }
 }
+
+watch(usuarioListo, async () => {
+    try {
+        menu.value = await getMenu();
+        categorias.value = await getCategories();
+        clasificarMenu();
+        cargado.value = true;
+    } catch (err) {
+        message.error('Error al cargar la página')
+    }
+}, { immediate: true });
 </script>
 
 <template>
@@ -137,7 +130,7 @@ async function guardarCarrito() {
         <HeaderDashboard :user="user" />
         <a-layout>
             <Sidebar></Sidebar>
-            <a-flex v-if="menu.length == 0" vertical align="center" justify="center" class="centrarSpin">
+            <a-flex v-if="!cargado" vertical align="center" justify="center" class="centrarSpin">
                 <a-spin size="large" />
                 <a-typography-text type="secondary">Cargando productos...</a-typography-text>
             </a-flex>
