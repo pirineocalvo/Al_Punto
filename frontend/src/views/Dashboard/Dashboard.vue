@@ -96,7 +96,7 @@ watch(usuarioListo, async () => {
         await fetchReserve();
     } catch (error) {
         message.error('Error al cargar los datos del usuario');
-    } finally {
+    }finally{
         cargado.value = true;
     }
     try {
@@ -107,6 +107,7 @@ watch(usuarioListo, async () => {
 
 }, { immediate: true });
 
+//si se pone en el de arriba no carga
 watch(cargado, () => {
     if (cargado.value) {
         renderChart();
