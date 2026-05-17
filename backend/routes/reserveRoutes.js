@@ -3,7 +3,7 @@ const router  = express.Router();
 const { getUserIdFromToken } = require('../utils/crypto');
 const db = require('../utils/db');
 
-// ── Middlewares ────────────────────────────────────────────────
+//Middlewares 
 const authMiddleware = (req, res, next) => {
     const userId = getUserIdFromToken(req, res);
     if (!userId) return;
