@@ -1,16 +1,16 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { userInfo } from '@/Services/api';
+import { userInfo } from '@/services/api';
 
 export const ACCESS_LEVELS = {
-    CLIENTE:  1,
-    EMPLEADO:    3,
-    ADMIN:    5,
+    CLIENTE: 1,
+    EMPLEADO: 3,
+    ADMIN: 5,
 };
 
 const usuarioCacheado = ref(null);
 
-export function useAuth({rutaLogin ='/login', nivelMin = ACCESS_LEVELS.CLIENTE}) {
+export function useAuth({rutaLogin ='/iniciarSesion', nivelMin = ACCESS_LEVELS.CLIENTE}) {
     const router  = useRouter();
     const usuarioListo = ref(false);
 

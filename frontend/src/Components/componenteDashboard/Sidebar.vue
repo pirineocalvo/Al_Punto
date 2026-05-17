@@ -3,8 +3,8 @@ import { useRouter, useRoute } from 'vue-router';
 import { ref, onMounted, onUnmounted } from 'vue';
 import { HomeOutlined, UserOutlined, HistoryOutlined, ShoppingOutlined, ShopOutlined, TagsOutlined, SettingOutlined, CommentOutlined } from '@ant-design/icons-vue';
 import { message } from 'ant-design-vue';
-import { userInfo } from '../../Services/api';
-import { funcinalidadSidebar } from '../../Components/componenteDashboard/js/ocultarSidebar';
+import { userInfo } from '../../services/api';
+import { funcinalidadSidebar } from '../../components/componenteDashboard/js/ocultarSidebar';
 
 const { cambiarEstadoSidebar, sidebarAbierto } = funcinalidadSidebar();
 
@@ -30,7 +30,7 @@ const rutasMenu = [
     { key: '2', ruta: '/zonaPersonal', label: 'Zona Personal', icon: UserOutlined },
     { key: '5', ruta: '/historial', label: 'Historial', icon: HistoryOutlined },
     { key: '6', ruta: '/realizarPedido', label: 'Realizar Pedido', icon: ShoppingOutlined },
-        { key: '7', ruta: '/reviews', label: 'Tus comentarios', icon: CommentOutlined },
+        { key: '7', ruta: '/comentarios', label: 'Tus comentarios', icon: CommentOutlined },
     { key: '8', ruta: '/marketplace', label: 'Marketplace', icon: ShopOutlined },
     {
         key: 'sub1',
@@ -49,7 +49,7 @@ const rutasMenuAdmin = [
     { ruta: '/zonaPersonal', label: 'Zona Personal', icon: UserOutlined },
     { ruta: '/historial', label: 'Historial', icon: HistoryOutlined },
     { ruta: '/realizarPedido', label: 'Realizar Pedido', icon: ShoppingOutlined },
-    {ruta: '/reviews', label: 'Tus comentarios', icon: CommentOutlined },
+    {ruta: '/comentarios', label: 'Tus comentarios', icon: CommentOutlined },
     { ruta: '/marketplace', label: 'Marketplace', icon: ShopOutlined },
     {
         ruta: '',
