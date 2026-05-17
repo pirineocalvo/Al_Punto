@@ -1,5 +1,5 @@
 <script setup>
-import Footer from '../../../components/cabeceraYpiePrincipal/PiePaginaPrincipal.vue';
+import PiePaginaPrincipal from '../../../components/cabeceraYpiePrincipal/PiePaginaPrincipal.vue';
 import CabeceraZonaPersonal from '../../../components/componenteDashboard/CabeceraZonaPersonal.vue';
 import Sidebar from '../../../components/componenteDashboard/Sidebar.vue';
 import { getMyReviews, userInfo, getProductosCompradosCliente, addReview, getMenu } from '../../../services/api';
@@ -170,7 +170,7 @@ const formatearFecha = (fechaStr) => {
                                             <p class="reseniaTexto">"{{ resenia.descripcion }}"</p>
                                         </template>
                                     </a-card-meta>
-                                    <div class="tarjetaFooter">
+                                    <div class="tarjetaPiePaginaPrincipal">
                                         <a-rate :value="resenia.puntuacion" disabled />
                                         <div>
                                             <a-tag color="orange">{{ formatearFecha(resenia.created_at) }}</a-tag>
@@ -224,7 +224,7 @@ const formatearFecha = (fechaStr) => {
                 </a-form-item>
             </a-form>
         </a-modal>
-        <Footer />
+        <PiePaginaPrincipal />
     </a-layout>
 </template>
 
