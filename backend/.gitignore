@@ -1,4 +1,4 @@
 node_modules
 db.db
 backend/utils/db/db.db
-backend/utils/restaurante.bd
+backend/utils/db/restaurante.db
