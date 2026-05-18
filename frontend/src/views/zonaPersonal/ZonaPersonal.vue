@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, nextTick, watch, onBeforeUnmount } from 'vue';
 import Sidebar from '../../components/componenteDashboard/Sidebar.vue';
-import { misReservas } from '../../services/api';
+import { misReservas } from '../../services/reservasEndpoint';
 import { Bar } from '@antv/g2plot';
 import { UserOutlined, TrophyOutlined, FileTextOutlined } from '@ant-design/icons-vue';
 import QRCode from 'qrcode';

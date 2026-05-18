@@ -4,8 +4,8 @@ import CabeceraZonaPersonal from '../../../components/componenteDashboard/Cabece
 import Sidebar from '../../../components/componenteDashboard/Sidebar.vue';
 import { ref, computed, watch } from 'vue';
 import { QuestionCircleOutlined, EditOutlined, CheckOutlined } from '@ant-design/icons-vue';
-import { getCategories, guardarCarritoCompraClientes } from '../../../services/api';
-import { getMenu } from '../../../services/menuEndpoint';
+import { guardarCarritoCompraClientes } from '../../../services/realizarPedidoEndpoint';
+import { getMenu, getCategories } from '../../../services/menuEndpoint';
 import { useAuth, ACCESS_LEVELS } from '@/composables/useAuth';
 import { message, notification } from 'ant-design-vue';
 const { user, usuarioListo } = useAuth({ minAccessLevel: ACCESS_LEVELS.ADMIN });

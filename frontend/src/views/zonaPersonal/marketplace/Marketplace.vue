@@ -2,7 +2,7 @@
 import PiePaginaPrincipal from '../../../components/cabeceraYpiePrincipal/PiePaginaPrincipal.vue';
 import CabeceraZonaPersonal from '../../../components/componenteDashboard/CabeceraZonaPersonal.vue';
 import Sidebar from '../../../components/componenteDashboard/Sidebar.vue';
-import { listaProductosMarketplace, cangearProductoMarkePlace } from '../../../services/api';
+import { listaProductosMarketplace, cangearProductoMarkePlace } from '../../../services/marketplaceEndpoint';
 import { notification } from 'ant-design-vue';
 import { ref, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';

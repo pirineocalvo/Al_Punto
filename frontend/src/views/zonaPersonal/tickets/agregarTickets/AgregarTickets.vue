@@ -2,7 +2,7 @@
 import { ref, watch } from 'vue';
 import { InboxOutlined } from '@ant-design/icons-vue';
 import { notification } from 'ant-design-vue';
-import { uploadTickets } from '../../../../services/api';
+import { uploadTickets } from '../../../../services/ticketsEndpoint';
 import CabeceraZonaPersonal from '@/components/componenteDashboard/CabeceraZonaPersonal.vue';
 import PiePaginaPrincipal from '@/components/cabeceraYpiePrincipal/PiePaginaPrincipal.vue';
 import Sidebar from '../../../../components/componenteDashboard/Sidebar.vue';

@@ -1,7 +1,8 @@
 <script setup>
 import CabeceraPrincipal from '../../components/cabeceraYpiePrincipal/CabeceraPrincipal.vue';
 import PiePaginaPrincipal from '../../components/cabeceraYpiePrincipal/PiePaginaPrincipal.vue';
-import { getDisponibilidadMes, todasLasMesasLibresPorDia, addReservation, misReservas, vincularMesaReserva } from '../../services/api';
+import { addReservation, misReservas, vincularMesaReserva } from '../../services/reservasEndpoint';
+import { getDisponibilidadMes, todasLasMesasLibresPorDia } from '../../services/mesasEndpoint';
 import { ref, onMounted } from 'vue';
 import dayjs from 'dayjs';
 import { message, notification } from 'ant-design-vue';
