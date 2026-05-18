@@ -3,7 +3,8 @@ import { ref, computed, onMounted, onUnmounted } from 'vue';
 import CabeceraPrincipal from '../../../components/cabeceraYpiePrincipal/CabeceraPrincipal.vue';
 import PiePaginaPrincipal from '../../../components/cabeceraYpiePrincipal/PiePaginaPrincipal.vue';
 import TarjetaPlato from '../../../components/componenteMenu/TarjetaPlato.vue';
-import { getMenu, getCategories, getReviewsByDish } from '../../../services/api';
+import { getCategories, getReviewsByDish } from '../../../services/api';
+import { getMenu } from '../../../services/menuEndpoint';
 import { RightOutlined, LeftOutlined} from '@ant-design/icons-vue';
 
 const categorias = ref([]);

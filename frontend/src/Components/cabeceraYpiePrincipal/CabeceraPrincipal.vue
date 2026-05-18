@@ -3,7 +3,7 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import { MenuOutlined } from '@ant-design/icons-vue';
 import { message } from 'ant-design-vue';
 import { useRouter, useRoute } from 'vue-router';
-import { userInfo } from '../../services/api';
+import { userInfo } from '../../services/usuariosEndpoint';
 
 const router = useRouter();
 const route = useRoute();

@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { userInfo } from '@/services/api'
+import { userInfo } from '@/services/usuariosEndpoint'
 import { ACCESS_LEVELS } from '@/composables/useAuth'
 
 // ─── Rutas ───────────────────────────────────────────────────────────────────

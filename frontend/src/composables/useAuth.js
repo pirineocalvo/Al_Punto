@@ -1,6 +1,6 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { userInfo } from '@/services/api';
+import { userInfo } from '@/services/usuariosEndpoint';
 
 export const ACCESS_LEVELS = {
     CLIENTE: 1,
