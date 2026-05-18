@@ -25,15 +25,14 @@ exports.cancelarReserva = async (userId, reservaId) => {
 
 exports.getAllReservesAdmin = () => reserveRepo.getAllPendingReservas();
 
-exports.updateStatusAdmin = async (reservaId, status) => {
+exports.updateStatusAdmin = async (reservaId, status, attended) => {
     if (!status) {
         const err = new Error('El campo status es obligatorio');
         err.status = 400;
         throw err;
     }
 
-    const attended = status === 'confirmed' ? 1 : 0;
-    const changes  = await reserveRepo.updateReservaStatus(reservaId, status, attended);
+    const changes = await reserveRepo.updateReservaStatus(reservaId, status, attended ? 1 : 0);
 
     if (changes === 0) {
         const err = new Error('Reserva no encontrada');

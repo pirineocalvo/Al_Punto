@@ -38,9 +38,9 @@ exports.getAllReservesAdmin = async (req, res) => {
 };
 
 exports.updateStatusAdmin = async (req, res) => {
-    const { status } = req.body;
+    const { status, attended } = req.body;  
     try {
-        const result = await reserveService.updateStatusAdmin(req.params.id, status);
+        const result = await reserveService.updateStatusAdmin(req.params.id, status, attended);
         res.json(result);
     } catch (err) {
         res.status(err.status || 500).json({ error: err.message });

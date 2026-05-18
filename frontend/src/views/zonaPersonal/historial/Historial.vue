@@ -48,6 +48,7 @@ watch(usuarioListo, async () => {
     }
 
 }, { immediate: true });
+
 async function eliminarPedido(pedido) {
     try {
         await cancelarPedido(pedido.id);
@@ -77,8 +78,7 @@ async function pararReserva(reserva) {
 
         <a-layout class="dashboardMainLayout">
             <Sidebar :collapsed="collapsed" />
-            <a-flex v-if="!cargado"
-                vertical align="center" justify="center" class="centrarSpin">
+            <a-flex v-if="!cargado" vertical align="center" justify="center" class="centrarSpin">
                 <a-spin size="large" />
                 <a-typography-text type="secondary">Cargando productos...</a-typography-text>
             </a-flex>
@@ -100,8 +100,8 @@ async function pararReserva(reserva) {
                                             <span>{{ reserva.reserve_date }}</span>
                                         </a-col>
                                         <a-col :xs="24" :lg="11" class="tagDerecha">
-                                            <a-tag v-if="reserva.status == 'attended'" color="lime">Atendido</a-tag>
-                                            <a-tag v-else-if="reserva.status == null" color="purple">Pendiente</a-tag>
+                                            <a-tag v-if="reserva.status === 'confirmed'" color="lime">Atendido</a-tag>
+                                            <a-tag v-else-if="reserva.status === null" color="purple">Pendiente</a-tag>
                                             <a-tag v-else color="red">Cancelado</a-tag>
                                         </a-col>
                                     </a-row>
@@ -113,7 +113,7 @@ async function pararReserva(reserva) {
                                         reserva.reserve_hour }}</a-col>
                                     <a-col :xs="24"><a-typography-text strong>Asistentes:</a-typography-text> {{
                                         reserva.guests }}</a-col>
-                                    <a-col :xs="24" v-if="reserva.status == null">
+                                    <a-col :xs="24" v-if="reserva.status === null">
                                         <a-popconfirm title="¿Cancelar reserva?" @confirm="pararReserva(reserva)"
                                             ok-text="Sí" cancel-text="No">
                                             <template #icon>
@@ -137,11 +137,12 @@ async function pararReserva(reserva) {
                                             <span>{{ pedido.created_at }}</span>
                                         </a-col>
                                         <a-col :xs="24" :lg="11" class="tagDerecha">
-                                            <a-tag color="purple" v-if="pedido.status == 'pendiente'">Pendiente de
+                                            <a-tag color="purple" v-if="pedido.status === 'pendiente'">Pendiente de
                                                 preparación</a-tag>
-                                            <a-tag color="purple" v-else-if="pedido.status == 'listo'">Preparado</a-tag>
+                                            <a-tag color="purple"
+                                                v-else-if="pedido.status === 'listo'">Preparado</a-tag>
                                             <a-tag color="red"
-                                                v-else-if="pedido.status == 'cancelado'">Cancelado</a-tag>
+                                                v-else-if="pedido.status === 'cancelado'">Cancelado</a-tag>
                                             <a-tag color="lime" v-else>Entregado</a-tag>
                                         </a-col>
                                     </a-row>
@@ -156,7 +157,7 @@ async function pararReserva(reserva) {
                                         <span><a-typography-text strong>Precio:</a-typography-text> {{
                                             producto.price_at_time }}€</span>
                                     </a-col>
-                                    <a-col :xs="24" v-if="pedido.is_picked_up == 0 && pedido.status == 'pendiente'">
+                                    <a-col :xs="24" v-if="pedido.is_picked_up == 0 && pedido.status === 'pendiente'">
                                         <a-popconfirm title="¿Cancelar pedido?" @confirm="eliminarPedido(pedido)"
                                             ok-text="Sí" cancel-text="No">
                                             <template #icon>
@@ -170,7 +171,6 @@ async function pararReserva(reserva) {
                         </a-collapse>
                         <a-empty v-if="listaPedidos.length === 0" description="No tienes pedidos" />
                     </a-tab-pane>
-
 
                     <a-tab-pane key="marketplace" tab="Marketplace">
                         <a-collapse v-model:activeKey="acordeonActivo" accordion>
@@ -189,7 +189,7 @@ async function pararReserva(reserva) {
                                 <a-row :gutter="[6, 12]">
                                     <a-col :xs="24"><span>{{ market.description }}</span></a-col>
                                     <a-col :xs="24"><span>Código: <a-tag><a-typography-text copyable>{{ market.token_url
-                                                    }}</a-typography-text></a-tag></span></a-col>
+                                    }}</a-typography-text></a-tag></span></a-col>
                                 </a-row>
                             </a-collapse-panel>
                         </a-collapse>

@@ -240,25 +240,21 @@ export const obtenerTodasLasReservasAdmin = async () => {
 };
 
 // Actualizar el estado de una reserva (confirmed | cancel)
-export const actualizarEstadoReservaAdmin = async (id, status) => {
-  try {
-    const token = getAuthToken();
-    const config = {
-      headers: { authorization: `Bearer ${token}` },
-    };
-    const response = await axios.patch(
-      `${API_URL}/api/reservas/admin/${id}/status`,
-      { status },
-      config
-    );
-    return response.data;
-  } catch (error) {
-    if (error.response?.status === 401) {
-      logoutUser();
+export const actualizarEstadoReservaAdmin = async (id, status, attended = false) => {
+    try {
+        const token  = getAuthToken();
+        const config = { headers: { authorization: `Bearer ${token}` } };
+        const response = await axios.patch(
+            `${API_URL}/api/reservas/admin/${id}/status`,
+            { status, attended },
+            config
+        );
+        return response.data;
+    } catch (error) {
+        if (error.response?.status === 401) logoutUser();
+        console.error('Error al actualizar estado de reserva:', error);
+        throw error;
     }
-    console.error('Error al actualizar estado de reserva:', error);
-    throw error;
-  }
 };
 
 /*

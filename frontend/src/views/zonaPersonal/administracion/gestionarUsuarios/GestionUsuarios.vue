@@ -18,7 +18,7 @@ const tabActiva = ref('reservas');
 const tokenInput = ref('');
 const loadingMarket = ref(false);
 const listaPedidos = ref([]);
-const listaReservas = ref([]);
+const listaReservas = ref({});
 
 
 function generarNotificacion(tipo, titulo, texto) {
@@ -33,7 +33,6 @@ async function cargarPedidos() {
     try {
         const res = await getTodosLosPedidosAdmin();
         listaPedidos.value = res;
-        
     } catch (err) {
         message.error('Error al cargar pedidos');
     }
@@ -96,7 +95,8 @@ async function cambiarEstado(id, estado, recogido = false) {
 
 async function actualizarReserva(id, estado) {
     try {
-        await actualizarEstadoReservaAdmin(id, estado);
+        const attended = estado === 'confirmed';
+        await actualizarEstadoReservaAdmin(id, estado, attended);
         await cargarReservas();
         generarNotificacion('success', 'Reserva actualizada', `Reserva #${id} actualizada correctamente.`);
     } catch (error) {
@@ -126,8 +126,7 @@ const formatearFecha = (fechaStr) => {
 
         <a-layout>
             <Sidebar :collapsed="collapsed" />
-            <a-flex v-if="!cargado" vertical align="center"
-                justify="center" class="centrarSpin">
+            <a-flex v-if="!cargado" vertical align="center" justify="center" class="centrarSpin">
                 <a-spin size="large" />
                 <a-typography-text type="secondary">Cargando productos...</a-typography-text>
             </a-flex>
@@ -138,7 +137,8 @@ const formatearFecha = (fechaStr) => {
                 <a-tabs v-model:activeKey="tabActiva" class="colocarContenedorPrincipalDashBoard">
                     <a-tab-pane key="reservas" tab="Gestionar Reservas">
                         <a-row :gutter="[10, 24]" justify="space-around">
-                            <a-empty v-if="listaReservas.reservations == 0"
+                            <!-- FIX: ?.length en lugar de == 0 para comparar el array correctamente -->
+                            <a-empty v-if="!listaReservas.reservations?.length"
                                 description="No se encontraron reservas pendientes de gestionar" />
                             <a-col :xl="11" :lg="16" :md="20" :xs="24" v-for="reserva in listaReservas.reservations"
                                 :key="reserva.id">
@@ -154,10 +154,10 @@ const formatearFecha = (fechaStr) => {
                                             </div>
                                         </div>
                                     </template>
-
                                     <template #extra>
-                                        <a-tag :color="reserva.attended ? 'green' : 'blue'">
-                                            {{ reserva.attended ? 'ATENDIDO' : 'PENDIENTE' }}
+                                        <!-- FIX: basado en status === 'confirmed' en lugar de attended -->
+                                        <a-tag :color="reserva.status === 'confirmed' ? 'green' : 'blue'">
+                                            {{ reserva.status === 'confirmed' ? 'ATENDIDO' : 'PENDIENTE' }}
                                         </a-tag>
                                     </template>
 
@@ -192,8 +192,9 @@ const formatearFecha = (fechaStr) => {
                                         <a-space style="width: 100%; justify-content: space-between;">
                                             <a-popconfirm title="¿Marcar como confirmado?" ok-text="Sí" cancel-text="No"
                                                 @confirm="actualizarReserva(reserva.id, 'confirmed')">
+                                                <!-- FIX: deshabilitar basado en status en lugar de attended -->
                                                 <a-button type="primary" size="small"
-                                                    :disabled="reserva.attended === 1">
+                                                    :disabled="reserva.status === 'confirmed'">
                                                     MARCAR ASISTENCIA
                                                 </a-button>
                                             </a-popconfirm>
