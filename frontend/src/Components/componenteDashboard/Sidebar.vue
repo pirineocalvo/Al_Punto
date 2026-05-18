@@ -3,7 +3,7 @@ import { useRouter, useRoute } from 'vue-router';
 import { ref, onMounted, onUnmounted } from 'vue';
 import { HomeOutlined, UserOutlined, HistoryOutlined, ShoppingOutlined, ShopOutlined, TagsOutlined, SettingOutlined, CommentOutlined } from '@ant-design/icons-vue';
 import { message } from 'ant-design-vue';
-import { userInfo } from '../../services/api';
+import { userInfo } from '../../services/usuariosEndpoint';
 import { funcinalidadSidebar } from '../../components/componenteDashboard/js/ocultarSidebar';
 
 const { cambiarEstadoSidebar, sidebarAbierto } = funcinalidadSidebar();

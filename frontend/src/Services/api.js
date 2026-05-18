@@ -5,7 +5,7 @@ const API_URL = 'http://localhost:5000';
 /*
 ################# USER ENDPOINTS ########################
 */
-
+/* 
 export const loginUser = async (data = {}) => {
   try {
     const response = await axios.post(`${API_URL}/api/user/login`, data);
@@ -39,19 +39,19 @@ export const registerUser = async (data = {}) => {
   try {
     const response = await axios.post(`${API_URL}/api/user/register`, data);
     if (response.status === 200) {
-      return true;
+      return true;s
     } else {
       return false;
     }
   } catch (error) {
     return error.response.data.error;
   }
-};
+}; */
 
 /*
 ################# MENU ENDPOINTS ########################
 */
-export const getMenu = async (data = {}) => {
+/* export const getMenu = async (data = {}) => {
   try {
     const response = await axios.get(`${API_URL}/api/menu`);
     return response.data;
@@ -127,7 +127,7 @@ export const addCategory = async (data = {}) => {
   }
 };
 
-
+ */
 
 
 /*

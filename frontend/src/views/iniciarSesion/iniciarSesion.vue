@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
-import { loginUser } from '../../services/api';
+import { loginUser } from '../../services/usuariosEndpoint';
 import { message } from 'ant-design-vue';
 
 const router = useRouter();

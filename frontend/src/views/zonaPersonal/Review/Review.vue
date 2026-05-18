@@ -2,7 +2,9 @@
 import PiePaginaPrincipal from '../../../components/cabeceraYpiePrincipal/PiePaginaPrincipal.vue';
 import CabeceraZonaPersonal from '../../../components/componenteDashboard/CabeceraZonaPersonal.vue';
 import Sidebar from '../../../components/componenteDashboard/Sidebar.vue';
-import { getMyReviews, userInfo, getProductosCompradosCliente, addReview, getMenu } from '../../../services/api';
+import { getMyReviews, getProductosCompradosCliente, addReview } from '../../../services/api';
+import { getMenu } from '../../../services/menuEndpoint';
+import { userInfo } from '../../../services/usuariosEndpoint';
 import { onMounted, ref, computed, watch } from 'vue';
 import { message, notification } from 'ant-design-vue';
 import { useAuth, ACCESS_LEVELS } from '@/composables/useAuth';

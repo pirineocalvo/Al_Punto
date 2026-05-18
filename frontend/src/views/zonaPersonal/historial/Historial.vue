@@ -1,10 +1,10 @@
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { QuestionCircleOutlined } from '@ant-design/icons-vue';
 import CabeceraZonaPersonal from '@/components/componenteDashboard/CabeceraZonaPersonal.vue';
 import PiePaginaPrincipal from '@/components/cabeceraYpiePrincipal/PiePaginaPrincipal.vue';
 import Sidebar from '../../../components/componenteDashboard/Sidebar.vue';
-import { getProductosCompradosCliente, cancelarPedido, misReservas, pedidosRealizadosMarketPlace, cancelarReserva, userInfo } from '../../../services/api';
+import { getProductosCompradosCliente, cancelarPedido, misReservas, pedidosRealizadosMarketPlace, cancelarReserva } from '../../../services/api';
 import { message, notification } from 'ant-design-vue';
 import { useAuth, ACCESS_LEVELS } from '@/composables/useAuth';
 
