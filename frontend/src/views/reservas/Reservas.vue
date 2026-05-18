@@ -1,7 +1,7 @@
 <script setup>
 import CabeceraPrincipal from '../../components/cabeceraYpiePrincipal/CabeceraPrincipal.vue';
 import PiePaginaPrincipal from '../../components/cabeceraYpiePrincipal/PiePaginaPrincipal.vue';
-import { addReservation, misReservas, vincularMesaReserva } from '../../services/reservasEndpoint';
+import { nuevaReserva, misReservas, vincularMesaReserva } from '../../services/reservasEndpoint';
 import { getDisponibilidadMes, todasLasMesasLibresPorDia } from '../../services/mesasEndpoint';
 import { ref, onMounted } from 'vue';
 import dayjs from 'dayjs';
@@ -135,7 +135,7 @@ async function guardarReserva() {
         };
 
         try {
-            const idUltimaReserva = await addReservation(dato);
+            const idUltimaReserva = await nuevaReserva(dato);
             const bodyGuardarMesaReservada = { idReserva: idUltimaReserva.reservationId, idMesa: datosForm.value.mesa };
             await vincularMesaReserva(bodyGuardarMesaReservada);
             await cargarMes(fechasCalendario.value.year(), fechasCalendario.value.month() + 1);

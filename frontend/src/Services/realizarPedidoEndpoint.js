@@ -1,10 +1,10 @@
 import axios from 'axios';
 const API_URL = import.meta.env.VITE_API_URL;
-import { getAuthToken, logoutUser } from './gestionAlmacenamiento';
+import { getTokenAutentificacion, cerrarSesionUsuario } from './gestionAlmacenamiento';
 
 export const getProductosCompradosCliente = async () => {
     try {
-        const token = getAuthToken();
+        const token = getTokenAutentificacion();
         const config = {
             headers: { authorization: `Bearer ${token}` },
         };
@@ -12,7 +12,7 @@ export const getProductosCompradosCliente = async () => {
         return response.data;
     } catch (error) {
         if (error.response.status === 401) {
-            logoutUser();
+            cerrarSesionUsuario();
         }
         console.error('Error getting pedidos:', error);
         throw error;
@@ -21,7 +21,7 @@ export const getProductosCompradosCliente = async () => {
 
 export const guardarCarritoCompraClientes = async (data = {}) => {
     try {
-        const token = getAuthToken();
+        const token = getTokenAutentificacion();
         const config = {
             headers: { authorization: `Bearer ${token}` },
         };
@@ -29,7 +29,7 @@ export const guardarCarritoCompraClientes = async (data = {}) => {
         return response.data;
     } catch (error) {
         if (error.response.status === 401) {
-            logoutUser();
+            cerrarSesionUsuario();
         }
         console.error('Error subiendo pedidos:', error);
         throw error;
@@ -38,7 +38,7 @@ export const guardarCarritoCompraClientes = async (data = {}) => {
 
 export const cancelarPedido = async (id) => {
     try {
-        const token = getAuthToken()
+        const token = getTokenAutentificacion()
         const config = {
             headers: { authorization: `Bearer ${token}` },
         }
@@ -47,7 +47,7 @@ export const cancelarPedido = async (id) => {
         return response.data
     } catch (error) {
         if (error.response?.status === 401) {
-            logoutUser()
+            cerrarSesionUsuario()
         }
         console.error('Error cancelando pedido:', error)
         throw error
@@ -57,7 +57,7 @@ export const cancelarPedido = async (id) => {
 // Obtener TODOS los pedidos
 export const getTodosLosPedidosAdmin = async () => {
     try {
-        const token = getAuthToken();
+        const token = getTokenAutentificacion();
         const config = {
             headers: { authorization: `Bearer ${token}` },
         };
@@ -70,9 +70,9 @@ export const getTodosLosPedidosAdmin = async () => {
     }
 };
 
-export const updateOrderStatus = async (id, status, is_picked_up = false) => {
+export const actualizarEstadoOrden = async (id, status, is_picked_up = false) => {
     try {
-        const token = getAuthToken();
+        const token = getTokenAutentificacion();
         const config = {
             headers: { authorization: `Bearer ${token}` },
         };

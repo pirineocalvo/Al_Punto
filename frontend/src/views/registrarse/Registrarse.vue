@@ -2,10 +2,10 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
-import { registerUser } from '../../services/api';
+import { registrarUsuario } from '../../services/usuariosEndpoint';
+import { message } from 'ant-design-vue';
 
 const router = useRouter();
-const error = ref('');
 
 const formState = ref({
     firstName: '',
@@ -85,22 +85,23 @@ onMounted(() => {
     }
 });
 
-async function registrarUsuario() {
-    error.value = '';
-
+async function guardarUsuario() {
     try {
-        const res = await registerUser(formState.value);
+        const res = await registrarUsuario(formState.value);
+        
         if (res === true) {
-            router.push('/iniciarSesion')
+            message.success('¡Usuario creado correctamente!');
+            router.push('/iniciarSesion');
+        } else if (res === 409) {
+            message.error('El correo que trata de utilizar ya se encuentra en uso');
         } else {
-            error.value = res;
+            message.error('Error al crear el usuario');
         }
     } catch (err) {
-        console.error('Error al registrar:', err);
-        error.value = 'Ha ocurrido un error al registrarse.';
+        console.error(err);
+        message.error('Error inesperado al intentar registrarse');
     }
 }
-
 function volver() {
     router.push('/');
 }
@@ -119,7 +120,7 @@ function iniciarSesion() {
                 <a-card class="registerCard">
                     <a-typography-title :level="2" class="text-center">Registrarse</a-typography-title>
 
-                    <a-form :model="formState" :rules="rules" @finish="registrarUsuario" layout="vertical">
+                    <a-form :model="formState" :rules="rules" @finish="guardarUsuario" layout="vertical">
                         <a-form-item label="Nombre" name="firstName">
                             <a-input v-model:value="formState.firstName" placeholder="Nombre">
                                 <template #prefix>

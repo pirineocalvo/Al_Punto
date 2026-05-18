@@ -1,11 +1,11 @@
 import axios from 'axios';
 const API_URL = import.meta.env.VITE_API_URL;
-import { getAuthToken, logoutUser } from './gestionAlmacenamiento';
+import { getTokenAutentificacion, cerrarSesionUsuario } from './gestionAlmacenamiento';
 
 
 export const addReview = async (data = {}) => {
     try {
-        const token = getAuthToken();
+        const token = getTokenAutentificacion();
         const config = {
             headers: { authorization: `Bearer ${token}` },
         };
@@ -13,7 +13,7 @@ export const addReview = async (data = {}) => {
         return response.data;
     } catch (error) {
         if (error.response?.status === 401) {
-            logoutUser();
+            cerrarSesionUsuario();
         }
         console.error('Error al añadir reseña:', error);
         throw error;
@@ -22,7 +22,7 @@ export const addReview = async (data = {}) => {
 
 export const getMyReviews = async () => {
     try {
-        const token = getAuthToken();
+        const token = getTokenAutentificacion();
         const config = {
             headers: { authorization: `Bearer ${token}` },
         };
@@ -30,7 +30,7 @@ export const getMyReviews = async () => {
         return response.data;
     } catch (error) {
         if (error.response?.status === 401) {
-            logoutUser();
+            cerrarSesionUsuario();
         }
         console.error('Error al obtener mis reseñas:', error);
         throw error;

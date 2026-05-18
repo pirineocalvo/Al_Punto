@@ -6,7 +6,7 @@ const RESTAURANTES_CONOCIDOS = ['Al Punto'];
 
 // — Helpers privados —
 
-async function analyzeTicket(imagePath) {
+async function analizarTicket(imagePath) {
     const { data: { text } } = await Tesseract.recognize(imagePath, 'spa');
     return text;
 }
@@ -41,7 +41,7 @@ exports.uploadTicket = async (userId, file, fileName) => {
         throw err;
     }
 
-    const ocrText     = await analyzeTicket(file.path);
+    const ocrText     = await analizarTicket(file.path);
     const restaurante = extraerNombreRestaurante(ocrText);
 
     if (!restaurante) {

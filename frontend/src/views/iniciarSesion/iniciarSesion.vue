@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
-import { loginUser } from '../../services/usuariosEndpoint';
+import { iniciarSesionUsuario } from '../../services/usuariosEndpoint';
 import { message } from 'ant-design-vue';
 
 const router = useRouter();
@@ -32,7 +32,7 @@ const rules = {
 
 async function verificarUser() {
     try {
-        await loginUser(formState.value);
+        await iniciarSesionUsuario(formState.value);
 
         const redirect = route.query.redirect || '/';
         router.push(redirect);

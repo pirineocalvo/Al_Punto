@@ -2,7 +2,7 @@
 import { ref, watch } from 'vue';
 import { InboxOutlined } from '@ant-design/icons-vue';
 import { notification } from 'ant-design-vue';
-import { uploadTickets } from '../../../../services/ticketsEndpoint';
+import { subirTicket } from '../../../../services/ticketsEndpoint';
 import CabeceraZonaPersonal from '@/components/componenteDashboard/CabeceraZonaPersonal.vue';
 import PiePaginaPrincipal from '@/components/cabeceraYpiePrincipal/PiePaginaPrincipal.vue';
 import Sidebar from '../../../../components/componenteDashboard/Sidebar.vue';
@@ -35,7 +35,7 @@ const antesDeSubir = (file) => {
     return false;
 }
 
-const subirTicket = async () => {
+const gestionNuevoTicket = async () => {
     if (!archivo.value) {
         generarNotificacion('warning', '¡Advertencia!', 'Debe de subir una imagen clara de su ticket.');
         return;
@@ -44,7 +44,7 @@ const subirTicket = async () => {
     try {
         const formData = new FormData();
         formData.append('imagen', archivo.value);
-        const data = await uploadTickets(formData);
+        const data = await subirTicket(formData);
 
         ticketInfo.value = parsearTicket(data.text);
 
@@ -149,7 +149,7 @@ const resetear = () => {
                                             <a-col :span="24">
                                                 <a-flex justify="center">
                                                     <a-button type="primary" size="large" :disabled="!archivo"
-                                                        @click="subirTicket">
+                                                        @click="gestionNuevoTicket">
                                                         Subir Ticket
                                                     </a-button>
                                                 </a-flex>

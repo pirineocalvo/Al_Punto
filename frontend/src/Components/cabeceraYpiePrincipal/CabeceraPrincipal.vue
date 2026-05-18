@@ -3,7 +3,7 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import { MenuOutlined } from '@ant-design/icons-vue';
 import { message } from 'ant-design-vue';
 import { useRouter, useRoute } from 'vue-router';
-import { userInfo } from '../../services/usuariosEndpoint';
+import { informacionUsuario } from '../../services/usuariosEndpoint';
 
 const router = useRouter();
 const route = useRoute();
@@ -48,7 +48,7 @@ onMounted(async () => {
 
         if (usuarioRegistrado.value) {
             try {
-                const data = await userInfo();
+                const data = await informacionUsuario();
                 if (data) {
                     menuActual.value = menuConLog;
                 } else {

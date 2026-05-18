@@ -1,11 +1,11 @@
 import axios from 'axios';
 const API_URL = import.meta.env.VITE_API_URL;
-import { getAuthToken, logoutUser } from './gestionAlmacenamiento';
+import { getTokenAutentificacion, cerrarSesionUsuario } from './gestionAlmacenamiento';
 
-export const addReservation = async (reservation) => {
+export const nuevaReserva = async (reservation) => {
     try {
 
-        const token = getAuthToken();
+        const token = getTokenAutentificacion();
         const config = {
             headers: { authorization: `Bearer ${token}` },
         };
@@ -15,7 +15,7 @@ export const addReservation = async (reservation) => {
         return response.data;
     } catch (error) {
         if (error.response.status === 401) {
-            logoutUser();
+            cerrarSesionUsuario();
         }
         console.error('Error creating reservation:', error);
         throw error;
@@ -24,7 +24,7 @@ export const addReservation = async (reservation) => {
 
 export const vincularMesaReserva = async ({ idReserva, idMesa }) => {
     try {
-        const token = getAuthToken();
+        const token = getTokenAutentificacion();
         const config = {
             headers: { authorization: `Bearer ${token}` },
         };
@@ -32,7 +32,7 @@ export const vincularMesaReserva = async ({ idReserva, idMesa }) => {
         return response.data;
     } catch (error) {
         if (error.response.status === 401) {
-            logoutUser();
+            cerrarSesionUsuario();
         }
         console.error('Error linking table to reservation:', error);
         throw error;
@@ -41,7 +41,7 @@ export const vincularMesaReserva = async ({ idReserva, idMesa }) => {
 
 export const misReservas = async () => {
     try {
-        const token = getAuthToken();
+        const token = getTokenAutentificacion();
         const config = {
             headers: { authorization: `Bearer ${token}` },
         };
@@ -49,7 +49,7 @@ export const misReservas = async () => {
         return response.data;
     } catch (error) {
         if (error.response.status === 401) {
-            logoutUser();
+            cerrarSesionUsuario();
         }
         console.error('Error getting reservations:', error);
         throw error;
@@ -58,7 +58,7 @@ export const misReservas = async () => {
 
 export const cancelarReserva = async (id) => {
     try {
-        const token = getAuthToken();
+        const token = getTokenAutentificacion();
         const config = {
             headers: { authorization: `Bearer ${token}` },
         };
@@ -66,7 +66,7 @@ export const cancelarReserva = async (id) => {
         return response.data;
     } catch (error) {
         if (error.response.status === 401) {
-            logoutUser();
+            cerrarSesionUsuario();
         }
         console.error('Error cancelling reservation:', error);
         throw error;
@@ -75,7 +75,7 @@ export const cancelarReserva = async (id) => {
 
 export const todasLasReservas = async () => {
     try {
-        const token = getAuthToken();
+        const token = getTokenAutentificacion();
         const config = {
             headers: { authorization: `Bearer ${token}` },
         };
@@ -83,7 +83,7 @@ export const todasLasReservas = async () => {
         return response.data;
     } catch (error) {
         if (error.response.status === 401) {
-            logoutUser();
+            cerrarSesionUsuario();
         }
         throw error;
     }
@@ -91,7 +91,7 @@ export const todasLasReservas = async () => {
 
 export const obtenerTodasLasReservasAdmin = async () => {
     try {
-        const token = getAuthToken();
+        const token = getTokenAutentificacion();
         const config = {
             headers: { authorization: `Bearer ${token}` },
         };
@@ -99,7 +99,7 @@ export const obtenerTodasLasReservasAdmin = async () => {
         return response.data;
     } catch (error) {
         if (error.response?.status === 401) {
-            logoutUser();
+            cerrarSesionUsuario();
         }
         console.error('Error al obtener todas las reservas:', error);
         throw error;
@@ -108,7 +108,7 @@ export const obtenerTodasLasReservasAdmin = async () => {
 
 export const actualizarEstadoReservaAdmin = async (id, status, attended = false) => {
     try {
-        const token = getAuthToken();
+        const token = getTokenAutentificacion();
         const config = { headers: { authorization: `Bearer ${token}` } };
         const response = await axios.patch(
             `${API_URL}/api/reservas/admin/${id}/status`,
@@ -117,7 +117,7 @@ export const actualizarEstadoReservaAdmin = async (id, status, attended = false)
         );
         return response.data;
     } catch (error) {
-        if (error.response?.status === 401) logoutUser();
+        if (error.response?.status === 401) cerrarSesionUsuario();
         console.error('Error al actualizar estado de reserva:', error);
         throw error;
     }
