@@ -6,7 +6,7 @@ import { getMyReviews, addReview } from '../../../services/comentariosEndpoint';
 import { getProductosCompradosCliente } from '../../../services/realizarPedidoEndpoint';
 import { informacionUsuario } from '../../../services/usuariosEndpoint';
 import { getMenu } from '../../../services/menuEndpoint';
-import { onMounted, ref, computed, watch } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { message, notification } from 'ant-design-vue';
 import { useAuth, ACCESS_LEVELS } from '@/composables/useAuth';
 
@@ -91,13 +91,6 @@ const guardarResenia = async () => {
     }
 };
 
-onMounted(async () => {
-    const token = localStorage.getItem('loginUserToken');
-    if (!token) { router.push('/iniciarSesion'); return; }
-
-
-});
-
 watch(usuarioListo, async () => {
     try {
         [user.value, listaResenias.value, productosComprados.value, menuCompleto.value] = await Promise.all([
@@ -107,11 +100,10 @@ watch(usuarioListo, async () => {
             getMenu()
         ]);
     } catch (err) {
-        message.error("Error cargando datos:", err);
-    }finally{
+        message.error(`Error cargando datos: ${err}`);
+    } finally {
         cargado.value = true;
     }
-
 }, { immediate: true });
 
 const reseniasHechas = computed(() => listaResenias.value);
@@ -146,10 +138,9 @@ const formatearFecha = (fechaStr) => {
 <template>
     <a-layout class="dashboardMainLayout">
         <CabeceraZonaPersonal :user="user" />
-        <a-layout class="dashboardMainLayout">
+        <a-layout>
             <Sidebar />
-            <a-flex v-if="!cargado"
-                vertical align="center" justify="center" class="centrarSpin">
+            <a-flex v-if="!cargado" vertical align="center" justify="center" class="centrarSpin">
                 <a-spin size="large" />
                 <a-typography-text type="secondary">Cargando productos...</a-typography-text>
             </a-flex>
@@ -157,8 +148,9 @@ const formatearFecha = (fechaStr) => {
                 <a-divider orientation="left">
                     <a-typography-title :level="2">Comentarios</a-typography-title>
                 </a-divider>
-                <a-typography-title :level="5">Hecha un vistazo a tus comentarios o comenta un nuevo plato que hayas
-                    probado</a-typography-title>
+                <a-typography-title :level="5">
+                    Echa un vistazo a tus comentarios o comenta un nuevo plato que hayas probado
+                </a-typography-title>
                 <a-tabs v-model:activeKey="keyLab">
                     <a-tab-pane key="1" tab="Mis Reseñas Realizadas">
                         <a-row :gutter="[16, 16]">
@@ -189,7 +181,7 @@ const formatearFecha = (fechaStr) => {
                     <a-tab-pane key="2" tab="Pendientes de Calificar">
                         <a-row :gutter="[16, 16]">
                             <a-col v-for="producto in reseniasPendientes" :key="producto.id" :xs="24" :md="12" :lg="8">
-                                <a-card class="mpCard pendingCard">
+                                <a-card class="mpCard">
                                     <template #cover>
                                         <img :alt="producto.product_name" :src="'images/plates/' + producto.img_src"
                                             class="tarjetaImg" />
@@ -234,7 +226,7 @@ const formatearFecha = (fechaStr) => {
 <style scoped>
 .reseniaTexto {
     font-style: italic;
-    color: #555;
+    color: var(--color-texto-secundario);
     margin-top: 8px;
     height: 60px;
     overflow: hidden;
@@ -245,10 +237,13 @@ const formatearFecha = (fechaStr) => {
     object-fit: cover;
 }
 
-.tarjetaFooter {
+.tarjetaPiePaginaPrincipal {
     margin-top: 15px;
     padding-top: 10px;
-    border-top: 1px solid #f0f0f0;
+    border-top: 1px solid var(--color-borde-suave);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .mpCard {

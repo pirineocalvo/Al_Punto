@@ -96,13 +96,13 @@ watch(usuarioListo, async () => {
         await fetchReserve();
     } catch (error) {
         message.error('Error al cargar los datos del usuario');
-    }finally{
+    } finally {
         cargado.value = true;
     }
     try {
         await generarQR();
     } catch (error) {
-        message.error('Error al cargar el qr en el watch')
+        message.error('Error al cargar el qr en el watch');
     }
 
 }, { immediate: true });
@@ -133,12 +133,12 @@ onBeforeUnmount(() => {
                 <a-typography-text type="secondary">Cargando productos...</a-typography-text>
             </a-flex>
             <a-layout-content v-else class="colocarContenedorPrincipalDashBoard">
-                <div class="content-wrapper">
-                    <div class="header-section">
-                        <a-typography-title class="dashboard-titulo">
+                <div class="contenedorContenido">
+                    <div class="seccionCabecera">
+                        <a-typography-title class="dashboardTitulo">
                             Bienvenido {{ user?.first_name || 'Usuario' }}
                         </a-typography-title>
-                        <a-card class="qr-card">
+                        <a-card class="tarjetaQr">
                             <h3>Tu tarjeta de fidelización</h3>
                             <p>Enséñalo al llegar al local</p>
 
@@ -147,38 +147,38 @@ onBeforeUnmount(() => {
                             <p><strong>{{ user?.first_name }}</strong></p>
                         </a-card>
 
-                        <a-typography-paragraph class="dashboard-subtitulo">
+                        <a-typography-paragraph class="dashboardSubtitulo">
                             Resumen general de tu actividad
                         </a-typography-paragraph>
                     </div>
 
                     <a-row>
-                        <a-card class="stat-card">
-                            <div class="stat-header">
-                                <FileTextOutlined class="stat-icon" />
+                        <a-card class="tarjetaEstadistica">
+                            <div class="cabeceraEstadistica">
+                                <FileTextOutlined class="iconoEstadistica" />
                                 <span>Reservas</span>
                             </div>
-                            <div class="stat-number">
+                            <div class="numeroEstadistica">
                                 {{ reserveInfo.length }}
                             </div>
                         </a-card>
 
-                        <a-card class="stat-card">
-                            <div class="stat-header">
-                                <UserOutlined class="stat-icon" />
+                        <a-card class="tarjetaEstadistica">
+                            <div class="cabeceraEstadistica">
+                                <UserOutlined class="iconoEstadistica" />
                                 <span>Tickets</span>
                             </div>
-                            <div class="stat-number">
+                            <div class="numeroEstadistica">
                                 {{ user?.ticket_count || 0 }}
                             </div>
                         </a-card>
 
-                        <a-card class="stat-card">
-                            <div class="stat-header">
-                                <TrophyOutlined class="stat-icon" />
+                        <a-card class="tarjetaEstadistica">
+                            <div class="cabeceraEstadistica">
+                                <TrophyOutlined class="iconoEstadistica" />
                                 <span>Puntos</span>
                             </div>
-                            <div class="stat-number">
+                            <div class="numeroEstadistica">
                                 {{ user?.points || 0 }}
                             </div>
                         </a-card>
@@ -186,8 +186,8 @@ onBeforeUnmount(() => {
 
 
 
-                    <a-card class="chart-card">
-                        <div ref="chartRef" class="chart-container"></div>
+                    <a-card class="tarjetaGrafico">
+                        <div ref="chartRef" class="contenedorGrafico"></div>
                     </a-card>
 
                 </div>
@@ -196,15 +196,16 @@ onBeforeUnmount(() => {
         <PiePaginaPrincipal />
     </a-layout>
 </template>
+
 <style scoped>
-.content-wrapper {
+.contenedorContenido {
     width: 100%;
     max-width: 1100px;
-    animation: fadeIn 0.6s ease-out;
+    animation: aparecerDesvanecido 0.6s ease-out;
     margin: auto;
 }
 
-@keyframes fadeIn {
+@keyframes aparecerDesvanecido {
     from {
         opacity: 0;
         transform: translateY(10px);
@@ -216,83 +217,65 @@ onBeforeUnmount(() => {
     }
 }
 
-.header-section {
+.seccionCabecera {
     margin-bottom: 24px;
 }
 
-.dashboard-titulo {
+.dashboardTitulo {
     font-size: 2.2rem !important;
     font-weight: 800 !important;
     margin-bottom: 8px !important;
-    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
 }
 
-.dashboard-subtitulo {
+.dashboardSubtitulo {
     font-size: 1rem !important;
-    color: var(--text-secondary) !important;
 }
 
-.stat-card {
-    border-radius: 16px !important;
-    border: 1px solid var(--border-sutil) !important;
+.tarjetaEstadistica {
+    border: none;
     background: var(--bg-card) !important;
     transition: all 0.3s ease !important;
     padding: 20px !important;
     flex: 1;
 }
 
-.stat-card:hover {
+.tarjetaEstadistica:hover {
     transform: translateY(-5px);
-    border-color: var(--color-primary) !important;
 }
 
-.stat-header {
+.cabeceraEstadistica {
     display: flex;
     align-items: center;
     gap: 10px;
     font-weight: 600;
-    color: var(--text-muted);
+
 }
 
-.stat-icon {
+.iconoEstadistica {
     font-size: 20px;
 }
 
-.stat-number {
+.numeroEstadistica {
     font-size: 2.2rem;
     font-weight: 800;
     margin-top: 10px;
-    color: var(--text-primary);
 }
 
-.chart-card {
+.tarjetaGrafico {
     margin-top: 32px;
-    border-radius: 16px !important;
-    border: 1px solid var(--border-sutil) !important;
+    border: none;
     background: var(--bg-card) !important;
     transition: all 0.3s ease;
     padding: 20px !important;
 }
 
-.chart-card:hover {
-    transform: translateY(-3px);
-    border-color: var(--color-primary) !important;
-}
-
-
-.qr-card {
+.tarjetaQr {
     text-align: center;
     margin-bottom: 20px;
 }
 
-.qr-card img {
+.tarjetaQr img {
     width: 200px;
     margin: 10px auto;
-}
-
-.ant-card {
-    height: auto !important;
 }
 </style>

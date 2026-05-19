@@ -5,7 +5,7 @@ import PiePaginaPrincipal from '../../../components/cabeceraYpiePrincipal/PiePag
 import TarjetaPlato from '../../../components/componenteMenu/TarjetaPlato.vue';
 import { getReviewsByDish } from '../../../services/comentariosEndpoint';
 import { getMenu, getCategorias } from '../../../services/menuEndpoint';
-import { RightOutlined, LeftOutlined} from '@ant-design/icons-vue';
+import { RightOutlined, LeftOutlined } from '@ant-design/icons-vue';
 
 const categorias = ref([]);
 const menu = ref(null);
@@ -97,7 +97,9 @@ onUnmounted(() => {
       <div v-if="platoSeleccionado">
         <a-flex vertical gap="large">
           <a-flex>
-            <a-button @click="platoSeleccionado = null"><LeftOutlined /> Volver</a-button>
+            <a-button @click="platoSeleccionado = null">
+              <LeftOutlined /> Volver
+            </a-button>
           </a-flex>
           <a-flex justify="center">
             <TarjetaPlato :item="platoSeleccionado" />
@@ -129,11 +131,11 @@ onUnmounted(() => {
                       </a-typography-text>
                     </div>
                   </a-flex>
-                  
-                  <a-rate :value="resenia.puntuacion" disabled allow-half/>
-                  
+
+                  <a-rate :value="resenia.puntuacion" disabled allow-half />
+
                   <hr class="divisorResenia" />
-                  
+
                   <a-typography-paragraph>
                     {{ resenia.descripcion }}
                   </a-typography-paragraph>
@@ -149,29 +151,29 @@ onUnmounted(() => {
       <template v-else>
         <div v-for="categoria in categorias" :key="categoria.id" class="seccionMenu">
           <template v-if="platosPorCategoria[categoria.id]?.length">
-            
+
             <a-divider orientation="left">
               <a-typography-title :level="3">{{ categoria.name }}</a-typography-title>
             </a-divider>
 
             <div class="envoltorioCarrusel">
-              <button class="flechaCarrusel" @click="anterior(categoria.id)"><LeftOutlined /></button>
+              <button class="flechaCarrusel" @click="anterior(categoria.id)">
+                <LeftOutlined />
+              </button>
 
-              <a-carousel :ref="el => { if (el) referenciasCarrusel[categoria.id] = el }" class="carruselMenu" :dots="false">
-                <div v-for="(grupo, indiceGrupo) in dividirEnGrupos(platosPorCategoria[categoria.id], tarjetasPorSlide)" :key="indiceGrupo">
-                  
+              <a-carousel :ref="el => { if (el) referenciasCarrusel[categoria.id] = el }" class="carruselMenu"
+                :dots="false">
+                <div v-for="(grupo, indiceGrupo) in dividirEnGrupos(platosPorCategoria[categoria.id], tarjetasPorSlide)"
+                  :key="indiceGrupo">
+
                   <a-flex gap="middle" align="stretch" :style="{ padding: '10px 5px 30px' }">
-                    <a-card
-                      v-for="(plato, indicePlato) in grupo"
-                      :key="indicePlato"
-                      hoverable
+                    <a-card v-for="(plato, indicePlato) in grupo" :key="indicePlato" hoverable
                       :style="{ width: `${100 / tarjetasPorSlide}%`, display: 'flex', flexDirection: 'column' }"
-                      @click="seleccionarPlato(plato)"
-                    >
+                      @click="seleccionarPlato(plato)">
                       <template #cover>
                         <img :alt="plato.name" :src="'images/plates/' + plato.img_src" class="imagenTarjeta" />
                       </template>
-                      
+
                       <div class="cuerpoTarjeta" :style="{ flex: 1, display: 'flex', flexDirection: 'column' }">
                         <a-typography-title :level="5" class="tituloTarjeta">
                           {{ plato.name }}
@@ -179,11 +181,12 @@ onUnmounted(() => {
                         <a-typography-paragraph type="secondary" class="descripcionTarjeta">
                           {{ plato.description }}
                         </a-typography-paragraph>
-                        
+
                         <div :style="{ marginTop: 'auto' }">
                           <a-typography-text strong size="small">Ingredientes:</a-typography-text>
                           <div class="ingredientesTarjeta">
-                            <a-tag v-for="ing in plato.ingredients" :key="ing" class="etiquetaIngrediente">{{ ing }}</a-tag>
+                            <a-tag v-for="ing in plato.ingredients" :key="ing" class="etiquetaIngrediente">{{ ing
+                              }}</a-tag>
                           </div>
                           <a-typography-text strong class="precioTarjeta">
                             {{ plato.price }} €
@@ -196,7 +199,9 @@ onUnmounted(() => {
                 </div>
               </a-carousel>
 
-              <button class="flechaCarrusel" @click="siguiente(categoria.id)"><RightOutlined /></button>
+              <button class="flechaCarrusel" @click="siguiente(categoria.id)">
+                <RightOutlined />
+              </button>
             </div>
           </template>
         </div>
@@ -260,7 +265,7 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  background: var( #fff);
+  background: var(--color-fondo-blanco);
   flex: 1;
 }
 
@@ -304,7 +309,7 @@ onUnmounted(() => {
 }
 
 .tarjetaResenia {
-  background: var(--bg-card, #fff);
+  background: var(--color-fondo-blanco);
   border-radius: 0 12px 12px 0;
   padding: 16px 20px;
   display: flex;
@@ -316,7 +321,7 @@ onUnmounted(() => {
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  background: #FFF3E8;
+  background: var(--color-fondo-naranja-suave);
   display: flex;
   align-items: center;
   justify-content: center;

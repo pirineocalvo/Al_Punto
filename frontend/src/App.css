@@ -1,24 +1,7 @@
-/* =========================================================
-   GLOBAL STYLES & SHARED UTILITIES
-   ========================================================= */
-
-:root {
-  /* Common spacing and transition tokens */
-  --transition-fast: 0.2s ease;
-  --transition-normal: 0.3s ease;
-  --transition-slow: 0.5s ease;
-
-  --border-radius-sm: 4px;
-  --border-radius-md: 8px;
-  --border-radius-lg: 16px;
-  --border-radius-full: 50px;
-}
 
 body {
   margin: 0;
   font-family: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  transition: background-color var(--transition-normal), color var(--transition-normal);
+  transition: color var(--transition-normal);
   min-height: 100vh;
 }

@@ -23,7 +23,6 @@ const listaReservas = ref([]);
 const listaPedidos = ref([]);
 const listaMarketPlaceReclamado = ref([]);
 
-
 function generarNotificacion(tipo, titulo, texto) {
     notification[tipo]({
         message: titulo,
@@ -44,11 +43,10 @@ watch(usuarioListo, async () => {
         listaReservas.value = reservas;
         listaMarketPlaceReclamado.value = marketplace;
     } catch (err) {
-        message.error("Error cargando datos:", err);
+        message.error(`Error cargando datos: ${err}`);
     } finally {
         cargado.value = true;
     }
-
 }, { immediate: true });
 
 async function eliminarPedido(pedido) {
@@ -101,7 +99,7 @@ async function pararReserva(reserva) {
                                         <a-col :xs="24" :lg="11">
                                             <span>{{ reserva.reserve_date }}</span>
                                         </a-col>
-                                        <a-col :xs="24" :lg="11" class="tagDerecha">
+                                        <a-col :xs="24" :lg="11" class="etiquetaDerecha">
                                             <a-tag v-if="reserva.status === 'confirmed'" color="lime">Atendido</a-tag>
                                             <a-tag v-else-if="reserva.status === null" color="purple">Pendiente</a-tag>
                                             <a-tag v-else color="red">Cancelado</a-tag>
@@ -138,7 +136,7 @@ async function pararReserva(reserva) {
                                         <a-col :xs="24" :lg="11">
                                             <span>{{ pedido.created_at }}</span>
                                         </a-col>
-                                        <a-col :xs="24" :lg="11" class="tagDerecha">
+                                        <a-col :xs="24" :lg="11" class="etiquetaDerecha">
                                             <a-tag color="purple" v-if="pedido.status === 'pendiente'">Pendiente de
                                                 preparación</a-tag>
                                             <a-tag color="purple"
@@ -182,7 +180,7 @@ async function pararReserva(reserva) {
                                         <a-col :xs="24" :lg="11">
                                             <span>{{ market.name }}</span>
                                         </a-col>
-                                        <a-col :xs="24" :lg="11" class="tagDerecha">
+                                        <a-col :xs="24" :lg="11" class="etiquetaDerecha">
                                             <a-tag v-if="market.is_used == 0" color="lime">Sin canjear</a-tag>
                                             <a-tag v-else color="red">Canjeado el {{ market.used_at }}</a-tag>
                                         </a-col>
@@ -191,7 +189,7 @@ async function pararReserva(reserva) {
                                 <a-row :gutter="[6, 12]">
                                     <a-col :xs="24"><span>{{ market.description }}</span></a-col>
                                     <a-col :xs="24"><span>Código: <a-tag><a-typography-text copyable>{{ market.token_url
-                                    }}</a-typography-text></a-tag></span></a-col>
+                                                    }}</a-typography-text></a-tag></span></a-col>
                                 </a-row>
                             </a-collapse-panel>
                         </a-collapse>
@@ -207,7 +205,7 @@ async function pararReserva(reserva) {
 </template>
 
 <style scoped>
-.tagDerecha {
+.etiquetaDerecha {
     text-align: right;
 }
 

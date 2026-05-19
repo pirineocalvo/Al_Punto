@@ -1,11 +1,12 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
+import { UserOutlined, LockOutlined, PhoneOutlined, MailOutlined, IdcardOutlined } from '@ant-design/icons-vue';
 import { registrarUsuario } from '../../services/usuariosEndpoint';
 import { message } from 'ant-design-vue';
 
 const router = useRouter();
+const cargandoRegistro = ref(false);
 
 const formState = ref({
     firstName: '',
@@ -86,9 +87,10 @@ onMounted(() => {
 });
 
 async function guardarUsuario() {
+    cargandoRegistro.value = true;
     try {
         const res = await registrarUsuario(formState.value);
-        
+
         if (res === true) {
             message.success('¡Usuario creado correctamente!');
             router.push('/iniciarSesion');
@@ -100,23 +102,24 @@ async function guardarUsuario() {
     } catch (err) {
         console.error(err);
         message.error('Error inesperado al intentar registrarse');
+    } finally {
+        cargandoRegistro.value = false;
     }
 }
+
 function volver() {
     router.push('/');
 }
 
 function iniciarSesion() {
     router.push('/iniciarSesion');
-};
+}
 </script>
 
 <template>
     <a-layout class="contenedorLogin">
-
         <a-row type="flex" justify="center" align="middle" class="tarjetaInicioSesion">
             <a-col :xs="22" :md="16" :lg="8">
-
                 <a-card class="registerCard">
                     <a-typography-title :level="2" class="text-center">Registrarse</a-typography-title>
 
@@ -132,7 +135,7 @@ function iniciarSesion() {
                         <a-form-item label="Apellidos" name="lastName">
                             <a-input v-model:value="formState.lastName" placeholder="Apellidos">
                                 <template #prefix>
-                                    <UserOutlined />
+                                    <IdcardOutlined />
                                 </template>
                             </a-input>
                         </a-form-item>
@@ -140,7 +143,7 @@ function iniciarSesion() {
                         <a-form-item label="Teléfono" name="phone">
                             <a-input v-model:value="formState.phone" placeholder="612345678">
                                 <template #prefix>
-                                    <UserOutlined />
+                                    <PhoneOutlined />
                                 </template>
                             </a-input>
                         </a-form-item>
@@ -148,7 +151,7 @@ function iniciarSesion() {
                         <a-form-item label="Correo electrónico" name="email">
                             <a-input v-model:value="formState.email" placeholder="Correo electrónico">
                                 <template #prefix>
-                                    <UserOutlined />
+                                    <MailOutlined />
                                 </template>
                             </a-input>
                         </a-form-item>
@@ -164,10 +167,11 @@ function iniciarSesion() {
                         <a-form-item>
                             <a-flex justify="center">
                                 <a-space size="middle">
-                                    <a-button type="primary" html-type="submit" size="large">
+                                    <a-button type="primary" html-type="submit" size="large"
+                                        :loading="cargandoRegistro">
                                         Registrarse
                                     </a-button>
-                                    <a-button @click="volver" size="large">
+                                    <a-button @click="volver" size="large" :disabled="cargandoRegistro">
                                         Volver
                                     </a-button>
                                 </a-space>

@@ -34,14 +34,14 @@ watch(usuarioListo, async () => {
 const productosFiltrados = computed(() => listaProductos.value);
 
 function estaDesbloqueado(producto) {
-    let nivelUser = 0
+    let nivelUser = 0;
     if (!user.value) return false;
     if (user.value.levelName === 'Oro') {
         nivelUser = 3;
     } else if (user.value.levelName === 'Plata') {
         nivelUser = 2;
     } else {
-        nivelUser = 1
+        nivelUser = 1;
     }
     return nivelUser >= producto.min_level_id;
 }
@@ -50,10 +50,9 @@ async function adquirirProducto(producto) {
     if (!estaDesbloqueado(producto)) return;
     try {
         await cangearProductoMarkePlace(producto.id);
-
         generarNotificacion('success', 'Canjeo de producto', 'El producto fue canjeado con éxito. Tus puntos se han actualizado.');
     } catch (error) {
-        generarNotificacion('error', '¡Advertencia!', 'Hubo un error al canjear el producto. Verifique si tiene puzntos suficientes.');
+        generarNotificacion('error', '¡Advertencia!', 'Hubo un error al canjear el producto. Verifique si tiene puntos suficientes.');
     }
 }
 </script>
@@ -76,14 +75,16 @@ async function adquirirProducto(producto) {
 
                 <a-row :gutter="[16, 16]">
                     <a-col v-for="producto in productosFiltrados" :key="producto.id" :xs="24" :xl="6">
-                        <a-card :class="{ mpCardLocked: !estaDesbloqueado(producto) }" class="mpCard">
-                            <div class="mpCardBody">
+                        <a-card :class="{ tarjetaMarketplaceBloqueada: !estaDesbloqueado(producto) }"
+                            class="tarjetaMarketplace">
+                            <div class="cuerpoTarjetaMarketplace">
                                 <a-card-meta :title="producto.name" :description="producto.description" />
 
-                                <div class="mpCardFooter">
+                                <div class="pieTarjetaMarketplace">
                                     <div class="colocarNivelYPuntos">
                                         <a-tag>Nivel {{ producto.min_level_id }}+</a-tag>
-                                        <span class="mpPts"><strong>{{ producto.points_price }} pts</strong></span>
+                                        <span class="puntosMarketplace"><strong>{{ producto.points_price }}
+                                                pts</strong></span>
                                     </div>
 
                                     <a-popconfirm :disabled="!estaDesbloqueado(producto)"
@@ -117,29 +118,28 @@ async function adquirirProducto(producto) {
     padding: 24px;
 }
 
-.mpCardLocked {
+.tarjetaMarketplaceBloqueada {
     opacity: 0.6;
     filter: grayscale(0.5);
 }
 
-.mpPts {
+.puntosMarketplace {
     font-size: 1.1rem;
 }
 
-.mpCard {
+.tarjetaMarketplace {
     height: 100%;
     transition: transform 0.3s ease;
 }
 
-
-.mpCard :deep(.ant-card-body) {
+.tarjetaMarketplace :deep(.ant-card-body) {
     height: 100%;
     display: flex;
     flex-direction: column;
     padding: 16px;
 }
 
-.mpCardBody {
+.cuerpoTarjetaMarketplace {
     display: flex;
     width: 100%;
     flex-direction: column;
@@ -147,7 +147,7 @@ async function adquirirProducto(producto) {
     gap: 12px;
 }
 
-.mpCardFooter {
+.pieTarjetaMarketplace {
     margin-top: auto;
     display: flex;
     flex-direction: column;

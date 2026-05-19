@@ -12,12 +12,15 @@ const diasBloqueados = ref({});
 const fechaSeleccionada = ref('');
 const mesasDia = ref([]);
 const horario = ref([]);
+
+const cargandoDatos = ref(false);
+const cargandoReserva = ref(false);
+
 const datosForm = ref({
     comensales: null,
     mesa: null,
     hora: null
 });
-
 
 const opcionesOcupantes = ref([]);
 
@@ -31,7 +34,6 @@ function calcularCapacidadMesas() {
     });
     opcionesOcupantes.value = [...filtrarOcupantes];
     completarListaCapacidadMesas();
-
 }
 
 function completarListaCapacidadMesas() {
@@ -63,8 +65,9 @@ async function onSelect(date) {
     datosForm.value.comensales = null;
     datosForm.value.mesa = null;
     datosForm.value.hora = null;
-
     horario.value = [];
+
+    cargandoDatos.value = true;
     try {
         const fecha = date.format('YYYY-MM-DD');
         mesasDia.value = await todasLasMesasLibresPorDia(fecha, null);
@@ -73,6 +76,8 @@ async function onSelect(date) {
         fechaSeleccionada.value = fecha;
     } catch (error) {
         message.error('Error al cargar las mesas');
+    } finally {
+        cargandoDatos.value = false;
     }
 }
 
@@ -103,6 +108,8 @@ async function alCambiarOcupantes() {
     datosForm.value.mesa = null;
     datosForm.value.hora = null;
     horario.value = [];
+
+    cargandoDatos.value = true;
     try {
         let mesasQueVienenDelBack = await todasLasMesasLibresPorDia(fecha, datosForm.value.comensales);
         const todasLasReservas = await misReservas();
@@ -118,8 +125,9 @@ async function alCambiarOcupantes() {
         }).filter(mesa => mesa.horasDisponibles.length > 0);
     } catch (error) {
         message.error('Error al cargar los datos');
+    } finally {
+        cargandoDatos.value = false;
     }
-
 }
 
 function filtrarHorario() {
@@ -134,6 +142,7 @@ async function guardarReserva() {
             fecha: fechaSeleccionada.value
         };
 
+        cargandoReserva.value = true;
         try {
             const idUltimaReserva = await nuevaReserva(dato);
             const bodyGuardarMesaReservada = { idReserva: idUltimaReserva.reservationId, idMesa: datosForm.value.mesa };
@@ -143,8 +152,9 @@ async function guardarReserva() {
             generarNotificacion('success', '¡Reserva realizada!', 'Su reserva esta lista, ¡Te esperamos!.');
         } catch (error) {
             generarNotificacion('error', 'Error al realizar la reserva', 'Si el error persiste contacte con el establecimiento.');
+        } finally {
+            cargandoReserva.value = false;
         }
-
     }
 }
 </script>
@@ -153,9 +163,11 @@ async function guardarReserva() {
     <CabeceraPrincipal />
 
     <a-layout class="reservasMain">
-        <a-typography-title :level="2">Reservas</a-typography-title>
+        <a-divider orientation="left">
+            <a-typography-title :level="2" class="tituloSeccion">Reservas</a-typography-title>
+        </a-divider>
 
-        <a-row :gutter="[32, 16]">
+        <a-row :gutter="[32, 24]">
             <a-col :xs="24" :lg="16">
                 <a-card class="cardCalendario">
                     <a-calendar :model:value="fechasCalendario" @panelChange="onPanelChange" @select="onSelect"
@@ -165,12 +177,13 @@ async function guardarReserva() {
 
             <a-col :xs="24" :lg="8">
                 <a-card :title="fechaSeleccionada ? 'Fecha: ' + fechaSeleccionada : 'Selecciona una fecha'"
-                    class="cardFormulario">
+                    class="cardFormulario" :loading="cargandoDatos">
                     <a-form layout="vertical" @submit.prevent="guardarReserva">
 
                         <a-form-item label="Número de ocupantes">
                             <a-select v-model:value="datosForm.comensales" placeholder="Selecciona comensales"
-                                @change="alCambiarOcupantes" :disabled="!fechaSeleccionada" size="large">
+                                @change="alCambiarOcupantes" :disabled="!fechaSeleccionada || cargandoDatos"
+                                size="large">
                                 <a-select-option v-for="num in opcionesOcupantes" :key="num" :value="num">
                                     {{ num }} {{ num === 1 ? 'persona' : 'personas' }}
                                 </a-select-option>
@@ -179,7 +192,8 @@ async function guardarReserva() {
 
                         <a-form-item v-if="datosForm.comensales" label="Mesa disponible">
                             <a-select v-model:value="datosForm.mesa" placeholder="Selecciona una mesa"
-                                @change="filtrarHorario" size="large" :notFoundContent="'No se encontraron mesas disponibles para ese número de comensales, pongase en contacto con el establecimiento.'">
+                                @change="filtrarHorario" size="large" :disabled="cargandoDatos"
+                                :notFoundContent="'No se encontraron mesas disponibles para ese número de comensales, pongase en contacto con el establecimiento.'">
                                 <a-select-option v-for="mesa in mesasDia" :key="mesa.id" :value="mesa.id">
                                     {{ mesa.name }}
                                 </a-select-option>
@@ -187,17 +201,17 @@ async function guardarReserva() {
                         </a-form-item>
 
                         <a-form-item v-if="datosForm.mesa" label="Hora disponible">
-                            <a-select v-model:value="datosForm.hora" placeholder="Seleccione una hora" size="large">
+                            <a-select v-model:value="datosForm.hora" placeholder="Seleccione una hora" size="large"
+                                :disabled="cargandoDatos">
                                 <a-select-option v-for="hora in horario" :key="hora" :value="hora">
                                     {{ hora }}
-
                                 </a-select-option>
                             </a-select>
                         </a-form-item>
 
-                        <a-form-item>
-                            <a-button html-type="submit" size="large" block
-                                :disabled="!datosForm.comensales || !datosForm.mesa || !datosForm.hora">
+                        <a-form-item class="botonAccionContenedor">
+                            <a-button type="primary" html-type="submit" size="large" block :loading="cargandoReserva"
+                                :disabled="!datosForm.comensales || !datosForm.mesa || !datosForm.hora || cargandoDatos">
                                 Realizar reserva
                             </a-button>
                         </a-form-item>
@@ -210,16 +224,25 @@ async function guardarReserva() {
 
     <PiePaginaPrincipal />
 </template>
+
 <style scoped>
 .reservasMain {
-    padding: 100px 32px;
-    display: flex;
-    justify-content: center;
+    padding: 120px 32px 60px 32px;
+}
+
+.tituloSeccion {
+    margin-bottom: 32px !important;
 }
 
 .cardCalendario,
 .cardFormulario {
     border-radius: 18px !important;
-    box-shadow: 0 10px 28px rgba(58, 46, 42, 0.08) !important;
+    box-shadow: 0 10px 28px rgba(58, 46, 42, 0.06) !important;
+    background: var(--color-fondo-blanco);
+}
+
+.botonAccionContenedor {
+    margin-top: 24px;
+    margin-bottom: 0px;
 }
 </style>

@@ -1,21 +1,33 @@
 <script setup>
-import { ref, watch } from 'vue';
-import { InboxOutlined } from '@ant-design/icons-vue';
-import { notification } from 'ant-design-vue';
-import { subirTicket } from '../../../../services/ticketsEndpoint';
-import CabeceraZonaPersonal from '@/components/componenteDashboard/CabeceraZonaPersonal.vue';
-import PiePaginaPrincipal from '@/components/cabeceraYpiePrincipal/PiePaginaPrincipal.vue';
-import Sidebar from '../../../../components/componenteDashboard/Sidebar.vue';
+import PiePaginaPrincipal from '../../../components/cabeceraYpiePrincipal/PiePaginaPrincipal.vue';
+import CabeceraZonaPersonal from '../../../components/componenteDashboard/CabeceraZonaPersonal.vue';
+import Sidebar from '../../../components/componenteDashboard/Sidebar.vue';
+import { getMyReviews, addReview } from '../../../services/comentariosEndpoint';
+import { getProductosCompradosCliente } from '../../../services/realizarPedidoEndpoint';
+import { getMenu } from '../../../services/menuEndpoint';
+import { informacionUsuario } from '../../../services/usuariosEndpoint';
+import { onMounted, ref, computed, watch } from 'vue';
+import { message, notification } from 'ant-design-vue';
 import { useAuth, ACCESS_LEVELS } from '@/composables/useAuth';
 
 const cargado = ref(false);
 
 const { user, usuarioListo } = useAuth({ minAccessLevel: ACCESS_LEVELS.EMPLEADO });
 
-const collapsed = ref(false);
-const cargando = ref(false);
-const archivo = ref(null);
-const ticketInfo = ref(null);
+const listaResenias = ref([]);
+const productosComprados = ref([]);
+const menuCompleto = ref([]);
+const keyLab = ref('1');
+
+const estadoModal = ref(false);
+const confirmLoading = ref(false);
+
+const formModal = ref({
+    id_plato: null,
+    plato_name: '',
+    puntuacion: 0,
+    descripcion: ''
+});
 
 function generarNotificacion(tipo, titulo, texto) {
     notification[tipo]({
@@ -25,86 +37,107 @@ function generarNotificacion(tipo, titulo, texto) {
     });
 }
 
-watch(usuarioListo, () => {
-    cargado.value = true;
-}, { immediate: true });
+const datosModal = (producto) => {
+    const platoEnMenu = menuCompleto.value.find(
+        p => p.name.toLowerCase().trim() === producto.product_name.toLowerCase().trim()
+    );
 
-// evita que Ant Design suba automáticamente
-const antesDeSubir = (file) => {
-    archivo.value = file;
-    return false;
-}
+    formModal.value.id_plato = platoEnMenu?.id ?? null;
+    formModal.value.plato_name = producto.product_name;
+    formModal.value.puntuacion = 0;
+    formModal.value.descripcion = '';
 
-const gestionNuevoTicket = async () => {
-    if (!archivo.value) {
-        generarNotificacion('warning', '¡Advertencia!', 'Debe de subir una imagen clara de su ticket.');
+    if (!formModal.value.id_plato) {
+        generarNotificacion('error', 'Error de sistema', 'No se pudo encontrar la referencia del plato para crear la reseña.');
         return;
     }
-    cargando.value = true;
-    try {
-        const formData = new FormData();
-        formData.append('imagen', archivo.value);
-        const data = await subirTicket(formData);
 
-        ticketInfo.value = parsearTicket(data.text);
+    estadoModal.value = true;
+};
 
-        archivo.value = null;
-        generarNotificacion('success', '¡Ticket subido!', 'Los puntos del ticket fueron añadidos a su cuenta, para verificarlo acceda a su zona personal.');
-    } catch {
-        generarNotificacion('error', 'Error al subir el ticket', 'Verifique que la imagen es nitida y que pertenece al restaurante.');
-    } finally {
-        cargando.value = false;
+const guardarResenia = async () => {
+    if (formModal.value.puntuacion === 0) {
+        generarNotificacion('warning', 'Puntuación requerida', 'Por favor, selecciona una cantidad de estrellas.');
+        return;
     }
-}
+    if (!formModal.value.descripcion || formModal.value.descripcion.trim().length < 5) {
+        generarNotificacion('warning', 'Comentario demasiado corto', 'Cuéntanos un poco más sobre tu experiencia con el plato.');
+        return;
+    }
 
-const parsearTicket = (textoOcr) => {
-    const lineas = textoOcr.split('\n').map(l => l.trim());
-    const ticket = { restaurante: '', direccion: '', fecha: '', hora: '', productos: [], total: 0 };
+    confirmLoading.value = true;
+    try {
+        const res = await addReview({
+            id_plato: formModal.value.id_plato,
+            descripcion: formModal.value.descripcion,
+            puntuacion: formModal.value.puntuacion
+        });
 
-    lineas.forEach(linea => {
-        const limpia = linea.replace(/^[^a-zA-Z0-9\[(]+|[^a-zA-Z0-9€)\]]+$/g, '').trim();
+        generarNotificacion('success', '¡Reseña publicada!', res.reward || 'Se han añadido puntos a tu cuenta.');
 
-        const matchRestaurante = limpia.match(/\[\s*(.*?)\s*\]/);
-        if (matchRestaurante) {
-            ticket.restaurante = matchRestaurante[1];
-            return;
+        estadoModal.value = false;
+
+        [user.value, listaResenias.value, productosComprados.value] = await Promise.all([
+            informacionUsuario(),
+            getMyReviews(),
+            getProductosCompradosCliente()
+        ]);
+
+    } catch (err) {
+        generarNotificacion('error', 'Error al publicar', 'Hubo un problema al conectar con el servidor. Inténtalo de nuevo.');
+        console.error(err);
+    } finally {
+        confirmLoading.value = false;
+    }
+};
+
+onMounted(async () => {
+    const token = localStorage.getItem('loginUserToken');
+    if (!token) { router.push('/iniciarSesion'); return; }
+});
+
+watch(usuarioListo, async () => {
+    try {
+        [user.value, listaResenias.value, productosComprados.value, menuCompleto.value] = await Promise.all([
+            informacionUsuario(),
+            getMyReviews(),
+            getProductosCompradosCliente(),
+            getMenu()
+        ]);
+    } catch (err) {
+        message.error("Error cargando datos:", err);
+    } finally {
+        cargado.value = true;
+    }
+}, { immediate: true });
+
+const reseniasHechas = computed(() => listaResenias.value);
+
+const reseniasPendientes = computed(() => {
+    const nombresReseniados = listaResenias.value.map(r => r.plato_name.toLowerCase().trim());
+    const productosPendientes = [];
+    const yaAgregadosALista = new Set();
+
+    productosComprados.value.forEach(pedido => {
+        if (pedido.status === 'entregado') {
+            pedido.items.forEach(item => {
+                const nombreLimpio = item.product_name.toLowerCase().trim();
+                const yaReseniado = nombresReseniados.includes(nombreLimpio);
+                const enListaTemporal = yaAgregadosALista.has(nombreLimpio);
+
+                if (!yaReseniado && !enListaTemporal) {
+                    productosPendientes.push(item);
+                    yaAgregadosALista.add(nombreLimpio);
+                }
+            });
         }
+    });
+    return productosPendientes;
+});
 
-        if (limpia.toLowerCase().includes('fecha')) {
-            const matchFecha = limpia.match(/(\d{2}-\d{2}-\d{4})/);
-            const matchHora = limpia.match(/(\d{2}:\d{2})/);
-            if (matchFecha) ticket.fecha = matchFecha[0];
-            if (matchHora) ticket.hora = matchHora[0];
-            return;
-        }
-
-        if (/Paseo|Calle|Avda|C\/|Plaza/i.test(limpia) || /\d{5}/.test(limpia)) {
-            ticket.direccion = limpia.replace(/^[A-Z]\s[—\-]+\s*/, '');
-            return;
-        }
-
-        const matchProducto = limpia.match(/(.+?)\s+([\d,.]+)\s*€/);
-        if (matchProducto) {
-            const nombre = matchProducto[1].replace(/[><\/\\|]/g, '').trim();
-            const importe = parseFloat(matchProducto[2].replace(',', '.'));
-            if (nombre.toLowerCase().includes('total') && !nombre.toLowerCase().includes('subtotal')) {
-                ticket.total = importe;
-            } else if (
-                !['importe', 'producto', 'subtotal'].some(p => nombre.toLowerCase().includes(p)) &&
-                nombre.length > 3
-            ) {
-                ticket.productos.push({ nombre, importe });
-            }
-        }
-    })
-
-    return ticket;
-}
-
-const resetear = () => {
-    ticketInfo.value = null;
-    archivo.value = null;
-}
+const formatearFecha = (fechaStr) => {
+    return new Date(fechaStr).toLocaleDateString();
+};
 </script>
 
 <template>
@@ -112,125 +145,120 @@ const resetear = () => {
         <CabeceraZonaPersonal :user="user" />
 
         <a-layout>
-            <Sidebar :collapsed="collapsed" />
+            <Sidebar />
 
-            <a-layout-content class="colocarContenedorPrincipalDashBoard">
-                <a-spin :spinning="cargando" tip="Procesando ticket...">
-                    <div class="content-wrapper">
+            <a-flex v-if="!cargado" vertical align="center" justify="center" class="centrarSpin">
+                <a-spin size="large" />
+                <a-typography-text type="secondary">Cargando productos...</a-typography-text>
+            </a-flex>
 
-                        <template v-if="!ticketInfo">
-                            <a-divider orientation="left">
-                                <a-typography-title :level="2">Subir Ticket</a-typography-title>
-                            </a-divider>
-                            <a-typography-title :level="5">
-                                Sube una foto clara de tu ticket para validar tu compra.
-                            </a-typography-title>
+            <a-layout-content v-else class="colocarContenedorPrincipalDashBoard">
+                <a-divider orientation="left">
+                    <a-typography-title :level="2">Comentarios</a-typography-title>
+                </a-divider>
 
-                            <a-row justify="center">
-                                <a-col :xs="24" :sm="18" :md="16" :lg="8">
-                                    <a-card class="ticket-card">
-                                        <a-row :gutter="[24, 24]" justify="center" align="middle">
-                                            <a-col :span="24">
-                                                <a-upload-dragger name="file" accept="image/*" :max-count="1"
-                                                    :before-upload="antesDeSubir" list-type="picture"
-                                                    :file-list="archivo ? [archivo] : []" @remove="resetear">
-                                                    <p class="ant-upload-drag-icon">
-                                                        <inbox-outlined></inbox-outlined>
-                                                    </p>
-                                                    <p class="ant-upload-text">Haz click o arrastra la imagen para
-                                                        subirla</p>
-                                                    <p class="ant-upload-hint">
-                                                        Solo se admiten tickets de este establecimiento, recuerde que la
-                                                        imagen se debe de poder leer su contenido
-                                                    </p>
-                                                </a-upload-dragger>
-                                            </a-col>
+                <a-typography-title :level="5">
+                    Echa un vistazo a tus comentarios o comenta un nuevo plato que hayas probado
+                </a-typography-title>
 
-                                            <a-col :span="24">
-                                                <a-flex justify="center">
-                                                    <a-button type="primary" size="large" :disabled="!archivo"
-                                                        @click="gestionNuevoTicket">
-                                                        Subir Ticket
-                                                    </a-button>
-                                                </a-flex>
-                                            </a-col>
-                                        </a-row>
-                                    </a-card>
-                                </a-col>
-                            </a-row>
-                        </template>
-
-                        <template v-else>
-                            <a-row justify="space-between" align="middle" class="resultado-header">
-                                <a-col>
-                                    <a-typography-title :level="2">Ticket procesado</a-typography-title>
-                                </a-col>
-                                <a-col>
-                                    <a-button @click="resetear">Subir otro ticket</a-button>
-                                </a-col>
-                            </a-row>
-
-                            <a-card class="ticket-card">
-                                <a-descriptions :column="{ xs: 1, sm: 2 }" bordered>
-                                    <a-descriptions-item label="Restaurante">
-                                        {{ ticketInfo.restaurante || '—' }}
-                                    </a-descriptions-item>
-                                    <a-descriptions-item label="Dirección">
-                                        {{ ticketInfo.direccion || '—' }}
-                                    </a-descriptions-item>
-                                    <a-descriptions-item label="Fecha">
-                                        {{ ticketInfo.fecha || '—' }}
-                                    </a-descriptions-item>
-                                    <a-descriptions-item label="Hora">
-                                        {{ ticketInfo.hora || '—' }}
-                                    </a-descriptions-item>
-                                </a-descriptions>
-
-                                <a-divider>Productos</a-divider>
-
-                                <a-table :data-source="ticketInfo.productos" :pagination="false" row-key="nombre"
-                                    size="middle">
-                                    <a-table-column title="Producto" data-index="nombre" />
-                                    <a-table-column title="Importe" data-index="importe" align="right">
-                                        <template #default="{ record }">
-                                            {{ record.importe.toFixed(2) }} €
+                <a-tabs v-model:activeKey="keyLab">
+                    <a-tab-pane key="1" tab="Mis Reseñas Realizadas">
+                        <a-row :gutter="[16, 16]">
+                            <a-col v-for="resenia in reseniasHechas" :key="resenia.id" :xs="24" :md="12" :lg="8">
+                                <a-card class="tarjetaMenuPrincipal">
+                                    <template #cover>
+                                        <img :alt="resenia.plato_name" :src="'images/plates/' + resenia.plato_img"
+                                            class="tarjetaImg" />
+                                    </template>
+                                    <a-card-meta :title="resenia.plato_name">
+                                        <template #description>
+                                            <p class="textoResenia">"{{ resenia.descripcion }}"</p>
                                         </template>
-                                    </a-table-column>
-                                </a-table>
+                                    </a-card-meta>
+                                    <div class="pieTarjeta">
+                                        <a-rate :value="resenia.puntuacion" disabled />
+                                        <div>
+                                            <a-tag color="orange">{{ formatearFecha(resenia.created_at) }}</a-tag>
+                                        </div>
+                                    </div>
+                                </a-card>
+                            </a-col>
+                        </a-row>
+                        <a-empty v-if="reseniasHechas.length === 0"
+                            description="No has realizado ninguna reseña aún." />
+                    </a-tab-pane>
 
-                                <a-divider />
-
-                                <a-row justify="end">
-                                    <a-col>
-                                        <a-statistic title="Total" :value="ticketInfo.total" :precision="2" suffix="€"
-                                            class="ticket-total" />
-                                    </a-col>
-                                </a-row>
-                            </a-card>
-                        </template>
-
-                    </div>
-                </a-spin>
+                    <a-tab-pane key="2" tab="Pendientes de Calificar">
+                        <a-row :gutter="[16, 16]">
+                            <a-col v-for="producto in reseniasPendientes" :key="producto.id" :xs="24" :md="12" :lg="8">
+                                <a-card class="tarjetaMenuPrincipal tarjetaPendiente">
+                                    <template #cover>
+                                        <img :alt="producto.product_name" :src="'images/plates/' + producto.img_src"
+                                            class="tarjetaImg" />
+                                    </template>
+                                    <a-card-meta :title="producto.product_name">
+                                        <template #description>
+                                            <a-typography-text type="secondary">Aún no has valorado este
+                                                plato.</a-typography-text>
+                                        </template>
+                                    </a-card-meta>
+                                    <div class="contenedorBoton">
+                                        <a-button block type="primary" @click="datosModal(producto)">
+                                            Escribir Reseña (+5 pts)
+                                        </a-button>
+                                    </div>
+                                </a-card>
+                            </a-col>
+                        </a-row>
+                        <a-empty v-if="reseniasPendientes.length === 0"
+                            description="¡Estás al día! No tienes reseñas pendientes." />
+                    </a-tab-pane>
+                </a-tabs>
             </a-layout-content>
         </a-layout>
+
+        <a-modal v-model:open="estadoModal" :title="'Valorar ' + formModal.plato_name" @ok="guardarResenia"
+            :confirm-loading="confirmLoading" ok-text="Publicar Reseña" cancel-text="Cancelar" destroyOnClose>
+            <a-form layout="vertical">
+                <a-form-item label="Puntuación (Estrellas)">
+                    <a-rate v-model:value="formModal.puntuacion" />
+                </a-form-item>
+                <a-form-item label="Comentario">
+                    <a-textarea v-model:value="formModal.descripcion"
+                        placeholder="Cuéntanos qué te pareció este plato..." :rows="4" :maxlength="250" show-count />
+                </a-form-item>
+            </a-form>
+        </a-modal>
+
+        <PiePaginaPrincipal />
     </a-layout>
-    <PiePaginaPrincipal />
 </template>
 
 <style scoped>
-.ticket-card {
-    border-radius: 16px !important;
-    box-shadow: 0 4px 20px rgba(58, 46, 42, 0.07) !important;
-    margin-top: 16px;
+.textoResenia {
+    font-style: italic;
+    color: var(--color-texto-secundario);
+    margin-top: 8px;
+    height: 60px;
+    overflow: hidden;
 }
 
-.resultado-header {
-    margin-bottom: 8px;
+.tarjetaImg {
+    height: 200px;
+    object-fit: cover;
 }
 
-.ticket-total :deep(.ant-statistic-content-value) {
-    font-size: 2rem !important;
-    font-weight: 800 !important;
-    color: var(--color-principal) !important;
+.pieTarjeta {
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px solid var(--color-borde-suave);
+}
+
+.tarjetaMenuPrincipal {
+    height: 100%;
+}
+
+.contenedorBoton {
+    margin-top: 15px;
 }
 </style>

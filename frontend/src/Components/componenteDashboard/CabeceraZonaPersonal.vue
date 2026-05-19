@@ -64,12 +64,12 @@ const   logout = () => router.push('/cerrarSesion');
 }
 
 .colorBtnMenu {
-    color: #E8C9A0;
+    color: var(--color-acento-dorado);
 }
 
 .tituloCabeceraDashBoard {
     margin: 0;
-    color: #E8C9A0;
+    color: var(--color-acento-dorado);
 }
 
 .headerDashboard {
@@ -96,7 +96,7 @@ const   logout = () => router.push('/cerrarSesion');
 }
 
 .userAvatar {
-    background-color: #D97742;
+    background-color: var(--color-principal);
     border: 1px solid rgba(232, 201, 160, 0.3);
 }
 
