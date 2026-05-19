@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { userInfo } from '@/services/usuariosEndpoint'
+import { informacionUsuario } from '@/services/usuariosEndpoint'
 import { ACCESS_LEVELS } from '@/composables/useAuth'
 
 // ─── Rutas ───────────────────────────────────────────────────────────────────
@@ -108,7 +108,7 @@ router.beforeEach(async (to) => {
   if (to.meta.minAccessLevel) {
     try {
       if (!rutaUsuarioCacheada) {
-        rutaUsuarioCacheada = await userInfo();
+        rutaUsuarioCacheada = await informacionUsuario();
       }
 
       if (rutaUsuarioCacheada.access_level < to.meta.minAccessLevel) {

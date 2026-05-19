@@ -1,11 +1,11 @@
 import axios from 'axios';
 const API_URL = import.meta.env.VITE_API_URL;
-import { getAuthToken, logoutUser } from './gestionAlmacenamiento';
+import { getTokenAutentificacion, cerrarSesionUsuario } from './gestionAlmacenamiento';
 
 
 export const pedidosRealizadosMarketPlace = async () => {
     try {
-        const token = getAuthToken()
+        const token = getTokenAutentificacion()
         const config = {
             headers: { authorization: `Bearer ${token}` },
         }
@@ -14,7 +14,7 @@ export const pedidosRealizadosMarketPlace = async () => {
         return response.data
     } catch (error) {
         if (error.response?.status === 401) {
-            logoutUser()
+            cerrarSesionUsuario()
         }
         console.error('Error cancelando pedido:', error)
         throw error
@@ -23,7 +23,7 @@ export const pedidosRealizadosMarketPlace = async () => {
 
 export const listaProductosMarketplace = async () => {
     try {
-        const token = getAuthToken()
+        const token = getTokenAutentificacion()
         const config = {
             headers: { authorization: `Bearer ${token}` },
         }
@@ -32,7 +32,7 @@ export const listaProductosMarketplace = async () => {
         return response.data
     } catch (error) {
         if (error.response?.status === 401) {
-            logoutUser()
+            cerrarSesionUsuario()
         }
         console.error('Error cancelando pedido:', error)
         throw error
@@ -41,7 +41,7 @@ export const listaProductosMarketplace = async () => {
 
 export const cangearProductoMarkePlace = async (id) => {
     try {
-        const token = getAuthToken()
+        const token = getTokenAutentificacion()
         const config = {
             headers: { authorization: `Bearer ${token}` },
         }
@@ -50,7 +50,7 @@ export const cangearProductoMarkePlace = async (id) => {
         return response.data
     } catch (error) {
         if (error.response?.status === 401) {
-            logoutUser()
+            cerrarSesionUsuario()
         }
         console.error('Error cancelando pedido:', error)
         throw error
@@ -59,7 +59,7 @@ export const cangearProductoMarkePlace = async (id) => {
 
 export const usarProductoMarket = async (userId, tokenUrl) => {
     try {
-        const token = getAuthToken();
+        const token = getTokenAutentificacion();
         const config = {
             headers: { authorization: `Bearer ${token}` },
         };

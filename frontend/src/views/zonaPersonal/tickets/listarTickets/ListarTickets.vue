@@ -1,6 +1,6 @@
 <script setup>
 import { ref, watch } from 'vue';
-import { getMyTickets } from '../../../../services/ticketsEndpoint';
+import { misTickets } from '../../../../services/ticketsEndpoint';
 import { message} from 'ant-design-vue';
 import Sidebar from '../../../../components/componenteDashboard/Sidebar.vue';
 import CabeceraZonaPersonal from '@/components/componenteDashboard/CabeceraZonaPersonal.vue';
@@ -58,7 +58,7 @@ const parseTicketText = (text) => {
 
 watch(usuarioListo, async () => {
     try {
-        const data = await getMyTickets()
+        const data = await misTickets()
 
         tickets.value = data.map(t => ({
             ...t,

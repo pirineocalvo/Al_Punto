@@ -5,7 +5,7 @@ import Sidebar from '../../../components/componenteDashboard/Sidebar.vue';
 import { ref, computed, watch } from 'vue';
 import { QuestionCircleOutlined, EditOutlined, CheckOutlined } from '@ant-design/icons-vue';
 import { guardarCarritoCompraClientes } from '../../../services/realizarPedidoEndpoint';
-import { getMenu, getCategories } from '../../../services/menuEndpoint';
+import { getMenu, getCategorias } from '../../../services/menuEndpoint';
 import { useAuth, ACCESS_LEVELS } from '@/composables/useAuth';
 import { message, notification } from 'ant-design-vue';
 const { user, usuarioListo } = useAuth({ minAccessLevel: ACCESS_LEVELS.ADMIN });
@@ -117,7 +117,7 @@ async function guardarCarrito() {
 watch(usuarioListo, async () => {
     try {
         menu.value = await getMenu();
-        categorias.value = await getCategories();
+        categorias.value = await getCategorias();
         clasificarMenu();
         cargado.value = true;
     } catch (err) {

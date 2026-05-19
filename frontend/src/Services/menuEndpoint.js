@@ -1,6 +1,6 @@
 import axios from 'axios';
 const API_URL = import.meta.env.VITE_API_URL;
-import { getAdminToken, getAuthToken} from './gestionAlmacenamiento';
+import { getTokenAdmin, getTokenAutentificacion} from './gestionAlmacenamiento';
 
 export const getMenu = async (data = {}) => {
     try {
@@ -13,7 +13,7 @@ export const getMenu = async (data = {}) => {
 };
 
 
-export const getCategories = async () => {
+export const getCategorias = async () => {
     try {
         const response = await axios.get(`${API_URL}/api/menu/categorias`);
         return response.data;
@@ -36,8 +36,8 @@ export const getMenuByIdCategory = async (data = {}) => {
 
 export const addMenuItem = async (data = {}) => {
     try {
-        const token = getAuthToken();
-        const adminToken = getAdminToken();
+        const token = getTokenAutentificacion();
+        const adminToken = getTokenAdmin();
         const config = {
             headers: token ? { Authorization: `Bearer ${token} ${adminToken}` } : {},
         };
@@ -51,8 +51,8 @@ export const addMenuItem = async (data = {}) => {
 
 export const updateMenuItem = async (data = {}) => {
     try {
-        const token = getAuthToken();
-        const adminToken = getAdminToken();
+        const token = getTokenAutentificacion();
+        const adminToken = getTokenAdmin();
         const config = {
             headers: token ? { Authorization: `Bearer ${token} ${adminToken}` } : {},
         };
@@ -66,8 +66,8 @@ export const updateMenuItem = async (data = {}) => {
 
 export const addCategory = async (data = {}) => {
     try {
-        const token = getAuthToken();
-        const adminToken = getAdminToken();
+        const token = getTokenAutentificacion();
+        const adminToken = getTokenAdmin();
         const config = {
             headers: token ? { Authorization: `Bearer ${token} ${adminToken}` } : {},
         };

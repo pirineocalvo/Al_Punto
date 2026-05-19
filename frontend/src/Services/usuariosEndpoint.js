@@ -1,8 +1,8 @@
 import axios from 'axios';
 const API_URL = import.meta.env.VITE_API_URL;
-import { getAuthToken, guardarToken, logoutUser} from './gestionAlmacenamiento';
+import { getTokenAutentificacion, guardarToken, cerrarSesionUsuario} from './gestionAlmacenamiento';
 
-export const loginUser = async (data = {}) => {
+export const iniciarSesionUsuario = async (data = {}) => {
     try {
         const response = await axios.post(`${API_URL}/api/user/login`, data);
         guardarToken(response.data.token);
@@ -13,9 +13,9 @@ export const loginUser = async (data = {}) => {
     }
 };
 
-export const userInfo = async () => {
+export const informacionUsuario = async () => {
     try {
-        const token = getAuthToken();
+        const token = getTokenAutentificacion();
 
         const config = {
             headers: { authorization: `Bearer ${token}` },
@@ -24,22 +24,26 @@ export const userInfo = async () => {
         return response.data;
     } catch (error) {
         if (error.response.status === 401) {
-            logoutUser();
+            cerrarSesionUsuario();
         }
         console.error('Error getting data:', error);
         throw error;
     }
 };
 
-export const registerUser = async (data = {}) => {
+export const registrarUsuario = async (data = {}) => {
     try {
         const response = await axios.post(`${API_URL}/api/user/register`, data);
-        if (response.status === 200) {
+        
+        if (response.status === 201 || response.status === 200) {
             return true;
         } else {
             return false;
         }
     } catch (error) {
-        return error.response.data.error;
+        if (error.response) {
+            return error.response.status; 
+        }
+        return 500;
     }
 };

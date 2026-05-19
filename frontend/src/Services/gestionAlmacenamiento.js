@@ -1,4 +1,4 @@
-export const getAuthToken = () => {
+export const getTokenAutentificacion = () => {
     try {
         return localStorage.getItem('loginUserToken');
     } catch {
@@ -6,7 +6,7 @@ export const getAuthToken = () => {
     }
 };
 
-export const getAdminToken = () => {
+export const getTokenAdmin = () => {
     try {
         return localStorage.getItem('adminToken');
     } catch {
@@ -22,7 +22,7 @@ export const guardarToken = (token) => {
     }
 };
 
-export const logoutUser = () => {
+export const cerrarSesionUsuario = () => {
     try {
         localStorage.removeItem('loginUserToken');
     } catch {

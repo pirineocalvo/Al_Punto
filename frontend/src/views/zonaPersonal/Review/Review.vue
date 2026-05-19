@@ -3,9 +3,9 @@ import PiePaginaPrincipal from '../../../components/cabeceraYpiePrincipal/PiePag
 import CabeceraZonaPersonal from '../../../components/componenteDashboard/CabeceraZonaPersonal.vue';
 import Sidebar from '../../../components/componenteDashboard/Sidebar.vue';
 import { getMyReviews, addReview } from '../../../services/comentariosEndpoint';
-import {  getProductosCompradosCliente} from '../../../services/api';
+import {  getProductosCompradosCliente} from '../../../services/realizarPedidoEndpoint';
 import { getMenu } from '../../../services/menuEndpoint';
-import { userInfo } from '../../../services/usuariosEndpoint';
+import { informacionUsuario } from '../../../services/usuariosEndpoint';
 import { onMounted, ref, computed, watch } from 'vue';
 import { message, notification } from 'ant-design-vue';
 import { useAuth, ACCESS_LEVELS } from '@/composables/useAuth';
@@ -78,7 +78,7 @@ const guardarResenia = async () => {
         estadoModal.value = false;
 
         [user.value, listaResenias.value, productosComprados.value] = await Promise.all([
-            userInfo(),
+            informacionUsuario(),
             getMyReviews(),
             getProductosCompradosCliente()
         ]);
@@ -101,7 +101,7 @@ onMounted(async () => {
 watch(usuarioListo, async () => {
     try {
         [user.value, listaResenias.value, productosComprados.value, menuCompleto.value] = await Promise.all([
-            userInfo(),
+            informacionUsuario(),
             getMyReviews(),
             getProductosCompradosCliente(),
             getMenu()

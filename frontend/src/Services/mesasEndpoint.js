@@ -1,10 +1,10 @@
 import axios from 'axios';
 const API_URL = import.meta.env.VITE_API_URL;
-import { getAuthToken, logoutUser } from './gestionAlmacenamiento';
+import { getTokenAutentificacion, cerrarSesionUsuario } from './gestionAlmacenamiento';
 
 export const getDisponibilidadMes = async (year, month) => {
     try {
-        const token = getAuthToken();
+        const token = getTokenAutentificacion();
         const config = {
             headers: { authorization: `Bearer ${token}` },
             params: { year, month },
@@ -13,7 +13,7 @@ export const getDisponibilidadMes = async (year, month) => {
         return response.data;
     } catch (error) {
         if (error.response.status === 401) {
-            logoutUser();
+            cerrarSesionUsuario();
         }
         console.error('Error getting month availability:', error);
         throw error;
@@ -22,7 +22,7 @@ export const getDisponibilidadMes = async (year, month) => {
 
 export const todasLasMesasLibresPorDia = async (fecha, ocupantes) => {
     try {
-        const token = getAuthToken();
+        const token = getTokenAutentificacion();
         const config = {
             headers: { authorization: `Bearer ${token}` },
             params: { fecha, ocupantes },
@@ -31,7 +31,7 @@ export const todasLasMesasLibresPorDia = async (fecha, ocupantes) => {
         return response.data;
     } catch (error) {
         if (error.response.status === 401) {
-            logoutUser();
+            cerrarSesionUsuario();
         }
         console.error('Error getting day availability:', error);
         throw error;
@@ -41,7 +41,7 @@ export const todasLasMesasLibresPorDia = async (fecha, ocupantes) => {
 // Admin: todas las mesas (activas e inactivas)
 export const todasLasMesas = async () => {
     try {
-        const token = getAuthToken();
+        const token = getTokenAutentificacion();
         const config = {
             headers: { authorization: `Bearer ${token}` },
         };
@@ -49,7 +49,7 @@ export const todasLasMesas = async () => {
         return response.data;
     } catch (error) {
         if (error.response.status === 401) {
-            logoutUser();
+            cerrarSesionUsuario();
         }
         throw error;
     }
@@ -58,7 +58,7 @@ export const todasLasMesas = async () => {
 // Admin: crear mesa
 export const crearMesa = async (data = {}) => {
     try {
-        const token = getAuthToken();
+        const token = getTokenAutentificacion();
         const config = {
             headers: { authorization: `Bearer ${token}` },
         };
@@ -66,7 +66,7 @@ export const crearMesa = async (data = {}) => {
         return response.data;
     } catch (error) {
         if (error.response.status === 401) {
-            logoutUser();
+            cerrarSesionUsuario();
         }
         console.error('Error creating table:', error);
         throw error;
@@ -76,7 +76,7 @@ export const crearMesa = async (data = {}) => {
 // Admin: actualizar mesa
 export const actualizarMesa = async (id, data = {}) => {
     try {
-        const token = getAuthToken();
+        const token = getTokenAutentificacion();
         const config = {
             headers: { authorization: `Bearer ${token}` },
         };
@@ -84,7 +84,7 @@ export const actualizarMesa = async (id, data = {}) => {
         return response.data;
     } catch (error) {
         if (error.response.status === 401) {
-            logoutUser();
+            cerrarSesionUsuario();
         }
         console.error('Error updating table:', error);
         throw error;
@@ -94,7 +94,7 @@ export const actualizarMesa = async (id, data = {}) => {
 // Admin: baja lógica de mesa (activo = 0, no elimina)
 export const desactivarMesa = async (id) => {
     try {
-        const token = getAuthToken();
+        const token = getTokenAutentificacion();
         const config = {
             headers: { authorization: `Bearer ${token}` },
         };
@@ -102,7 +102,7 @@ export const desactivarMesa = async (id) => {
         return response.data;
     } catch (error) {
         if (error.response.status === 401) {
-            logoutUser();
+            cerrarSesionUsuario();
         }
         console.error('Error deactivating table:', error);
         throw error;

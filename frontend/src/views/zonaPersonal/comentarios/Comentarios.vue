@@ -4,7 +4,7 @@ import CabeceraZonaPersonal from '../../../components/componenteDashboard/Cabece
 import Sidebar from '../../../components/componenteDashboard/Sidebar.vue';
 import { getMyReviews, addReview } from '../../../services/comentariosEndpoint';
 import { getProductosCompradosCliente } from '../../../services/realizarPedidoEndpoint';
-import { userInfo } from '../../../services/usuariosEndpoint';
+import { informacionUsuario } from '../../../services/usuariosEndpoint';
 import { getMenu } from '../../../services/menuEndpoint';
 import { onMounted, ref, computed, watch } from 'vue';
 import { message, notification } from 'ant-design-vue';
@@ -78,7 +78,7 @@ const guardarResenia = async () => {
         estadoModal.value = false;
 
         [user.value, listaResenias.value, productosComprados.value] = await Promise.all([
-            userInfo(),
+            informacionUsuario(),
             getMyReviews(),
             getProductosCompradosCliente()
         ]);
@@ -101,7 +101,7 @@ onMounted(async () => {
 watch(usuarioListo, async () => {
     try {
         [user.value, listaResenias.value, productosComprados.value, menuCompleto.value] = await Promise.all([
-            userInfo(),
+            informacionUsuario(),
             getMyReviews(),
             getProductosCompradosCliente(),
             getMenu()

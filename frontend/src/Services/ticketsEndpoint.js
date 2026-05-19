@@ -1,10 +1,10 @@
 import axios from 'axios';
 const API_URL = import.meta.env.VITE_API_URL;
-import { getAuthToken, logoutUser } from './gestionAlmacenamiento';
+import { getTokenAutentificacion, cerrarSesionUsuario } from './gestionAlmacenamiento';
 
-export const uploadTickets = async (ticket) => {
+export const subirTicket = async (ticket) => {
     try {
-        const token = getAuthToken();
+        const token = getTokenAutentificacion();
         const config = {
             headers: { authorization: `Bearer ${token}` },
         };
@@ -12,16 +12,16 @@ export const uploadTickets = async (ticket) => {
         return response.data;
     } catch (error) {
         if (error.response.status === 401) {
-            logoutUser();
+            cerrarSesionUsuario();
         }
         console.error('Error uploading ticket:', error);
         throw error;
     }
 };
 
-export const getMyTickets = async () => {
+export const misTickets = async () => {
     try {
-        const token = getAuthToken();
+        const token = getTokenAutentificacion();
         const config = {
             headers: { authorization: `Bearer ${token}` },
         };
@@ -29,7 +29,7 @@ export const getMyTickets = async () => {
         return response.data;
     } catch (error) {
         if (error.response.status === 401) {
-            logoutUser();
+            cerrarSesionUsuario();
         }
         console.error('Error getting tickets:', error);
         throw error;

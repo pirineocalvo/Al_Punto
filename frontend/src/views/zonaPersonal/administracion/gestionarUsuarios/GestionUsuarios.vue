@@ -2,7 +2,7 @@
 import { ref, computed, watch } from 'vue';
 import { CalendarOutlined, ClockCircleOutlined, TeamOutlined, NumberOutlined } from '@ant-design/icons-vue';
 import { usarProductoMarket } from '../../../../services/marketplaceEndpoint';
-import {  getTodosLosPedidosAdmin, updateOrderStatus, cancelarPedido } from '../../../../services/realizarPedidoEndpoint';
+import {  getTodosLosPedidosAdmin, actualizarEstadoOrden, cancelarPedido } from '../../../../services/realizarPedidoEndpoint';
 import { obtenerTodasLasReservasAdmin, actualizarEstadoReservaAdmin } from '../../../../services/reservasEndpoint';
 import { notification, message } from 'ant-design-vue';
 import CabeceraZonaPersonal from '@/components/componenteDashboard/CabeceraZonaPersonal.vue';
@@ -87,7 +87,7 @@ const pedidosListos = computed(function () {
 
 async function cambiarEstado(id, estado, recogido = false) {
     try {
-        await updateOrderStatus(id, estado, recogido);
+        await actualizarEstadoOrden(id, estado, recogido);
         generarNotificacion('success', 'Pedido actualizado', `Pedido #${id} actualizado correctamente.`);
         await cargarPedidos();
     } catch (err) {

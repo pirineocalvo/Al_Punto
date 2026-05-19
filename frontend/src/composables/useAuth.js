@@ -1,6 +1,6 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { userInfo } from '@/services/usuariosEndpoint';
+import { informacionUsuario } from '@/services/usuariosEndpoint';
 
 export const ACCESS_LEVELS = {
     CLIENTE: 1,
@@ -24,7 +24,7 @@ export function useAuth({rutaLogin ='/iniciarSesion', nivelMin = ACCESS_LEVELS.C
         try {
 
         if(!usuarioCacheado.value){
-            usuarioCacheado.value = await userInfo();
+            usuarioCacheado.value = await informacionUsuario();
         }
 
         if(usuarioCacheado.value.access_level < nivelMin){

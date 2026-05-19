@@ -4,7 +4,7 @@ import CabeceraPrincipal from '../../../components/cabeceraYpiePrincipal/Cabecer
 import PiePaginaPrincipal from '../../../components/cabeceraYpiePrincipal/PiePaginaPrincipal.vue';
 import TarjetaPlato from '../../../components/componenteMenu/TarjetaPlato.vue';
 import { getReviewsByDish } from '../../../services/comentariosEndpoint';
-import { getMenu, getCategories } from '../../../services/menuEndpoint';
+import { getMenu, getCategorias } from '../../../services/menuEndpoint';
 import { RightOutlined, LeftOutlined} from '@ant-design/icons-vue';
 
 const categorias = ref([]);
@@ -67,7 +67,7 @@ async function seleccionarPlato(plato) {
 onMounted(() => {
   window.addEventListener('resize', actualizarAncho);
 
-  Promise.all([getCategories(), getMenu()])
+  Promise.all([getCategorias(), getMenu()])
     .then(([cats, datos]) => {
       categorias.value = cats;
       datos.forEach(plato => {
