@@ -12,7 +12,7 @@ const run = (sql, params = []) => new Promise((resolve, reject) =>
 
 exports.insertTicket = async (userId, fileName, ocrText, points, status) => {
     const result = await run(
-        `INSERT INTO Tickets (user_id, image_url, json_content, points_awarded, status)
+        `INSERT INTO tickets (id_usuario, url_imagen, contenido_json, puntos_otorgados, estado)
          VALUES (?, ?, ?, ?, ?)`,
         [userId, fileName, ocrText, points, status]
     );
@@ -20,20 +20,20 @@ exports.insertTicket = async (userId, fileName, ocrText, points, status) => {
 };
 
 exports.getWalletByUser = (userId) =>
-    queryOne('SELECT * FROM Wallet WHERE user_id = ?', [userId]);
+    queryOne('SELECT * FROM monedero WHERE id_usuario = ?', [userId]);
 
 exports.updateWalletPoints = (newPoints, userId) =>
-    run('UPDATE Wallet SET points = ? WHERE user_id = ?', [newPoints, userId]);
+    run('UPDATE monedero SET puntos = ? WHERE id_usuario = ?', [newPoints, userId]);
 
 exports.insertPointTransaction = (userId, walletId, points) =>
     run(
-        `INSERT INTO Point_transactions (user_id, wallet_id, amount_transaction, type)
+        `INSERT INTO transacciones_puntos (id_usuario, id_monedero, cantidad_transaccion, tipo)
          VALUES (?, ?, ?, 'add ticket')`,
         [userId, walletId, points]
     );
 
 exports.getLevels = () =>
-    query('SELECT name, min_points, max_points FROM Levels ORDER BY min_points ASC');
+    query('SELECT nombre AS name, puntos_min AS min_points, puntos_max AS max_points FROM niveles ORDER BY puntos_min ASC');
 
 exports.getTicketsByUser = (userId) =>
-    query('SELECT * FROM Tickets WHERE user_id = ?', [userId]);
+    query('SELECT * FROM tickets WHERE id_usuario = ?', [userId]);

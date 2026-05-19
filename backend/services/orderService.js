@@ -1,30 +1,29 @@
-const orderRepo          = require('../repositories/orderRepository');
-const { createNotification } = require('../utils/notifications');
+const orderRepo = require('../repositories/orderRepository');
 
 function groupOrderRows(rows, isAdmin = false) {
     const ordersMap = {};
     for (const row of rows) {
         if (!ordersMap[row.id]) {
             ordersMap[row.id] = {
-                id:           row.id,
-                total_price:  row.total_price,
-                status:       row.status,
-                created_at:   row.created_at,
+                id: row.id,
+                total_price: row.total_price,
+                status: row.status,
+                created_at: row.created_at,
                 is_picked_up: row.is_picked_up,
-                items:        [],
+                items: [],
                 ...(isAdmin && {
                     customer: `${row.first_name} ${row.last_name}`,
-                    email:    row.email,
+                    email: row.email,
                 }),
             };
         }
         if (row.item_id) {
             ordersMap[row.id].items.push({
-                id:            row.item_id,
-                product_id:    row.product_id,
-                quantity:      row.quantity,
+                id: row.item_id,
+                product_id: row.product_id,
+                quantity: row.quantity,
                 price_at_time: row.price_at_time,
-                product_name:  row.product_name,
+                product_name: row.product_name,
                 ...(!isAdmin && { img_src: row.img_src }),
             });
         }
@@ -81,11 +80,6 @@ exports.updateStatus = async (orderId, status, is_picked_up) => {
         err.status = 404;
         throw err;
     }
-
-    if (status === 'listo')
-        createNotification(order.user_id, `Tu pedido #${orderId} está listo para recoger`, 'order');
-    else if (status === 'entregado')
-        createNotification(order.user_id, `Tu pedido #${orderId} ha sido entregado. ¡Gracias!`, 'order');
 
     return { message: 'Pedido actualizado correctamente' };
 };

@@ -1,6 +1,5 @@
-const ticketsRepo            = require('../repositories/ticketsRepository');
-const { createNotification } = require('../utils/notifications');
-const Tesseract              = require('tesseract.js');
+const ticketsRepo = require('../repositories/ticketsRepository');
+const Tesseract = require('tesseract.js');
 
 const RESTAURANTES_CONOCIDOS = ['Al Punto'];
 
@@ -25,8 +24,8 @@ function extraerNombreRestaurante(text) {
 }
 
 function detectarSubidaNivel(levels, puntosAntes, puntosDespues) {
-    const prevLevel = levels.find(l => puntosAntes  >= l.min_points && puntosAntes  <= l.max_points);
-    const newLevel  = levels.find(l => puntosDespues >= l.min_points && puntosDespues <= l.max_points);
+    const prevLevel = levels.find(l => puntosAntes >= l.min_points && puntosAntes <= l.max_points);
+    const newLevel = levels.find(l => puntosDespues >= l.min_points && puntosDespues <= l.max_points);
     if (prevLevel && newLevel && prevLevel.name !== newLevel.name)
         return newLevel.name;
     return null;
@@ -41,7 +40,7 @@ exports.uploadTicket = async (userId, file, fileName) => {
         throw err;
     }
 
-    const ocrText     = await analizarTicket(file.path);
+    const ocrText = await analizarTicket(file.path);
     const restaurante = extraerNombreRestaurante(ocrText);
 
     if (!restaurante) {
@@ -50,34 +49,30 @@ exports.uploadTicket = async (userId, file, fileName) => {
         throw err;
     }
 
-    const points  = calcularPuntos(ocrText);
-    const status  = points === 0 ? 'review' : 'ok';
+    const points = calcularPuntos(ocrText);
+    const status = points === 0 ? 'review' : 'ok';
 
     const ticketId = await ticketsRepo.insertTicket(userId, fileName, ocrText, points, status);
 
-    const wallet    = await ticketsRepo.getWalletByUser(userId);
-    const newPoints = wallet.points + points;
+    const wallet = await ticketsRepo.getWalletByUser(userId);
+    const newPoints = wallet.puntos + points;
 
     await ticketsRepo.updateWalletPoints(newPoints, userId);
     await ticketsRepo.insertPointTransaction(userId, wallet.id, points);
 
-    if (points > 0)
-        createNotification(userId, `🎫 Ticket procesado: has ganado ${points} puntos`, 'info');
-
-    const levels    = await ticketsRepo.getLevels();
-    const nuevoNivel = detectarSubidaNivel(levels, wallet.points, newPoints);
-    if (nuevoNivel)
-        createNotification(userId, `🏆 ¡Has subido al nivel ${nuevoNivel}! Sigue así.`, 'level');
+    const levels = await ticketsRepo.getLevels();
+    const nuevoNivel = detectarSubidaNivel(levels, wallet.puntos, newPoints);
 
     return {
-        message:  'Ticket subido y procesado correctamente',
+        message: 'Ticket subido y procesado correctamente',
         fileName,
-        text:     ocrText,
+        text: ocrText,
         points,
         status,
         ticketId,
         walletId: wallet.id,
         newPoints,
+        ...(nuevoNivel && { nuevoNivel }),
     };
 };
 

@@ -11,25 +11,25 @@ const run = (sql, params = []) => new Promise((resolve, reject) =>
 );
 
 const MENU_SELECT = `
-    SELECT Menu.id, Menu_category.name AS category_name, Menu.id_category,
-           Menu.name, Menu.ingredients, Menu.description,
-           Menu.img_src, Menu.available, Menu.price
-    FROM Menu
-    LEFT JOIN Menu_category ON Menu.id_category = Menu_category.id
+    SELECT m.id, c.nombre AS category_name, m.id_categoria AS id_category,
+           m.nombre AS name, m.ingredientes AS ingredients, m.descripcion AS description,
+           m.img_src, m.disponible AS available, m.precio AS price
+    FROM menu m
+    LEFT JOIN categorias_menu c ON m.id_categoria = c.id
 `;
 
 exports.getAllItems = () => query(MENU_SELECT);
 
-exports.getAllCategories = () => query('SELECT * FROM Menu_category ORDER BY id');
+exports.getAllCategories = () => query('SELECT id, nombre AS name FROM categorias_menu ORDER BY id');
 
 exports.getItemsByCategory = (idcategory) => query(
-    `${MENU_SELECT} WHERE Menu.id_category = ?`,
+    `${MENU_SELECT} WHERE m.id_categoria = ?`,
     [idcategory]
 );
 
 exports.insertItem = async ({ name, ingredients, description, img_src, available, price, id_category }) => {
     const result = await run(
-        `INSERT INTO Menu (name, ingredients, description, img_src, available, price, id_category)
+        `INSERT INTO menu (nombre, ingredientes, descripcion, img_src, disponible, precio, id_categoria)
          VALUES (?, ?, ?, ?, ?, ?, ?)`,
         [name, ingredients, description, img_src, available, price, id_category]
     );
@@ -38,7 +38,7 @@ exports.insertItem = async ({ name, ingredients, description, img_src, available
 
 exports.insertCategory = async (name) => {
     const result = await run(
-        'INSERT INTO Menu_category (name) VALUES (?)',
+        'INSERT INTO categorias_menu (nombre) VALUES (?)',
         [name]
     );
     return result.lastID;
@@ -46,9 +46,9 @@ exports.insertCategory = async (name) => {
 
 exports.updateItem = async ({ id, name, ingredients, description, img_src, available, price, id_category }) => {
     const result = await run(
-        `UPDATE Menu
-         SET name = ?, ingredients = ?, description = ?, img_src = ?,
-             available = ?, price = ?, id_category = ?
+        `UPDATE menu
+         SET nombre = ?, ingredientes = ?, descripcion = ?, img_src = ?,
+             disponible = ?, precio = ?, id_categoria = ?
          WHERE id = ?`,
         [name, ingredients, description, img_src, available, price, id_category, id]
     );

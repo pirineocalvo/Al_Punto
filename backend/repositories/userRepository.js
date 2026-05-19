@@ -11,20 +11,20 @@ const run = (sql, params = []) => new Promise((resolve, reject) =>
 );
 
 exports.getUserByEmail = (email) =>
-    queryOne('SELECT * FROM Users WHERE email = ?', [email]);
+    queryOne('SELECT * FROM usuarios WHERE email = ?', [email]);
 
 exports.getUserById = (userId) =>
-    queryOne('SELECT password_hash FROM Users WHERE id = ?', [userId]);
+    queryOne('SELECT hash_contrasena FROM usuarios WHERE id = ?', [userId]);
 
 exports.insertLoginLog = (userId, success, ip) =>
     run(
-        'INSERT INTO login_log (user_id, success, ip_address) VALUES (?, ?, ?)',
+        'INSERT INTO registro_accesos (id_usuario, exitoso, ip_address) VALUES (?, ?, ?)',
         [userId, success ? 1 : 0, ip]
     );
 
 exports.insertUser = async ({ firstName, lastName, phone, email, passwordHash, birthDate }) => {
     const result = await run(
-        `INSERT INTO Users (first_name, last_name, phone, email, password_hash, birth_date)
+        `INSERT INTO usuarios (nombre, apellido, telefono, email, hash_contrasena, fecha_nacimiento)
          VALUES (?, ?, ?, ?, ?, ?)`,
         [firstName, lastName, phone, email, passwordHash, birthDate || null]
     );
@@ -32,33 +32,37 @@ exports.insertUser = async ({ firstName, lastName, phone, email, passwordHash, b
 };
 
 exports.insertWallet = (userId, points) =>
-    run('INSERT INTO Wallet (user_id, points) VALUES (?, ?)', [userId, points]);
+    run('INSERT INTO monedero (id_usuario, puntos) VALUES (?, ?)', [userId, points]);
 
 exports.getUserInfo = (userId) =>
     queryOne(
         `SELECT
-             Users.first_name, Users.last_name, Users.phone, Users.email,
-             Users.birth_date, Users.access_level,
-             Wallet.points,
-             (SELECT name       FROM Levels WHERE Wallet.points >= min_points AND Wallet.points <= max_points) AS levelName,
-             (SELECT hex_bkg    FROM Levels WHERE Wallet.points >= min_points AND Wallet.points <= max_points) AS levelBkg,
-             (SELECT hex_text   FROM Levels WHERE Wallet.points >= min_points AND Wallet.points <= max_points) AS levelText,
-             (SELECT min_points FROM Levels WHERE Wallet.points >= min_points AND Wallet.points <= max_points) AS levelMin,
-             (SELECT max_points FROM Levels WHERE Wallet.points >= min_points AND Wallet.points <= max_points) AS levelMax,
-             (SELECT name FROM Levels
-                 WHERE min_points > (SELECT max_points FROM Levels WHERE Wallet.points >= min_points AND Wallet.points <= max_points)
-                 ORDER BY min_points ASC LIMIT 1) AS nextLevelName,
-             (SELECT COUNT(*) FROM Tickets WHERE user_id = Users.id) AS ticket_count
-         FROM Users
-         LEFT JOIN Wallet ON Users.id = Wallet.user_id
-         WHERE Users.id = ?`,
+             u.nombre        AS first_name,
+             u.apellido      AS last_name,
+             u.telefono      AS phone,
+             u.email,
+             u.fecha_nacimiento AS birth_date,
+             u.nivel_acceso  AS access_level,
+             m.puntos        AS points,
+             (SELECT nombre     FROM niveles WHERE m.puntos >= puntos_min AND m.puntos <= puntos_max) AS levelName,
+             (SELECT hex_bkg    FROM niveles WHERE m.puntos >= puntos_min AND m.puntos <= puntos_max) AS levelBkg,
+             (SELECT hex_text   FROM niveles WHERE m.puntos >= puntos_min AND m.puntos <= puntos_max) AS levelText,
+             (SELECT puntos_min FROM niveles WHERE m.puntos >= puntos_min AND m.puntos <= puntos_max) AS levelMin,
+             (SELECT puntos_max FROM niveles WHERE m.puntos >= puntos_min AND m.puntos <= puntos_max) AS levelMax,
+             (SELECT nombre FROM niveles
+                 WHERE puntos_min > (SELECT puntos_max FROM niveles WHERE m.puntos >= puntos_min AND m.puntos <= puntos_max)
+                 ORDER BY puntos_min ASC LIMIT 1) AS nextLevelName,
+             (SELECT COUNT(*) FROM tickets WHERE id_usuario = u.id) AS ticket_count
+         FROM usuarios u
+         LEFT JOIN monedero m ON u.id = m.id_usuario
+         WHERE u.id = ?`,
         [userId]
     );
 
 exports.getTransactions = (userId) =>
     query(
-        `SELECT * FROM Point_transactions
-         WHERE user_id = ?
+        `SELECT * FROM transacciones_puntos
+         WHERE id_usuario = ?
          ORDER BY id DESC
          LIMIT 50`,
         [userId]
@@ -66,14 +70,14 @@ exports.getTransactions = (userId) =>
 
 exports.getLevels = () =>
     query(
-        'SELECT id, name, min_points, max_points, hex_bkg, hex_text FROM Levels ORDER BY min_points ASC'
+        'SELECT id, nombre, puntos_min, puntos_max, hex_bkg, hex_text FROM niveles ORDER BY puntos_min ASC'
     );
 
 exports.updatePerfil = (userId, first_name, last_name, phone) =>
     run(
-        'UPDATE Users SET first_name = ?, last_name = ?, phone = ? WHERE id = ?',
+        'UPDATE usuarios SET nombre = ?, apellido = ?, telefono = ? WHERE id = ?',
         [first_name, last_name, phone, userId]
     );
 
 exports.updatePassword = (userId, newHash) =>
-    run('UPDATE Users SET password_hash = ? WHERE id = ?', [newHash, userId]);
+    run('UPDATE usuarios SET hash_contrasena = ? WHERE id = ?', [newHash, userId]);

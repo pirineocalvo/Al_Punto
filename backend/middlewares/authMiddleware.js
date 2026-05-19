@@ -21,10 +21,10 @@ exports.waiterMiddleware = (req, res, next) => {
     const userId = exports.getTokenUserId(req, res);
     if (!userId) return;
     req.userId = userId;
-    db.get('SELECT access_level FROM Users WHERE id = ?', [userId], (err, user) => {
+    db.get('SELECT nivel_acceso FROM usuarios WHERE id = ?', [userId], (err, user) => {
         if (err)
             return res.status(500).json({ error: 'Error de base de datos' });
-        if (!user || user.access_level < 3)
+        if (!user || user.nivel_acceso < 3)
             return res.status(403).json({ error: 'Acceso denegado: se requiere nivel Camarero o superior' });
         next();
     });
@@ -34,10 +34,10 @@ exports.adminMiddleware = (req, res, next) => {
     const userId = exports.getTokenUserId(req, res);
     if (!userId) return;
     req.userId = userId;
-    db.get('SELECT access_level FROM Users WHERE id = ?', [userId], (err, user) => {
+    db.get('SELECT nivel_acceso FROM usuarios WHERE id = ?', [userId], (err, user) => {
         if (err)
             return res.status(500).json({ error: 'Error de base de datos' });
-        if (!user || user.access_level < 5)
+        if (!user || user.nivel_acceso < 5)
             return res.status(403).json({ error: 'Acceso denegado: se requiere nivel Administrador' });
         next();
     });

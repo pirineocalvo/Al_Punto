@@ -6,6 +6,7 @@ exports.login = async (req, res) => {
         const result = await userService.login(email, password, req.ip);
         res.json(result);
     } catch (err) {
+        console.error('ERROR LOGIN:', err);
         res.status(err.status || 500).json({ error: err.message });
     }
 };

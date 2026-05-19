@@ -11,69 +11,76 @@ const run = (sql, params) => new Promise((resolve, reject) =>
 );
 
 exports.getLevelByUserPoints = (userId) => query(
-    `SELECT id FROM Levels
-     WHERE min_points <= (SELECT points FROM Wallet WHERE user_id = ?)
-       AND max_points >= (SELECT points FROM Wallet WHERE user_id = ?)`,
+    `SELECT id FROM niveles
+     WHERE puntos_min <= (SELECT puntos FROM monedero WHERE id_usuario = ?)
+       AND puntos_max >= (SELECT puntos FROM monedero WHERE id_usuario = ?)`,
     [userId, userId]
 );
 
 exports.getItemsByLevel = (levelId) => query(
-    'SELECT * FROM Marketplace WHERE min_level_id <= ?',
+    `SELECT id, nombre AS name, descripcion AS description,
+            precio_puntos AS points_price, id_nivel_min AS min_level_id,
+            img_src, creado_en AS created_at
+     FROM mercado WHERE id_nivel_min <= ?`,
     [levelId]
 );
 
 exports.getPocketByUser = (userId) => query(
-    `SELECT p.id AS pocket_id, p.is_used, p.added_at, p.used_at, p.token_url,
-            m.id AS product_id, m.name, m.description, m.img_src, m.points_price
-     FROM Pocket p
-     INNER JOIN Marketplace m ON p.product_id = m.id
-     WHERE p.user_id = ?
-     ORDER BY p.is_used ASC, p.added_at DESC`,
+    `SELECT c.id AS pocket_id, c.usado AS is_used, c.anadido_en AS added_at,
+            c.usado_en AS used_at, c.token_url,
+            m.id AS product_id, m.nombre AS name, m.descripcion AS description,
+            m.img_src, m.precio_puntos AS points_price
+     FROM cartera c
+     INNER JOIN mercado m ON c.id_producto = m.id
+     WHERE c.id_usuario = ?
+     ORDER BY c.usado ASC, c.anadido_en DESC`,
     [userId]
 );
 
 exports.getProductById = (productId) => queryOne(
-    'SELECT points_price FROM Marketplace WHERE id = ?',
+    'SELECT precio_puntos AS points_price FROM mercado WHERE id = ?',
     [productId]
 );
 
 exports.getWalletByUser = (userId) => queryOne(
-    'SELECT id, points FROM Wallet WHERE user_id = ?',
+    'SELECT id, puntos AS points FROM monedero WHERE id_usuario = ?',
     [userId]
 );
 
 exports.deductPoints = (userId, amount) => run(
-    'UPDATE Wallet SET points = points - ? WHERE user_id = ?',
+    'UPDATE monedero SET puntos = puntos - ? WHERE id_usuario = ?',
     [amount, userId]
 );
 
 exports.insertPocketItem = (userId, productId, tokenUrl) => run(
-    'INSERT INTO Pocket (user_id, product_id, token_url) VALUES (?, ?, ?)',
+    'INSERT INTO cartera (id_usuario, id_producto, token_url) VALUES (?, ?, ?)',
     [userId, productId, tokenUrl]
 );
 
 exports.insertPointTransaction = (userId, walletId, amount, type) => run(
-    `INSERT INTO Point_transactions (user_id, wallet_id, amount_transaction, type) VALUES (?, ?, ?, ?)`,
+    `INSERT INTO transacciones_puntos (id_usuario, id_monedero, cantidad_transaccion, tipo) VALUES (?, ?, ?, ?)`,
     [userId, walletId, amount, type]
 );
 
 exports.getPocketByToken = (tokenUrl, userId) => queryOne(
-    `SELECT p.id AS pocket_id, p.is_used, p.used_at, p.expires_at, p.added_at,
-            m.id AS product_id, m.name AS product_name, m.description AS product_description, m.img_src,
-            u.id AS user_id, u.first_name, u.last_name, u.email
-     FROM Pocket p
-     INNER JOIN Marketplace m ON p.product_id = m.id
-     INNER JOIN Users u ON p.user_id = u.id
-     WHERE p.token_url = ? AND p.user_id = ?`,
+    `SELECT c.id AS pocket_id, c.usado AS is_used, c.usado_en AS used_at,
+            c.expira_en AS expires_at, c.anadido_en AS added_at,
+            m.id AS product_id, m.nombre AS product_name,
+            m.descripcion AS product_description, m.img_src,
+            u.id AS user_id, u.nombre AS first_name, u.apellido AS last_name, u.email
+     FROM cartera c
+     INNER JOIN mercado m ON c.id_producto = m.id
+     INNER JOIN usuarios u ON c.id_usuario = u.id
+     WHERE c.token_url = ? AND c.id_usuario = ?`,
     [tokenUrl, userId]
 );
 
 exports.getPocketStatusByToken = (tokenUrl, userId) => queryOne(
-    'SELECT id, is_used, expires_at FROM Pocket WHERE token_url = ? AND user_id = ?',
+    'SELECT id, usado AS is_used, expira_en AS expires_at FROM cartera WHERE token_url = ? AND id_usuario = ?',
     [tokenUrl, userId]
 );
 
 exports.markPocketAsUsed = (pocketId, usedAt) => run(
-    'UPDATE Pocket SET is_used = 1, used_at = ? WHERE id = ? AND is_used = 0',
+    'UPDATE cartera SET usado = 1, usado_en = ? WHERE id = ? AND usado = 0',
     [usedAt, pocketId]
 );

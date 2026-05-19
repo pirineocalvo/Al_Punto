@@ -13,9 +13,8 @@ exports.login = async (email, password, ip) => {
     }
 
     const user = await userRepo.getUserByEmail(email);
-    const isValid = user ? comparePassword(password, user.password_hash) : false;
+    const isValid = user ? comparePassword(password, user.hash_contrasena) : false;
 
-    // Registrar intento siempre, independientemente del resultado
     if (user) await userRepo.insertLoginLog(user.id, isValid, ip);
 
     if (!user) {
@@ -38,9 +37,9 @@ exports.login = async (email, password, ip) => {
     return {
         token,
         userInfo: {
-            first_name: user.first_name,
-            last_name: user.last_name,
-            phone: user.phone,
+            first_name: user.nombre,
+            last_name: user.apellido,
+            phone: user.telefono,
             email: user.email,
         },
     };
@@ -56,7 +55,7 @@ exports.register = async ({ firstName, lastName, phone, email, password, birthDa
     const existing = await userRepo.getUserByEmail(email);
     if (existing) {
         const err = new Error('Usuario ya registrado');
-        err.status = 409; // Conflict es más correcto que 401 para duplicado
+        err.status = 409;
         throw err;
     }
 
@@ -110,7 +109,7 @@ exports.updatePassword = async (userId, password_actual, password_nueva) => {
         err.status = 404;
         throw err;
     }
-    if (!comparePassword(password_actual, user.password_hash)) {
+    if (!comparePassword(password_actual, user.hash_contrasena)) {
         const err = new Error('La contraseña actual no es correcta');
         err.status = 401;
         throw err;

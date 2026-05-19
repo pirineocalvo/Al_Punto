@@ -1,6 +1,6 @@
 import axios from 'axios';
 const API_URL = import.meta.env.VITE_API_URL;
-import { getTokenAutentificacion, guardarToken, cerrarSesionUsuario} from './gestionAlmacenamiento';
+import { getTokenAutentificacion, guardarToken, cerrarSesionUsuario} from './gestionAlmacenamiento.js';
 
 export const iniciarSesionUsuario = async (data = {}) => {
     try {

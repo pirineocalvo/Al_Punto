@@ -12,42 +12,42 @@ const run = (sql, params = []) => new Promise((resolve, reject) =>
 
 exports.insertResenia = (id_plato, descripcion, puntuacion, userId) =>
     run(
-        'INSERT INTO Resenias (id_plato, descripcion, puntuacion, user_id) VALUES (?, ?, ?, ?)',
+        'INSERT INTO resenas (id_plato, descripcion, puntuacion, id_usuario) VALUES (?, ?, ?, ?)',
         [id_plato, descripcion, puntuacion, userId]
     );
 
 exports.getWalletByUser = (userId) =>
-    queryOne('SELECT id FROM Wallet WHERE user_id = ?', [userId]);
+    queryOne('SELECT id FROM monedero WHERE id_usuario = ?', [userId]);
 
 exports.insertPointTransaction = (userId, walletId, amount) =>
     run(
-        `INSERT INTO Point_transactions (user_id, wallet_id, amount_transaction, type)
+        `INSERT INTO transacciones_puntos (id_usuario, id_monedero, cantidad_transaccion, tipo)
          VALUES (?, ?, ?, 'add resenia')`,
         [userId, walletId, amount]
     );
 
 exports.addPoints = (userId, amount) =>
     run(
-        'UPDATE Wallet SET points = points + ? WHERE user_id = ?',
+        'UPDATE monedero SET puntos = puntos + ? WHERE id_usuario = ?',
         [amount, userId]
     );
 
 exports.getReviewsByUser = (userId) =>
     query(
-        `SELECT r.*, m.name AS plato_name, m.img_src AS plato_img
-         FROM Resenias r
-         LEFT JOIN Menu m ON r.id_plato = m.id
-         WHERE r.user_id = ?
-         ORDER BY r.created_at DESC`,
+        `SELECT r.*, m.nombre AS plato_name, m.img_src AS plato_img
+         FROM resenas r
+         LEFT JOIN menu m ON r.id_plato = m.id
+         WHERE r.id_usuario = ?
+         ORDER BY r.creado_en DESC`,
         [userId]
     );
 
 exports.getReviewsByPlato = (id_plato) =>
     query(
-        `SELECT r.*, u.first_name, u.last_name
-         FROM Resenias r
-         LEFT JOIN Users u ON r.user_id = u.id
+        `SELECT r.*, u.nombre AS first_name, u.apellido AS last_name
+         FROM resenas r
+         LEFT JOIN usuarios u ON r.id_usuario = u.id
          WHERE r.id_plato = ?
-         ORDER BY r.created_at DESC`,
+         ORDER BY r.creado_en DESC`,
         [id_plato]
     );
