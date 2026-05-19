@@ -3,8 +3,6 @@ const Tesseract = require('tesseract.js');
 
 const RESTAURANTES_CONOCIDOS = ['Al Punto'];
 
-// — Helpers privados —
-
 async function analizarTicket(imagePath) {
     const { data: { text } } = await Tesseract.recognize(imagePath, 'spa');
     return text;
@@ -25,13 +23,11 @@ function extraerNombreRestaurante(text) {
 
 function detectarSubidaNivel(levels, puntosAntes, puntosDespues) {
     const prevLevel = levels.find(l => puntosAntes >= l.min_points && puntosAntes <= l.max_points);
-    const newLevel = levels.find(l => puntosDespues >= l.min_points && puntosDespues <= l.max_points);
+    const newLevel  = levels.find(l => puntosDespues >= l.min_points && puntosDespues <= l.max_points);
     if (prevLevel && newLevel && prevLevel.name !== newLevel.name)
         return newLevel.name;
     return null;
 }
-
-// — Casos de uso —
 
 exports.uploadTicket = async (userId, file, fileName) => {
     if (!file) {
@@ -40,7 +36,7 @@ exports.uploadTicket = async (userId, file, fileName) => {
         throw err;
     }
 
-    const ocrText = await analizarTicket(file.path);
+    const ocrText    = await analizarTicket(file.path);
     const restaurante = extraerNombreRestaurante(ocrText);
 
     if (!restaurante) {
@@ -54,19 +50,19 @@ exports.uploadTicket = async (userId, file, fileName) => {
 
     const ticketId = await ticketsRepo.insertTicket(userId, fileName, ocrText, points, status);
 
-    const wallet = await ticketsRepo.getWalletByUser(userId);
-    const newPoints = wallet.puntos + points;
+    const wallet    = await ticketsRepo.getWalletByUser(userId);
+    const newPoints = wallet.points + points;   // era wallet.puntos
 
     await ticketsRepo.updateWalletPoints(newPoints, userId);
     await ticketsRepo.insertPointTransaction(userId, wallet.id, points);
 
-    const levels = await ticketsRepo.getLevels();
-    const nuevoNivel = detectarSubidaNivel(levels, wallet.puntos, newPoints);
+    const levels     = await ticketsRepo.getLevels();
+    const nuevoNivel = detectarSubidaNivel(levels, wallet.points, newPoints);  // era wallet.puntos
 
     return {
         message: 'Ticket subido y procesado correctamente',
         fileName,
-        text: ocrText,
+        text:     ocrText,
         points,
         status,
         ticketId,

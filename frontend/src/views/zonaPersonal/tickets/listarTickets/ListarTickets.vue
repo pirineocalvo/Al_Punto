@@ -62,7 +62,7 @@ watch(usuarioListo, async () => {
 
         tickets.value = data.map(t => ({
             ...t,
-            parsed: parseTicketText(t.json_content)
+            parsed: parseTicketText(t.ocr_content)
         }));
     } catch (error) {
         message.error('Error al cargar los tickets');
@@ -146,7 +146,7 @@ const columnasProductos = [
 
                                     <a-typography-text type="warning">
                                         <star-outlined />
-                                        {{ ticket.points_awarded || 0 }} pts
+                                        {{ ticket.points_granted || 0 }} pts
                                     </a-typography-text>
                                 </a-space>
                             </template>

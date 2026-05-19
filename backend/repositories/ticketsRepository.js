@@ -20,7 +20,10 @@ exports.insertTicket = async (userId, fileName, ocrText, points, status) => {
 };
 
 exports.getWalletByUser = (userId) =>
-    queryOne('SELECT * FROM monedero WHERE id_usuario = ?', [userId]);
+    queryOne(
+        'SELECT id, puntos AS points FROM monedero WHERE id_usuario = ?',
+        [userId]
+    );
 
 exports.updateWalletPoints = (newPoints, userId) =>
     run('UPDATE monedero SET puntos = ? WHERE id_usuario = ?', [newPoints, userId]);
@@ -36,4 +39,11 @@ exports.getLevels = () =>
     query('SELECT nombre AS name, puntos_min AS min_points, puntos_max AS max_points FROM niveles ORDER BY puntos_min ASC');
 
 exports.getTicketsByUser = (userId) =>
-    query('SELECT * FROM tickets WHERE id_usuario = ?', [userId]);
+    query(
+        `SELECT id, url_imagen AS image_url, contenido_json AS ocr_content,
+                puntos_otorgados AS points_granted, estado AS status,
+                creado_en AS created_at
+         FROM tickets WHERE id_usuario = ?
+         ORDER BY creado_en DESC`,
+        [userId]
+    );
