@@ -1,6 +1,6 @@
 <script setup>
 import { ref, watch } from 'vue';
-import { getMyTickets } from '../../../../services/api';
+import { getMyTickets } from '../../../../services/ticketsEndpoint';
 import { message} from 'ant-design-vue';
 import Sidebar from '../../../../components/componenteDashboard/Sidebar.vue';
 import CabeceraZonaPersonal from '@/components/componenteDashboard/CabeceraZonaPersonal.vue';

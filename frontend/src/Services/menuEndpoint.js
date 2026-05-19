@@ -1,7 +1,6 @@
 import axios from 'axios';
 const API_URL = import.meta.env.VITE_API_URL;
-console.log(API_URL);
-console.log("Todas las variables de Vite:", import.meta.env);
+import { getAdminToken, getAuthToken} from './gestionAlmacenamiento';
 
 export const getMenu = async (data = {}) => {
     try {
@@ -24,6 +23,7 @@ export const getCategories = async () => {
     }
 };
 
+//REVISAR SI SE USA EN ALGUNA PARTE
 export const getMenuByIdCategory = async (data = {}) => {
     try {
         const response = await axios.get(`${API_URL}/api/menu/${data.idcategory}`);

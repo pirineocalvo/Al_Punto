@@ -4,7 +4,9 @@ import { QuestionCircleOutlined } from '@ant-design/icons-vue';
 import CabeceraZonaPersonal from '@/components/componenteDashboard/CabeceraZonaPersonal.vue';
 import PiePaginaPrincipal from '@/components/cabeceraYpiePrincipal/PiePaginaPrincipal.vue';
 import Sidebar from '../../../components/componenteDashboard/Sidebar.vue';
-import { getProductosCompradosCliente, cancelarPedido, misReservas, pedidosRealizadosMarketPlace, cancelarReserva } from '../../../services/api';
+import { getProductosCompradosCliente, cancelarPedido } from '../../../services/realizarPedidoEndpoint';
+import { pedidosRealizadosMarketPlace } from '../../../services/marketplaceEndpoint';
+import { misReservas, cancelarReserva } from '../../../services/reservasEndpoint';
 import { message, notification } from 'ant-design-vue';
 import { useAuth, ACCESS_LEVELS } from '@/composables/useAuth';
 

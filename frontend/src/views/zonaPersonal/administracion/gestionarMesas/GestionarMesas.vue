@@ -1,6 +1,6 @@
 <script setup>
 import { ref, watch } from 'vue';
-import {  crearMesa, todasLasMesas, actualizarMesa, desactivarMesa } from '../../../../services/api';
+import {  crearMesa, todasLasMesas, actualizarMesa, desactivarMesa } from '../../../../services/mesasEndpoint';
 import CabeceraZonaPersonal from '@/components/componenteDashboard/CabeceraZonaPersonal.vue';
 import { notification, message } from 'ant-design-vue';
 import PiePaginaPrincipal from '@/components/cabeceraYpiePrincipal/PiePaginaPrincipal.vue';
