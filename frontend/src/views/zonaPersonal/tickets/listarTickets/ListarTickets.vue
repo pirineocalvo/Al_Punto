@@ -1,7 +1,7 @@
 <script setup>
 import { ref, watch } from 'vue';
 import { misTickets } from '../../../../services/ticketsEndpoint';
-import { message} from 'ant-design-vue';
+import { message } from 'ant-design-vue';
 import Sidebar from '../../../../components/componenteDashboard/Sidebar.vue';
 import CabeceraZonaPersonal from '@/components/componenteDashboard/CabeceraZonaPersonal.vue';
 import PiePaginaPrincipal from '@/components/cabeceraYpiePrincipal/PiePaginaPrincipal.vue';
@@ -17,32 +17,32 @@ const tickets = ref([]);
 const collapsed = ref(false);
 
 const parseTicketText = (text) => {
-    if (!text) return {}
+    if (!text) return {};
 
     let clean = text
         .replace(/\n/g, ' ')
         .replace(/[^\w\s€:.,()-]/g, ' ')
         .replace(/\s+/g, ' ')
-        .trim()
+        .trim();
 
-    const totalMatch = clean.match(/total[:\s]*([\d,.]+)\s*€/i)
-    const subtotalMatch = clean.match(/subtotal[:\s]*([\d,.]+)\s*€/i)
-    const fechaMatch = clean.match(/fecha[:\s]*([\d-]{8,10})/i)
-    const horaMatch = clean.match(/hora[:\s]*([\d:]{4,5})/i)
-    const direccionMatch = clean.match(/(paseo|calle|avda|avenida)[^,]+,\s*\d+/i)
+    const totalMatch = clean.match(/total[:\s]*([\d,.]+)\s*€/i);
+    const subtotalMatch = clean.match(/subtotal[:\s]*([\d,.]+)\s*€/i);
+    const fechaMatch = clean.match(/fecha[:\s]*([\d-]{8,10})/i);
+    const horaMatch = clean.match(/hora[:\s]*([\d:]{4,5})/i);
+    const direccionMatch = clean.match(/(paseo|calle|avda|avenida)[^,]+,\s*\d+/i);
 
-    const productos = []
-    const productRegex = /([A-Za-zÁÉÍÓÚñ\s]+?)\s*\(?(\d+)\s*(uds?|ud)?\)?\s*([\d,.]+)\s*€/gi
+    const productos = [];
+    const productRegex = /([A-Za-zÁÉÍÓÚñ\s]+?)\s*\(?(\d+)\s*(uds?|ud)?\)?\s*([\d,.]+)\s*€/gi;
 
-    let match
+    let match;
     while ((match = productRegex.exec(clean)) !== null) {
-        const nombre = match[1].trim()
-        if (/total|subtotal|fecha|hora/i.test(nombre)) continue
+        const nombre = match[1].trim();
+        if (/total|subtotal|fecha|hora/i.test(nombre)) continue;
         productos.push({
             nombre,
             cantidad: parseInt(match[2]),
             precio: parseFloat(match[4].replace(',', '.'))
-        })
+        });
     }
 
     return {
@@ -53,12 +53,12 @@ const parseTicketText = (text) => {
         hora: horaMatch ? horaMatch[1] : null,
         direccion: direccionMatch ? direccionMatch[0] : null,
         productos
-    }
-}
+    };
+};
 
 watch(usuarioListo, async () => {
     try {
-        const data = await misTickets()
+        const data = await misTickets();
 
         tickets.value = data.map(t => ({
             ...t,
@@ -66,7 +66,7 @@ watch(usuarioListo, async () => {
         }));
     } catch (error) {
         message.error('Error al cargar los tickets');
-    }finally{
+    } finally {
         cargado.value = true;
     }
 
@@ -74,8 +74,8 @@ watch(usuarioListo, async () => {
 
 
 const separarFechaHora = (fecha) => {
-    if (!fecha) return { fecha: '—', hora: '—' }
-    const [f, h] = fecha.split(' ')
+    if (!fecha) return { fecha: '—', hora: '—' };
+    const [f, h] = fecha.split(' ');
     return {
         fecha: f,
         hora: h || '—'
@@ -114,7 +114,7 @@ const columnasProductos = [
         <CabeceraZonaPersonal :user="user" />
         <a-layout class="dashboardMainLayout">
             <Sidebar :collapsed="collapsed" />
-            <a-flex v-if="!cargado" class="centrarSpin ajustarSpiner">
+            <a-flex v-if="!cargado" class="centrarSpin ajustarSpinner">
                 <a-spin size="large" />
                 <a-typography-text type="secondary">Cargando productos...</a-typography-text>
             </a-flex>
@@ -162,7 +162,7 @@ const columnasProductos = [
                                     {{ ticket.parsed.hora || '—' }}
                                 </a-descriptions-item>
 
-                                <a-descriptions-item :span="2">
+                                <a-descriptions-item>
                                     <template #label><environment-outlined /> Dirección</template>
                                     {{ ticket.parsed.direccion || '—' }}
                                 </a-descriptions-item>
@@ -178,9 +178,10 @@ const columnasProductos = [
         <PiePaginaPrincipal />
     </a-layout>
 </template>
+
 <style scoped>
-.ajustarSpiner{
+.ajustarSpinner {
     align-items: center;
-    justify-content: centers;
+    justify-content: center;
 }
 </style>

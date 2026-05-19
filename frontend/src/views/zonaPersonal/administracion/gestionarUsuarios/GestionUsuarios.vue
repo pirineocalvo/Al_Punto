@@ -2,7 +2,7 @@
 import { ref, computed, watch } from 'vue';
 import { CalendarOutlined, ClockCircleOutlined, TeamOutlined, NumberOutlined } from '@ant-design/icons-vue';
 import { usarProductoMarket } from '../../../../services/marketplaceEndpoint';
-import {  getTodosLosPedidosAdmin, actualizarEstadoOrden, cancelarPedido } from '../../../../services/realizarPedidoEndpoint';
+import { getTodosLosPedidosAdmin, actualizarEstadoOrden, cancelarPedido } from '../../../../services/realizarPedidoEndpoint';
 import { obtenerTodasLasReservasAdmin, actualizarEstadoReservaAdmin } from '../../../../services/reservasEndpoint';
 import { notification, message } from 'ant-design-vue';
 import CabeceraZonaPersonal from '@/components/componenteDashboard/CabeceraZonaPersonal.vue';
@@ -11,17 +11,14 @@ import Sidebar from '../../../../components/componenteDashboard/Sidebar.vue';
 import { useAuth, ACCESS_LEVELS } from '@/composables/useAuth';
 
 const cargado = ref(false);
-
 const { user, usuarioListo } = useAuth({ minAccessLevel: ACCESS_LEVELS.EMPLEADO });
 
 const collapsed = ref(false);
-
 const tabActiva = ref('reservas');
 const tokenInput = ref('');
 const loadingMarket = ref(false);
 const listaPedidos = ref([]);
 const listaReservas = ref({});
-
 
 function generarNotificacion(tipo, titulo, texto) {
     notification[tipo]({
@@ -49,40 +46,42 @@ async function cargarReservas() {
     }
 }
 
-watch(usuarioListo, () => {
-    cargarPedidos();
-    cargarReservas();
+watch(usuarioListo, async () => {
+    await Promise.all([cargarPedidos(), cargarReservas()]);
     cargado.value = true;
 }, { immediate: true });
 
 async function cangearProductoMarket() {
-    if (!tokenInput.value.trim()) {
+    const tokenLimpio = tokenInput.value.trim();
+    if (!tokenLimpio) {
         generarNotificacion('warning', '¡Advertencia!', 'Introduce un código válido.');
         return;
     }
+
+    if (!tokenLimpio.includes('-')) {
+        generarNotificacion('error', 'Código Inválido', 'El formato del token ingresado no es correcto.');
+        return;
+    }
+
     loadingMarket.value = true;
     try {
-        const [userId] = tokenInput.value.split('-');
-        await usarProductoMarket(userId, tokenInput.value.trim());
-        generarNotificacion('success', 'Canje de producto marketplace', `El producto ${tokenInput.value.trim()} fue canjeado.`);
+        const [userId] = tokenLimpio.split('-');
+        await usarProductoMarket(userId, tokenLimpio);
+        generarNotificacion('success', 'Canje de producto marketplace', `El producto ${tokenLimpio} fue canjeado.`);
         tokenInput.value = '';
     } catch (err) {
-        generarNotificacion('error', 'Canje de producto marketplace', `El producto ${tokenInput.value.trim()} no pudo ser canjeado. Revise si fue bien escrito o si ya fue canjeado.`);
+        generarNotificacion('error', 'Canje de producto marketplace', `El producto ${tokenLimpio} no pudo ser canjeado. Revise si fue bien escrito o si ya fue canjeado.`);
     } finally {
         loadingMarket.value = false;
     }
 }
 
-const pedidosPendientes = computed(function () {
-    return listaPedidos.value.filter(function (p) {
-        return p.status === 'pendiente';
-    });
+const pedidosPendientes = computed(() => {
+    return listaPedidos.value.filter(p => p.status === 'pendiente');
 });
 
-const pedidosListos = computed(function () {
-    return listaPedidos.value.filter(function (p) {
-        return p.status === 'listo';
-    });
+const pedidosListos = computed(() => {
+    return listaPedidos.value.filter(p => p.status === 'listo');
 });
 
 async function cambiarEstado(id, estado, recogido = false) {
@@ -123,7 +122,7 @@ const formatearFecha = (fechaStr) => {
 </script>
 
 <template>
-    <a-layout style="min-height: 100vh">
+    <a-layout class="dashboardMainLayout">
         <CabeceraZonaPersonal :user="user" />
 
         <a-layout>
@@ -136,10 +135,10 @@ const formatearFecha = (fechaStr) => {
                 <a-divider orientation="left">
                     <a-typography-title :level="2">Gestor Usuarios</a-typography-title>
                 </a-divider>
-                <a-tabs v-model:activeKey="tabActiva" class="colocarContenedorPrincipalDashBoard">
+
+                <a-tabs v-model:activeKey="tabActiva">
                     <a-tab-pane key="reservas" tab="Gestionar Reservas">
                         <a-row :gutter="[10, 24]" justify="space-around">
-                            <!-- FIX: ?.length en lugar de == 0 para comparar el array correctamente -->
                             <a-empty v-if="!listaReservas.reservations?.length"
                                 description="No se encontraron reservas pendientes de gestionar" />
                             <a-col :xl="11" :lg="16" :md="20" :xs="24" v-for="reserva in listaReservas.reservations"
@@ -147,7 +146,7 @@ const formatearFecha = (fechaStr) => {
                                 <a-card class="card-reserva">
                                     <template #title>
                                         <div class="header-reserva">
-                                            <a-avatar :style="{ backgroundColor: '#D97742' }">
+                                            <a-avatar class="colorAvatar">
                                                 {{ reserva.user_name.charAt(0) }}
                                             </a-avatar>
                                             <div class="info-header">
@@ -157,7 +156,6 @@ const formatearFecha = (fechaStr) => {
                                         </div>
                                     </template>
                                     <template #extra>
-                                        <!-- FIX: basado en status === 'confirmed' en lugar de attended -->
                                         <a-tag :color="reserva.status === 'confirmed' ? 'green' : 'blue'">
                                             {{ reserva.status === 'confirmed' ? 'ATENDIDO' : 'PENDIENTE' }}
                                         </a-tag>
@@ -194,7 +192,6 @@ const formatearFecha = (fechaStr) => {
                                         <a-space style="width: 100%; justify-content: space-between;">
                                             <a-popconfirm title="¿Marcar como confirmado?" ok-text="Sí" cancel-text="No"
                                                 @confirm="actualizarReserva(reserva.id, 'confirmed')">
-                                                <!-- FIX: deshabilitar basado en status en lugar de attended -->
                                                 <a-button type="primary" size="small"
                                                     :disabled="reserva.status === 'confirmed'">
                                                     MARCAR ASISTENCIA
@@ -220,7 +217,7 @@ const formatearFecha = (fechaStr) => {
                                     <a-empty v-if="pedidosPendientes.length === 0"
                                         description="No hay productos pendientes en la cocina" />
                                     <a-card v-for="p in pedidosPendientes" :key="p.id" size="small"
-                                        :head-style="{ borderLeft: '4px solid #D97742' }">
+                                        :head-style="{ borderLeft: '4px solid var(--color-principal)' }">
                                         <template #title>
                                             <strong>Pedido #{{ p.id }}</strong>
                                             <span class="textoFecha">{{ p.created_at }}</span>
@@ -234,7 +231,7 @@ const formatearFecha = (fechaStr) => {
                                             <a-col :xs="24" :md="24" :xl="10">
                                                 <a-button type="primary" block
                                                     @click="cambiarEstado(p.id, 'listo', false)">
-                                                    MARCAR COMO LISTO
+                                                    MARCAR ASISTENCIA
                                                 </a-button>
                                             </a-col>
                                             <a-col :xs="24" :md="24" :xl="10">
@@ -252,9 +249,9 @@ const formatearFecha = (fechaStr) => {
                                 <a-divider orientation="left">LISTOS PARA ENTREGA</a-divider>
                                 <a-space direction="vertical" class="todoElAncho" size="middle">
                                     <a-empty v-if="pedidosListos.length === 0"
-                                        description="No hay productos listos para la entrega" />
+                                        description="No hay productos personalizados listos para la entrega" />
                                     <a-card v-for="p in pedidosListos" :key="p.id" size="small"
-                                        :head-style="{ borderLeft: '4px solid #3A9E6F' }">
+                                        :head-style="{ borderLeft: '4px solid var(--color-exito)' }">
                                         <template #title>
                                             <strong>Pedido #{{ p.id }}</strong> - <span>{{ p.customer }}</span>
                                         </template>
@@ -276,7 +273,6 @@ const formatearFecha = (fechaStr) => {
                                 size="large" :loading="loadingMarket" @search="cangearProductoMarket" />
                         </a-card>
                     </a-tab-pane>
-
                 </a-tabs>
             </a-layout-content>
         </a-layout>
@@ -286,6 +282,9 @@ const formatearFecha = (fechaStr) => {
 </template>
 
 <style scoped>
+.colorAvatar{
+    background-color: var(--color-principal);
+}
 .textoFecha {
     float: right;
     font-weight: normal;
@@ -294,16 +293,16 @@ const formatearFecha = (fechaStr) => {
 
 .btnConfirmar {
     margin-top: 10px;
-    background-color: #52c41a;
+    background-color: var(--color-exito);
     border: none;
 }
 
 .btnConfirmar:hover {
-    background-color: #7de748 !important;
+    background-color: var(--color-exito-hover) !important;
 }
 
 .btnConfirmar:active {
-    background-color: #34850c !important;
+    background-color: var(--color-exito-active) !important;
 }
 
 .todoElAncho {
@@ -335,13 +334,13 @@ const formatearFecha = (fechaStr) => {
 .nombre-cliente {
     font-size: 14px;
     font-weight: 600;
-    color: #262626;
+    color: var(--color-texto-oscuro);
     line-height: 1.2;
 }
 
 .email-cliente {
     font-size: 11px;
-    color: #8c8c8c;
+    color: var(--color-texto-suave);
 }
 
 .dato-item {

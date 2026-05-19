@@ -1,6 +1,6 @@
 <script setup>
 import { ref, watch } from 'vue';
-import {  crearMesa, todasLasMesas, actualizarMesa, desactivarMesa } from '../../../../services/mesasEndpoint';
+import { crearMesa, todasLasMesas, actualizarMesa, desactivarMesa } from '../../../../services/mesasEndpoint';
 import CabeceraZonaPersonal from '@/components/componenteDashboard/CabeceraZonaPersonal.vue';
 import { notification, message } from 'ant-design-vue';
 import PiePaginaPrincipal from '@/components/cabeceraYpiePrincipal/PiePaginaPrincipal.vue';
@@ -8,14 +8,9 @@ import Sidebar from '../../../../components/componenteDashboard/Sidebar.vue';
 import { useAuth, ACCESS_LEVELS } from '@/composables/useAuth';
 
 const cargado = ref(false);
-
 const { user, usuarioListo } = useAuth({ minAccessLevel: ACCESS_LEVELS.ADMIN });
 
-
-
-
 const tabActiva = ref('crear');
-
 const mesas = ref([]);
 
 const formNuevaMesa = ref({ name: '', n_ocupantes: null });
@@ -28,11 +23,10 @@ const cargandoActualizar = ref(false);
 const mesaEliminarId = ref(null);
 const cargandoEliminar = ref(false);
 
-
 async function cargarMesas() {
     try {
         mesas.value = await todasLasMesas();
-    } catch{
+    } catch (err) {
         message.error('Error al cargar las mesas');
     } finally {
         cargado.value = true;
@@ -40,12 +34,11 @@ async function cargarMesas() {
 }
 
 watch(usuarioListo, () => {
-        cargarMesas();
+    cargarMesas();
 }, { immediate: true });
 
 function onSeleccionarMesa(id) {
     const mesa = mesas.value.find(m => m.id === id);
-
     if (mesa) {
         formActualizarMesa.value = {
             name: mesa.name,
@@ -71,6 +64,7 @@ async function nuevaMesa() {
         generarNotificacion('warning', 'Campo inválido', 'El número de ocupantes debe ser al menos 1.');
         return;
     }
+
     cargandoCrear.value = true;
     try {
         await crearMesa({
@@ -81,16 +75,15 @@ async function nuevaMesa() {
         formNuevaMesa.value = { name: '', n_ocupantes: null };
         await cargarMesas();
     } catch (error) {
-        generarNotificacion('error', 'Error al crear', 'Error al crear la mesa.');
+        generarNotificacion('error', 'Error al crear', 'No se pudo procesar la creación de la mesa.');
     } finally {
         cargandoCrear.value = false;
     }
 }
 
 async function actualizarUnaMesaExistente() {
-    mensajeActualizar.value = null;
     if (!mesaSeleccionadaId.value) {
-        generarNotificacion('warning', 'Sin selección', 'Selecciona una mesa.');
+        generarNotificacion('warning', 'Sin selección', 'Selecciona una mesa primero.');
         return;
     }
     if (!formActualizarMesa.value.name.trim()) {
@@ -102,9 +95,7 @@ async function actualizarUnaMesaExistente() {
         return;
     }
 
-    const mesa = mesas.value.find(function (m) {
-        return m.id === mesaSeleccionadaId.value;
-    });
+    const mesa = mesas.value.find(m => m.id === mesaSeleccionadaId.value);
 
     cargandoActualizar.value = true;
     try {
@@ -114,11 +105,11 @@ async function actualizarUnaMesaExistente() {
             activo: mesa ? mesa.activo : 1,
         });
         await cargarMesas();
-        generarNotificacion('success', 'Mesa actualizada', 'Mesa actualizada correctamente.');
+        generarNotificacion('success', 'Mesa actualizada', 'Los cambios se guardaron correctamente.');
         mesaSeleccionadaId.value = null;
         formActualizarMesa.value = { name: '', n_ocupantes: null };
     } catch (error) {
-        generarNotificacion('error', 'Error al actualizar la mesa.');
+        generarNotificacion('error', 'Error al actualizar', 'Hubo un problema al modificar los datos de la mesa.');
     } finally {
         cargandoActualizar.value = false;
     }
@@ -126,22 +117,21 @@ async function actualizarUnaMesaExistente() {
 
 async function eliminarMesa() {
     if (!mesaEliminarId.value) {
-        generarNotificacion('warning', 'Sin selección', 'Selecciona una mesa.');
+        generarNotificacion('warning', 'Sin selección', 'Por favor, selecciona una mesa.');
         return;
     }
     cargandoEliminar.value = true;
     try {
         await desactivarMesa(mesaEliminarId.value);
-        generarNotificacion('success', 'Mesa eliminada', 'Mesa eliminada correctamente.')
+        generarNotificacion('success', 'Mesa eliminada', 'La mesa se ha desactivado del sistema.');
         mesaEliminarId.value = null;
         await cargarMesas();
     } catch (error) {
-        generarNotificacion('error', 'Error al eliminar la mesa.');
+        generarNotificacion('error', 'Error al eliminar', 'Hubo un problema al intentar dar de baja la mesa.');
     } finally {
         cargandoEliminar.value = false;
     }
 }
-
 </script>
 
 <template>
@@ -149,7 +139,7 @@ async function eliminarMesa() {
         <CabeceraZonaPersonal :user="user" />
         <a-layout class="dashboardMainLayout">
             <Sidebar />
-            <a-flex v-if="cargado == false" vertical align="center" justify="center" class="centrarSpin">
+            <a-flex v-if="!cargado" vertical align="center" justify="center" class="centrarSpin">
                 <a-spin size="large" />
                 <a-typography-text type="secondary">Cargando productos...</a-typography-text>
             </a-flex>
@@ -169,7 +159,8 @@ async function eliminarMesa() {
                                     <a-input-number v-model:value="formNuevaMesa.n_ocupantes" :min="1" :max="999"
                                         placeholder="Ej: 4" class="todoElAncho" />
                                 </a-form-item>
-                                <a-button type="primary" html-type="submit" :loading="cargandoCrear" block>Crear mesa</a-button>
+                                <a-button type="primary" html-type="submit" :loading="cargandoCrear" block>Crear
+                                    mesa</a-button>
                             </a-form>
                         </a-card>
                     </a-tab-pane>
@@ -204,7 +195,7 @@ async function eliminarMesa() {
 
                     <a-tab-pane key="eliminar" tab="Eliminar mesa">
                         <a-card>
-                            <a-form layout="vertical" @submit.prevent="eliminarMesa">
+                            <a-form layout="vertical">
                                 <a-form-item label="Selecciona una mesa">
                                     <a-select v-model:value="mesaEliminarId" placeholder="Elige una mesa..."
                                         :loading="!cargado" class="todoElAncho">
@@ -214,10 +205,14 @@ async function eliminarMesa() {
                                         </a-select-option>
                                     </a-select>
                                 </a-form-item>
+                                <a-popconfirm title="¿Seguro que desea eliminar esta mesa?" ok-text="Sí" cancel-text="No"
+                                    @confirm="eliminarMesa"  :disabled="!mesaEliminarId">
                                 <a-button type="primary" html-type="submit" :loading="cargandoEliminar"
                                     :disabled="!mesaEliminarId" block>
                                     Eliminar mesa
                                 </a-button>
+                                </a-popconfirm>
+
                             </a-form>
                         </a-card>
                     </a-tab-pane>
@@ -238,11 +233,11 @@ async function eliminarMesa() {
     font-size: 22px;
     font-weight: 600;
     margin-bottom: 20px;
-    color: #1a1a1a;
+    color: var(--color-texto-oscuro);
 }
 
 .card-formulario {
-    background: #fff;
+    background: var(--color-fondo-blanco);
     border-radius: 8px;
     padding: 24px;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
@@ -252,7 +247,7 @@ async function eliminarMesa() {
     font-size: 16px;
     font-weight: 600;
     margin-bottom: 20px;
-    color: #333;
+    color: var(v);
 }
 
 .todoElAncho {

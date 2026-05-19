@@ -1,37 +1,29 @@
 :root {
-    --color-fondo: #FFEDDC;
-
-
     --color-principal: #D97742;
 
-    --color-boton-principal: var(--color-principal);
-    --color-boton-principal-hover: #b86435;
-    --color-boton-principal-active: #97522d;
-    --color-boton-principal-texto: white;
-
-    --color-boton-secundario: white;
-    --color-boton-secundario-hover: #FFF3E8;
-    --color-boton-secundario-active: #F6E3D2;
-    --color-boton-secundario-texto: var(--color-principal);
-    --color-borde-boton: var(--color-principal);
-    --color-borde-boton-hover: #97522d;
-
-    --color-select-seleccionado: #d977428c;
-
-
-    --color-enlace: #B85F34;
-    --color-enlace-hover: var(--color-principal);
-    --color-enlace-active: #97522D;
-    --color-enlace-visited: #8C5A46;
-
     --color-menu-fondo: #3A2E2A;
-    --color-subMenu-fondo: var(--color-menu-fondo);
-    --color-subMenu-fondo-hover: #6e5851;
     --color-menu-texto: #FFECD1;
 
     --color-footer-fondo: var(--color-menu-fondo);
     --color-footer-texto: var(--color-menu-texto);
 
+    --transition-normal: 0.3s ease;
+
+    --color-fondo-blanco: #ffffff;
+    --color-fondo-naranja-suave: #FFF3E8;
+
+    --color-texto-oscuro: #1a1a1a;
+    --color-texto-secundario: #555555;
+    --color-texto-suave: #8c8c8c;
+
+    --color-acento-dorado: #E8C9A0;
+    --color-acento-marron: #a67c52;
+
+    --color-exito: #3A9E6F;
+    --color-exito-hover: #7de748;
+    --color-exito-active: #34850c;
+
+    --color-borde-suave: #f0f0f0;
 }
 
 /*INICIO SE SESION*/
@@ -101,7 +93,7 @@
 
 .botonMenuMovil:active {
     background-color: var(--color-principal);
-    color: white;
+    color: var(--color-fondo-blanco);
 }
 
 .centrarSpin{

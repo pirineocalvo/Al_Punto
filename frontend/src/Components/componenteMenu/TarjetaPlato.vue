@@ -40,7 +40,7 @@ defineProps({
   font-size: 0.75rem;
   font-weight: inherit;
   text-transform: uppercase;
-  color: #8c8c8c;
+  color: var(--color-texto-suave);
   letter-spacing: 1px;
   margin: 16px 0 8px 0;
 }

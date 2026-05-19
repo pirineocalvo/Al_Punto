@@ -40,7 +40,7 @@ function irAReservas() {
       </div>
       <a-typography-paragraph>Desde 1995, hemos estado sirviendo los platos más exquisitos...</a-typography-paragraph>
       <a-typography-paragraph>Cada plato cuenta una historia...</a-typography-paragraph>
-      <a-button type="default" @click="modalVisible = true">Conoce Más</a-button> 
+      <a-button type="default" @click="modalVisible = true">Conoce Más</a-button>
     </div>
 
     <div id="contenedorTarjetas">
@@ -48,11 +48,13 @@ function irAReservas() {
         <a-typography-title :level="2">Platos destacados</a-typography-title>
         <a-typography-text>Lo mejor de nuestro servicio</a-typography-text>
       </div>
+
       <a-row justify="center" :gutter="0">
-        <a-col class="colTarjeta">
+
+        <a-col :xs="24" :md="12" :lg="7" class="colTarjeta">
           <a-card class="tarjeta" hoverable>
             <div class="imagenTarjeta">
-              <img src="../../../public/images/huevosRotos.png" />
+              <img src="/images/huevosRotos.png" />
             </div>
             <div class="infoTarjeta">
               <h2>Huevos rotos</h2>
@@ -61,10 +63,11 @@ function irAReservas() {
             </div>
           </a-card>
         </a-col>
-        <a-col class="colTarjeta">
+
+        <a-col :xs="24" :md="12" :lg="7" class="colTarjeta">
           <a-card class="tarjeta" hoverable>
             <div class="imagenTarjeta">
-              <img src="../../../public/images/espagueti.png" />
+              <img src="/images/espagueti.png" />
             </div>
             <div class="infoTarjeta">
               <h2>Pasta a la boloñesa</h2>
@@ -73,10 +76,11 @@ function irAReservas() {
             </div>
           </a-card>
         </a-col>
-        <a-col class="colTarjeta">
+
+        <a-col :xs="24" :md="12" :lg="7" class="colTarjeta">
           <a-card class="tarjeta" hoverable>
             <div class="imagenTarjeta">
-              <img src="../../../public/images/tartaQueso.png" />
+              <img src="/images/tartaQueso.png" />
             </div>
             <div class="infoTarjeta">
               <h2>Tarta de queso</h2>
@@ -85,131 +89,133 @@ function irAReservas() {
             </div>
           </a-card>
         </a-col>
+
       </a-row>
     </div>
   </a-layout>
   <PiePaginaPrincipal />
   <Historia v-model:open="modalVisible" />
 </template>
+
 <style scoped>
 #eslogan {
-    margin-top: 80px;
-    height: 700px;
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  margin-top: 80px;
+  height: 700px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 #eslogan::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background-image: url('/images/imagenPrincipalMenu.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    filter: blur(6px);
-    z-index: 0;
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url('/images/imagenPrincipalMenu.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: blur(6px);
+  z-index: 0;
 }
 
 #contenidoEslogan {
-    position: relative;
-    z-index: 1;
+  position: relative;
+  z-index: 1;
 }
 
 #contenidoEslogan {
-    width: 50%;
-    text-align: center;
+  width: 50%;
+  text-align: center;
 }
 
 #sobreNosotros {
-    padding: 80px 20px;
-    text-align: center;
+  padding: 80px 20px;
+  text-align: center;
 }
 
 .subTitulo {
-    font-size: 1.2rem;
-    margin-bottom: 10px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    text-align: center;
-    margin-bottom: 20px;
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 20px;
 }
 
 #sobreNosotros p {
-    max-width: 700px;
-    margin: 0 auto 15px auto;
-    line-height: 1.6;
-    color: #444;
+  max-width: 700px;
+  margin: 0 auto 15px auto;
+  line-height: 1.6;
+  color: var(--color-texto-secundario);
 }
 
 #sobreNosotros .cta-button {
-    margin-top: 20px;
+  margin-top: 20px;
 }
 
 #platosDestacado {
-    padding: 80px 20px;
+  padding: 80px 20px;
 }
 
 #contenedorTarjetas {
-    margin-bottom: 30px;
+  margin-bottom: 30px;
 }
 
 .tarjeta.ant-card {
-    width: 500px;
-    border-radius: 15px;
-    overflow: hidden;
-    text-align: center;
+  width: 500px;
+  border-radius: 15px;
+  overflow: hidden;
+  text-align: center;
 
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    transition: transform 1s ease;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 1s ease;
 }
 
 .tarjeta .ant-card-body {
-    padding: 0;
+  padding: 0;
 }
 
 .tarjeta:hover {
-    transform: translateY(-15px);
+  transform: translateY(-15px);
 }
 
 .imagenTarjeta img {
-    width: 100%;
-    height: 300px;
-    object-fit: cover;
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
 }
 
 .infoTarjeta {
-    padding: 40px;
-    text-align: center;
+  padding: 40px;
+  text-align: center;
 }
 
 .infoTarjeta h2 {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 .infoTarjeta p {
-    font-size: 0.9rem;
-    color: #555;
-    margin-bottom: 15px;
+  font-size: 0.9rem;
+  color: var(--color-texto-secundario);
+  margin-bottom: 15px;
 }
 
 .colTarjeta {
-    display: flex;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
 }
 
 .precioPlato {
-    font-weight: bold;
-    color: #a67c52;
-    font-size: 1.1rem;
+  font-weight: bold;
+  color: var(--color-acento-marron);
+  font-size: 1.1rem;
 }
 
 .ant-row {
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    flex-wrap: wrap;
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
 }
 </style>

@@ -8,6 +8,7 @@ import { guardarCarritoCompraClientes } from '../../../services/realizarPedidoEn
 import { getMenu, getCategorias } from '../../../services/menuEndpoint';
 import { useAuth, ACCESS_LEVELS } from '@/composables/useAuth';
 import { message, notification } from 'ant-design-vue';
+
 const { user, usuarioListo } = useAuth({ minAccessLevel: ACCESS_LEVELS.ADMIN });
 
 const cargado = ref(false);
@@ -33,7 +34,7 @@ function clasificarMenu() {
         menu.value.forEach(product => {
             if (product.id_category == catego.id) {
                 inforCatego.productos.push(product);
-            };
+            }
         });
 
         menuClasificado.value.push(inforCatego);
@@ -46,7 +47,7 @@ function addCarritoProducto(nuevoProducto) {
     const existente = productosElegidos.value.find(pro => pro.name === nuevoProducto.name);
     if (existente) {
         existente.cantidad += 1;
-        existente.precioTotal = existente.price * existente.cantidad
+        existente.precioTotal = existente.price * existente.cantidad;
     } else {
         const crearNuevoProducto = {
             ...nuevoProducto,
@@ -59,21 +60,21 @@ function addCarritoProducto(nuevoProducto) {
 }
 
 function activarEdicionCantidad(nombreProducto) {
-    const producto = productosElegidos.value.find(pro =>{return pro.name == nombreProducto});
-    if(producto){
+    const producto = productosElegidos.value.find(pro => { return pro.name == nombreProducto; });
+    if (producto) {
         producto.edicion = !producto.edicion;
     }
 }
 
 function guardarCambios(nuevoProducto) {
-    const producto = productosElegidos.value.find(pro =>{return pro.name == nuevoProducto.name});
-    
-    if(producto){
+    const producto = productosElegidos.value.find(pro => { return pro.name == nuevoProducto.name; });
+
+    if (producto) {
         if (nuevoProducto.cantidad <= 0) {
             eliminarProductoCarrito(nuevoProducto);
         } else {
             producto.cantidad = nuevoProducto.cantidad;
-            producto.precioTotal = pro.cantidad * pro.price;
+            producto.precioTotal = producto.cantidad * producto.price;
             producto.edicion = false;
         }
     }
@@ -121,7 +122,7 @@ watch(usuarioListo, async () => {
         clasificarMenu();
         cargado.value = true;
     } catch (err) {
-        message.error('Error al cargar la página')
+        message.error('Error al cargar la página');
     }
 }, { immediate: true });
 </script>
@@ -136,33 +137,41 @@ watch(usuarioListo, async () => {
                 <a-typography-text type="secondary">Cargando productos...</a-typography-text>
             </a-flex>
             <a-row v-else class="colocarContenedorPrincipalDashBoard" justify="space-between">
-                <a-divider orientation="left"><a-typography-title :level="1">Realizar un pedido</a-typography-title></a-divider>
-                
+                <a-divider orientation="left"><a-typography-title :level="1">Realizar un
+                        pedido</a-typography-title></a-divider>
+
                 <a-col :xl="24" :xxl="16">
                     <a-row :xs="24">
                         <a-col :span="24" v-for="catego in menuClasificado" :key="catego.categoria">
-                            <a-divider orientation="left"><a-typography-title :level="3">{{ catego.categoria }}</a-typography-title></a-divider>
-                            <a-row :gutter="[16,16]">
-                                <a-col v-for="producto in catego.productos" :key="producto.name" :xs="24" :lg="24" :xl="12">
-                                    <a-card class="productoCard" size="small" :bodyStyle="{ padding: '14px 16px' }">
-                                        <div class="productoRow">
+                            <a-divider orientation="left"><a-typography-title :level="3">{{ catego.categoria
+                                    }}</a-typography-title></a-divider>
+                            <a-row :gutter="[16, 16]">
+                                <a-col v-for="producto in catego.productos" :key="producto.name" :xs="24" :lg="24"
+                                    :xl="12">
+                                    <a-card class="tarjetaProducto" size="small" :bodyStyle="{ padding: '14px 16px' }">
+                                        <div class="filaProducto">
                                             <a-image :width="72" :preview="false"
                                                 :src="'/images/plates/' + producto.img_src" :alt="producto.name"
-                                                class="productoImage" />
+                                                class="imagenProducto" />
 
-                                            <div class="productoInfo">
-                                                <a-space :size="[8, 8]" wrap class="productoHeader">
+                                            <div class="infoProducto">
+                                                <a-space :size="[8, 8]" wrap class="cabeceraProducto">
                                                     <a-typography-text strong>{{ producto.name }}</a-typography-text>
-                                                    <a-tag v-if="producto.tag" color="processing">{{ producto.tag }}</a-tag>
+                                                    <a-tag v-if="producto.tag" color="processing">{{ producto.tag
+                                                        }}</a-tag>
                                                 </a-space>
 
-                                                <a-typography-paragraph :ellipsis="{ rows: 1 }" :content="producto.description" class="productoDescription" />
-                                                <a-typography-text type="secondary" class="productoSecondary">{{ producto.ingredients }}</a-typography-text>
+                                                <a-typography-paragraph :ellipsis="{ rows: 1 }"
+                                                    :content="producto.description" class="descripcionProducto" />
+                                                <a-typography-text type="secondary" class="secundarioProducto">{{
+                                                    producto.ingredients }}</a-typography-text>
                                             </div>
 
-                                            <div class="productoActions">
-                                                <a-typography-text strong class="productoPrice">{{ producto.price.toFixed(2) }} €</a-typography-text>
-                                                <a-button type="primary" size="small" ghost @click="addCarritoProducto(producto)">+ Añadir</a-button>
+                                            <div class="accionesProducto">
+                                                <a-typography-text strong class="precioProducto">{{
+                                                    producto.price.toFixed(2) }} €</a-typography-text>
+                                                <a-button type="primary" size="small" ghost
+                                                    @click="addCarritoProducto(producto)">+ Añadir</a-button>
                                             </div>
                                         </div>
                                     </a-card>
@@ -172,14 +181,17 @@ watch(usuarioListo, async () => {
                     </a-row>
                 </a-col>
 
-                <a-col :xs="24" :xxl="7" class="pedidoCard">
+                <a-col :xs="24" :xxl="7" class="tarjetaPedido">
                     <a-card title="Tu pedido">
                         <a-list :data-source="productosElegidos" item-layout="horizontal">
                             <template #renderItem="{ item }">
                                 <a-list-item class="itemPedido">
                                     <template #actions>
-                                        <a-popconfirm title="¿Eliminar este producto?" @confirm="eliminarProductoCarrito(item)" ok-text="Sí" cancel-text="No">
-                                            <template #icon><QuestionCircleOutlined /></template>
+                                        <a-popconfirm title="¿Eliminar este producto?"
+                                            @confirm="eliminarProductoCarrito(item)" ok-text="Sí" cancel-text="No">
+                                            <template #icon>
+                                                <QuestionCircleOutlined />
+                                            </template>
                                             <a-button type="text" size="small">Eliminar</a-button>
                                         </a-popconfirm>
                                     </template>
@@ -190,11 +202,17 @@ watch(usuarioListo, async () => {
                                             <div class="detallePedido">
                                                 <template v-if="!item.edicion">
                                                     <span>Cantidad: {{ item.cantidad }}</span>
-                                                    <a-button type="text" size="small" @click="activarEdicionCantidad(item.name)"><EditOutlined /></a-button>
+                                                    <a-button type="text" size="small"
+                                                        @click="activarEdicionCantidad(item.name)">
+                                                        <EditOutlined />
+                                                    </a-button>
                                                 </template>
                                                 <template v-else>
-                                                    <a-input-number v-model:value="item.cantidad" @pressEnter="guardarCambios(item)" :min="0" size="small" />
-                                                    <a-button type="primary" size="small" @click="guardarCambios(item)"><CheckOutlined /></a-button>
+                                                    <a-input-number v-model:value="item.cantidad"
+                                                        @pressEnter="guardarCambios(item)" :min="0" size="small" />
+                                                    <a-button type="primary" size="small" @click="guardarCambios(item)">
+                                                        <CheckOutlined />
+                                                    </a-button>
                                                 </template>
                                                 <a-tag color="green">{{ item.precioTotal.toFixed(2) }} €</a-tag>
                                             </div>
@@ -209,7 +227,7 @@ watch(usuarioListo, async () => {
                             <strong>{{ totalPedido.toFixed(2) }} €</strong>
                         </div>
                     </a-card>
-                    <a-button type="primary" class="ajusteBtn" @click="guardarCarrito()">Realizar pedido</a-button>
+                    <a-button type="primary" class="botonAjuste" @click="guardarCarrito()">Realizar pedido</a-button>
                 </a-col>
             </a-row>
         </a-layout>
@@ -226,7 +244,7 @@ watch(usuarioListo, async () => {
     margin-top: 8px;
 }
 
-.pedidoCard {
+.tarjetaPedido {
     display: flex !important;
     align-self: flex-start !important;
     flex-direction: column !important;
@@ -234,12 +252,12 @@ watch(usuarioListo, async () => {
     padding: 24px;
 }
 
-.productoCard {
+.tarjetaProducto {
     height: 100%;
     border-radius: 12px;
 }
 
-.productoRow {
+.filaProducto {
     display: flex;
     align-items: center;
     gap: 14px;
@@ -247,19 +265,19 @@ watch(usuarioListo, async () => {
     height: 100%;
 }
 
-.productoImage :deep(img) {
+.imagenProducto :deep(img) {
     width: 72px;
     height: 72px;
     object-fit: cover;
     border-radius: 10px;
 }
 
-.productoInfo {
+.infoProducto {
     flex: 1;
     min-width: 0;
 }
 
-.productoActions {
+.accionesProducto {
     min-width: 96px;
     display: flex;
     flex-direction: column;
@@ -267,9 +285,8 @@ watch(usuarioListo, async () => {
     gap: 8px;
 }
 
-.ajusteBtn {
+.botonAjuste {
     width: 100%;
     margin-top: 10px;
 }
-
 </style>
