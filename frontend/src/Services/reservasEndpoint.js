@@ -73,22 +73,6 @@ export const cancelarReserva = async (id) => {
     }
 };
 
-export const todasLasReservas = async () => {
-    try {
-        const token = getTokenAutentificacion();
-        const config = {
-            headers: { authorization: `Bearer ${token}` },
-        };
-        const response = await axios.get(`${API_URL}/api/reservas/allReserve`, config);
-        return response.data;
-    } catch (error) {
-        if (error.response.status === 401) {
-            cerrarSesionUsuario();
-        }
-        throw error;
-    }
-};
-
 export const obtenerTodasLasReservasAdmin = async () => {
     try {
         const token = getTokenAutentificacion();

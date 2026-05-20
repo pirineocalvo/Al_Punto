@@ -42,10 +42,12 @@ exports.getAllPendingReservas = () =>
         `SELECT r.id, r.fecha_reserva AS reserve_date, r.hora_reserva AS reserve_hour,
                 r.comensales AS guests, r.atendido AS attended, r.estado AS status,
                 r.creado_en AS created_at,
+                mr.id_mesa AS table_id,
                 u.nombre || ' ' || u.apellido AS user_name,
                 u.email                       AS user_email
          FROM reservas r
          LEFT JOIN usuarios u ON r.id_usuario = u.id
+         LEFT JOIN mesas_reservadas mr ON mr.id_reserva = r.id
          WHERE r.estado IS NULL
          ORDER BY r.fecha_reserva DESC, r.hora_reserva DESC`
     );

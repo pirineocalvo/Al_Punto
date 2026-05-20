@@ -125,7 +125,7 @@ const formatearFecha = (fechaStr) => {
     <a-layout class="dashboardMainLayout">
         <CabeceraZonaPersonal :user="user" />
 
-        <a-layout>
+        <a-layout class="dashboardMainLayout">
             <Sidebar :collapsed="collapsed" />
             <a-flex v-if="!cargado" vertical align="center" justify="center" class="centrarSpin">
                 <a-spin size="large" />

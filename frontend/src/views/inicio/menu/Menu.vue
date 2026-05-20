@@ -107,7 +107,7 @@ onUnmounted(() => {
 
           <div class="seccionResenias">
             <a-divider orientation="left">
-              <a-typography-title :level="3">Opiniones de nuestros clientes</a-typography-title>
+              <a-typography-title :level="3">Opiniones</a-typography-title>
             </a-divider>
 
             <a-flex v-if="cargandoResenias" justify="center">

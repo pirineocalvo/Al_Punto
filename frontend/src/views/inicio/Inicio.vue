@@ -61,8 +61,8 @@ async function buscarPlatos() {
   <a-layout>
     <div id="eslogan">
       <div id="contenidoEslogan">
-        <a-typography-title>Sabores Que Enamoran</a-typography-title>
-        <a-typography-paragraph>
+        <a-typography-title class="colorTxtImagen">Sabores Que Enamoran</a-typography-title>
+        <a-typography-paragraph class="colorTxtImagen">
           Experiencia gastronómica de primer nivel en un ambiente refinado y acogedor.
         </a-typography-paragraph>
         <a-button type="primary" size="large" @click="irAReservas">
@@ -89,7 +89,7 @@ async function buscarPlatos() {
 
       <a-row justify="center" :gutter="0">
 
-        <a-col :xs="24" :md="12" :lg="7" class="colTarjeta" v-for="plato in platosDestacados">
+        <a-col :xs="22" :md="12" :lg="7" class="colTarjeta" v-for="plato in platosDestacados">
           <a-card class="tarjeta" hoverable>
             <div class="imagenTarjeta">
               <img :src="'/images/plates/'+plato.img_src" />
@@ -117,6 +117,11 @@ async function buscarPlatos() {
   display: flex;
   justify-content: center;
   align-items: center;
+
+}
+
+.colorTxtImagen{
+      color: var(--color-menu-texto) !important;
 }
 
 #eslogan::before {
@@ -131,14 +136,12 @@ async function buscarPlatos() {
   z-index: 0;
 }
 
-#contenidoEslogan {
-  position: relative;
-  z-index: 1;
-}
 
 #contenidoEslogan {
   width: 50%;
   text-align: center;
+    position: relative;
+  z-index: 1;
 }
 
 #sobreNosotros {
@@ -159,7 +162,6 @@ async function buscarPlatos() {
   max-width: 700px;
   margin: 0 auto 15px auto;
   line-height: 1.6;
-  color: var(--color-texto-secundario);
 }
 
 #sobreNosotros .cta-button {
