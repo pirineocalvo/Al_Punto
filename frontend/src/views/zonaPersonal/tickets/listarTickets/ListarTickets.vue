@@ -69,6 +69,7 @@ watch(usuarioListo, async () => {
     } finally {
         cargado.value = true;
     }
+console.log(tickets.value);
 
 }, { immediate: true });
 

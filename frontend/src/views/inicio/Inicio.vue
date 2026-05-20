@@ -1,12 +1,23 @@
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import CabeceraPrincipal from '../../components/cabeceraYpiePrincipal/CabeceraPrincipal.vue';
 import PiePaginaPrincipal from '../../components/cabeceraYpiePrincipal/PiePaginaPrincipal.vue';
 import Historia from '../../components/modales/Historia.vue';
+import {getMenu} from '../../services/menuEndpoint';
+import { message } from 'ant-design-vue';
 
 const router = useRouter();
 const modalVisible = ref(false);
+const platosDestacados = ref([]);
+
+onMounted(async () => {
+  try {
+      buscarPlatos();
+    } catch (err) {
+        message.error('Error al cargar la página');
+    }
+})
 
 function irAReservas() {
   const token = localStorage.getItem('loginUserToken');
@@ -16,6 +27,33 @@ function irAReservas() {
     router.push('/iniciarSesion?redirect=/reservas');
   }
 }
+
+async function buscarPlatos() {
+  try {
+    const listaMenu = await getMenu();
+
+    let listaYaSeleccionado = [];
+
+    while(listaYaSeleccionado.length != 3){
+        const elementoAleatorio = listaMenu[Math.floor(Math.random() * listaMenu.length)];
+        
+        if(!listaYaSeleccionado.includes(elementoAleatorio.id)){
+          listaYaSeleccionado.push(elementoAleatorio.id);
+        }
+    };
+
+    listaMenu.forEach(element => {
+      if(listaYaSeleccionado.includes(element.id)){
+        platosDestacados.value.push(element);
+      }
+    });
+    console.log(platosDestacados.value);
+    
+    } catch (err) {
+        message.error('Error al cargar la página');
+    }
+}
+
 </script>
 
 <template>
@@ -51,41 +89,15 @@ function irAReservas() {
 
       <a-row justify="center" :gutter="0">
 
-        <a-col :xs="24" :md="12" :lg="7" class="colTarjeta">
+        <a-col :xs="24" :md="12" :lg="7" class="colTarjeta" v-for="plato in platosDestacados">
           <a-card class="tarjeta" hoverable>
             <div class="imagenTarjeta">
-              <img src="/images/huevosRotos.png" />
+              <img :src="'/images/plates/'+plato.img_src" />
             </div>
             <div class="infoTarjeta">
-              <h2>Huevos rotos</h2>
-              <p>Compuesto por huevos de las mejores gallinas camperas...</p>
-              <span class="precioPlato">31.99€</span>
-            </div>
-          </a-card>
-        </a-col>
-
-        <a-col :xs="24" :md="12" :lg="7" class="colTarjeta">
-          <a-card class="tarjeta" hoverable>
-            <div class="imagenTarjeta">
-              <img src="/images/espagueti.png" />
-            </div>
-            <div class="infoTarjeta">
-              <h2>Pasta a la boloñesa</h2>
-              <p>Pasta fresca hecha a mano...</p>
-              <span class="precioPlato">18.50€</span>
-            </div>
-          </a-card>
-        </a-col>
-
-        <a-col :xs="24" :md="12" :lg="7" class="colTarjeta">
-          <a-card class="tarjeta" hoverable>
-            <div class="imagenTarjeta">
-              <img src="/images/tartaQueso.png" />
-            </div>
-            <div class="infoTarjeta">
-              <h2>Tarta de queso</h2>
-              <p>Postre casera hecho con alimentos...</p>
-              <span class="precioPlato">7.99€</span>
+              <h2>{{ plato.name }}</h2>
+              <p>{{ plato.description }}</p>
+              <span class="precioPlato">{{plato.price}}€</span>
             </div>
           </a-card>
         </a-col>
