@@ -4,7 +4,7 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import { HomeOutlined, UserOutlined, HistoryOutlined, ShoppingOutlined, ShopOutlined, TagsOutlined, SettingOutlined, CommentOutlined } from '@ant-design/icons-vue';
 import { message } from 'ant-design-vue';
 import { informacionUsuario } from '../../services/usuariosEndpoint';
-import { funcinalidadSidebar } from '../../components/componenteDashboard/js/ocultarSidebar';
+import { funcinalidadSidebar } from './js/ocultarSidebar';
 
 const { cambiarEstadoSidebar, sidebarAbierto } = funcinalidadSidebar();
 
