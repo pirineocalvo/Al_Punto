@@ -1,52 +1,51 @@
 import axios from 'axios';
-const API_URL = import.meta.env.VITE_API_URL;
-import { getTokenAutentificacion, cerrarSesionUsuario } from './gestionAlmacenamiento';
+const URL_API = import.meta.env.VITE_API_URL;
+import { obtenerTokenAutentificacion, cerrarSesionUsuario } from './gestionAlmacenamiento';
 
-export const getDisponibilidadMes = async (year, month) => {
+export const obtenerDisponibilidadMes = async (anio, mes) => {
     try {
-        const token = getTokenAutentificacion();
-        const config = {
+        const token = obtenerTokenAutentificacion();
+        const configuracion = {
             headers: { authorization: `Bearer ${token}` },
-            params: { year, month },
+            params: { anio, mes },
         };
-        const response = await axios.get(`${API_URL}/api/mesas/disponibilidad-mes`, config);
-        return response.data;
+        const respuesta = await axios.get(`${URL_API}/api/mesas/disponibilidad-mes`, configuracion);
+        return respuesta.data;
     } catch (error) {
         if (error.response.status === 401) {
             cerrarSesionUsuario();
         }
-        console.error('Error getting month availability:', error);
+        console.error('Error al obtener disponibilidad del mes:', error);
         throw error;
     }
 };
 
 export const todasLasMesasLibresPorDia = async (fecha, ocupantes) => {
     try {
-        const token = getTokenAutentificacion();
-        const config = {
+        const token = obtenerTokenAutentificacion();
+        const configuracion = {
             headers: { authorization: `Bearer ${token}` },
             params: { fecha, ocupantes },
         };
-        const response = await axios.get(`${API_URL}/api/mesas/disponibilidad-dia`, config);
-        return response.data;
+        const respuesta = await axios.get(`${URL_API}/api/mesas/disponibilidad-dia`, configuracion);
+        return respuesta.data;
     } catch (error) {
         if (error.response.status === 401) {
             cerrarSesionUsuario();
         }
-        console.error('Error getting day availability:', error);
+        console.error('Error al obtener disponibilidad del dia:', error);
         throw error;
     }
 };
 
-// Admin: todas las mesas (activas e inactivas)
 export const todasLasMesas = async () => {
     try {
-        const token = getTokenAutentificacion();
-        const config = {
+        const token = obtenerTokenAutentificacion();
+        const configuracion = {
             headers: { authorization: `Bearer ${token}` },
         };
-        const response = await axios.get(`${API_URL}/api/mesas/admin/todas`, config);
-        return response.data;
+        const respuesta = await axios.get(`${URL_API}/api/mesas/admin/todas`, configuracion);
+        return respuesta.data;
     } catch (error) {
         if (error.response.status === 401) {
             cerrarSesionUsuario();
@@ -55,56 +54,53 @@ export const todasLasMesas = async () => {
     }
 };
 
-// Admin: crear mesa
-export const crearMesa = async (data = {}) => {
+export const crearMesa = async (datos = {}) => {
     try {
-        const token = getTokenAutentificacion();
-        const config = {
+        const token = obtenerTokenAutentificacion();
+        const configuracion = {
             headers: { authorization: `Bearer ${token}` },
         };
-        const response = await axios.post(`${API_URL}/api/mesas/admin/crear`, data, config);
-        return response.data;
+        const respuesta = await axios.post(`${URL_API}/api/mesas/admin/crear`, datos, configuracion);
+        return respuesta.data;
     } catch (error) {
         if (error.response.status === 401) {
             cerrarSesionUsuario();
         }
-        console.error('Error creating table:', error);
+        console.error('Error al crear la mesa:', error);
         throw error;
     }
 };
 
-// Admin: actualizar mesa
-export const actualizarMesa = async (id, data = {}) => {
+export const actualizarMesa = async (id, datos = {}) => {
     try {
-        const token = getTokenAutentificacion();
-        const config = {
+        const token = obtenerTokenAutentificacion();
+        const configuracion = {
             headers: { authorization: `Bearer ${token}` },
         };
-        const response = await axios.put(`${API_URL}/api/mesas/admin/${id}`, data, config);
-        return response.data;
+        const respuesta = await axios.put(`${URL_API}/api/mesas/admin/${id}`, datos, configuracion);
+        return respuesta.data;
     } catch (error) {
         if (error.response.status === 401) {
             cerrarSesionUsuario();
         }
-        console.error('Error updating table:', error);
+        console.error('Error al actualizar la mesa:', error);
         throw error;
     }
 };
 
-// Admin: baja lógica de mesa (activo = 0, no elimina)
 export const desactivarMesa = async (id) => {
     try {
-        const token = getTokenAutentificacion();
-        const config = {
+        const token = obtenerTokenAutentificacion();
+        const configuracion = {
             headers: { authorization: `Bearer ${token}` },
         };
-        const response = await axios.delete(`${API_URL}/api/mesas/admin/${id}`, config);
-        return response.data;
+        const respuesta = await axios.delete(`${URL_API}/api/mesas/admin/${id}`, configuracion);
+        return respuesta.data;
     } catch (error) {
         if (error.response.status === 401) {
             cerrarSesionUsuario();
         }
-        console.error('Error deactivating table:', error);
+        console.error('Error al desactivar la mesa:', error);
         throw error;
     }
 };

@@ -1,13 +1,13 @@
 const express = require('express');
-const router = express.Router();
-const menuController = require('../controllers/menuController');
+const enrutador = express.Router();
+const controladorMenu = require('../controllers/menuController');
 const { adminMiddleware } = require('../middlewares/authMiddleware');
 
-router.get('/', menuController.getAllItems);
-router.get('/categorias', menuController.getCategories);
-router.get('/:idcategory', menuController.getItemsByCategory);
-router.post('/', adminMiddleware, menuController.createItem);
-router.post('/addcategory', adminMiddleware, menuController.createCategory);
-router.post('/update', adminMiddleware, menuController.updateItem);
+enrutador.get('/', controladorMenu.obtenerTodosItems);
+enrutador.get('/categorias', controladorMenu.obtenerCategorias);
+enrutador.get('/:idcategory', controladorMenu.obtenerItemsPorCategoria);
+enrutador.post('/agregar', adminMiddleware, controladorMenu.crearItem);
+enrutador.post('/agregarCategoria', adminMiddleware, controladorMenu.crearCategoria);
+enrutador.post('/actualizar', adminMiddleware, controladorMenu.actualizarItem);
 
-module.exports = router;
+module.exports = enrutador;

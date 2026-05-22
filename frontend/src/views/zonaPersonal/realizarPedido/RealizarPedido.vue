@@ -4,8 +4,8 @@ import CabeceraZonaPersonal from '../../../components/componenteDashboard/Cabece
 import Sidebar from '../../../components/componenteDashboard/Sidebar.vue';
 import { ref, computed, watch } from 'vue';
 import { QuestionCircleOutlined, EditOutlined, CheckOutlined } from '@ant-design/icons-vue';
-import { guardarCarritoCompraClientes } from '../../../services/realizarPedidoEndpoint';
-import { getMenu, getCategorias } from '../../../services/menuEndpoint';
+import { guardarCarritoCompraClientes } from '../../../Services/realizarPedidoEndpoint';
+import { obtenerMenu, obtenerCategorias } from '../../../Services/menuEndpoint';
 import { useAuth, ACCESS_LEVELS } from '@/composables/useAuth';
 import { message, notification } from 'ant-design-vue';
 
@@ -42,7 +42,6 @@ function clasificarMenu() {
 }
 
 const productosElegidos = ref([]);
-
 function addCarritoProducto(nuevoProducto) {
     const existente = productosElegidos.value.find(pro => pro.name === nuevoProducto.name);
     if (existente) {
@@ -117,8 +116,8 @@ async function guardarCarrito() {
 
 watch(usuarioListo, async () => {
     try {
-        menu.value = await getMenu();
-        categorias.value = await getCategorias();
+        menu.value = await obtenerMenu();
+        categorias.value = await obtenerCategorias();
         clasificarMenu();
         cargado.value = true;
     } catch (err) {
@@ -221,6 +220,7 @@ watch(usuarioListo, async () => {
                                 </a-list-item>
                             </template>
                         </a-list>
+
                         <a-divider />
                         <div class="totalPedido">
                             <span>Total</span>

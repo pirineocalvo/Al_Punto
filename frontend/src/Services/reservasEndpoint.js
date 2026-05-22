@@ -1,86 +1,83 @@
 import axios from 'axios';
-const API_URL = import.meta.env.VITE_API_URL;
-import { getTokenAutentificacion, cerrarSesionUsuario } from './gestionAlmacenamiento';
+const URL_API = import.meta.env.VITE_API_URL;
+import { obtenerTokenAutentificacion, cerrarSesionUsuario } from './gestionAlmacenamiento';
 
-export const nuevaReserva = async (reservation) => {
+export const nuevaReserva = async (reserva) => {
     try {
-
-        const token = getTokenAutentificacion();
-        const config = {
+        const token = obtenerTokenAutentificacion();
+        const configuracion = {
             headers: { authorization: `Bearer ${token}` },
         };
-
-        const response = await axios.post(`${API_URL}/api/reservas/addreserve`, reservation, config);
-
-        return response.data;
+        const respuesta = await axios.post(`${URL_API}/api/reservas/nueva`, reserva, configuracion);
+        return respuesta.data;
     } catch (error) {
         if (error.response.status === 401) {
             cerrarSesionUsuario();
         }
-        console.error('Error creating reservation:', error);
+        console.error('Error al crear la reserva:', error);
         throw error;
     }
 };
 
 export const vincularMesaReserva = async ({ idReserva, idMesa }) => {
     try {
-        const token = getTokenAutentificacion();
-        const config = {
+        const token = obtenerTokenAutentificacion();
+        const configuracion = {
             headers: { authorization: `Bearer ${token}` },
         };
-        const response = await axios.post(`${API_URL}/api/mesas/reservar`, { idReserva, idMesa }, config);
-        return response.data;
+        const respuesta = await axios.post(`${URL_API}/api/mesas/reservar`, { idReserva, idMesa }, configuracion);
+        return respuesta.data;
     } catch (error) {
         if (error.response.status === 401) {
             cerrarSesionUsuario();
         }
-        console.error('Error linking table to reservation:', error);
+        console.error('Error al vincular mesa a la reserva:', error);
         throw error;
     }
 };
 
 export const misReservas = async () => {
     try {
-        const token = getTokenAutentificacion();
-        const config = {
+        const token = obtenerTokenAutentificacion();
+        const configuracion = {
             headers: { authorization: `Bearer ${token}` },
         };
-        const response = await axios.get(`${API_URL}/api/reservas/userReserve`, config);
-        return response.data;
+        const respuesta = await axios.get(`${URL_API}/api/reservas/misReservas`, configuracion);
+        return respuesta.data;
     } catch (error) {
         if (error.response.status === 401) {
             cerrarSesionUsuario();
         }
-        console.error('Error getting reservations:', error);
+        console.error('Error al obtener las reservas:', error);
         throw error;
     }
 };
 
 export const cancelarReserva = async (id) => {
     try {
-        const token = getTokenAutentificacion();
-        const config = {
+        const token = obtenerTokenAutentificacion();
+        const configuracion = {
             headers: { authorization: `Bearer ${token}` },
         };
-        const response = await axios.delete(`${API_URL}/api/reservas/cancelar/${id}`, config);
-        return response.data;
+        const respuesta = await axios.delete(`${URL_API}/api/reservas/cancelar/${id}`, configuracion);
+        return respuesta.data;
     } catch (error) {
         if (error.response.status === 401) {
             cerrarSesionUsuario();
         }
-        console.error('Error cancelling reservation:', error);
+        console.error('Error al cancelar la reserva:', error);
         throw error;
     }
 };
 
 export const todasLasReservas = async () => {
     try {
-        const token = getTokenAutentificacion();
-        const config = {
+        const token = obtenerTokenAutentificacion();
+        const configuracion = {
             headers: { authorization: `Bearer ${token}` },
         };
-        const response = await axios.get(`${API_URL}/api/reservas/allReserve`, config);
-        return response.data;
+        const respuesta = await axios.get(`${URL_API}/api/reservas/todas`, configuracion);
+        return respuesta.data;
     } catch (error) {
         if (error.response.status === 401) {
             cerrarSesionUsuario();
@@ -91,12 +88,12 @@ export const todasLasReservas = async () => {
 
 export const obtenerTodasLasReservasAdmin = async () => {
     try {
-        const token = getTokenAutentificacion();
-        const config = {
+        const token = obtenerTokenAutentificacion();
+        const configuracion = {
             headers: { authorization: `Bearer ${token}` },
         };
-        const response = await axios.get(`${API_URL}/api/reservas/admin/allReserve`, config);
-        return response.data;
+        const respuesta = await axios.get(`${URL_API}/api/reservas/admin/todas`, configuracion);
+        return respuesta.data;
     } catch (error) {
         if (error.response?.status === 401) {
             cerrarSesionUsuario();
@@ -106,18 +103,20 @@ export const obtenerTodasLasReservasAdmin = async () => {
     }
 };
 
-export const actualizarEstadoReservaAdmin = async (id, status, attended = false) => {
+export const actualizarEstadoReservaAdmin = async (id, estado, atendido = false) => {
     try {
-        const token = getTokenAutentificacion();
-        const config = { headers: { authorization: `Bearer ${token}` } };
-        const response = await axios.patch(
-            `${API_URL}/api/reservas/admin/${id}/status`,
-            { status, attended },
-            config
+        const token = obtenerTokenAutentificacion();
+        const configuracion = { headers: { authorization: `Bearer ${token}` } };
+        const respuesta = await axios.patch(
+            `${URL_API}/api/reservas/admin/${id}/estado`,
+            { estado, atendido },
+            configuracion
         );
-        return response.data;
+        return respuesta.data;
     } catch (error) {
-        if (error.response?.status === 401) cerrarSesionUsuario();
+        if (error.response?.status === 401) {
+            cerrarSesionUsuario();
+        }
         console.error('Error al actualizar estado de reserva:', error);
         throw error;
     }

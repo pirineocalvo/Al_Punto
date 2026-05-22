@@ -4,9 +4,9 @@ import { QuestionCircleOutlined } from '@ant-design/icons-vue';
 import CabeceraZonaPersonal from '@/components/componenteDashboard/CabeceraZonaPersonal.vue';
 import PiePaginaPrincipal from '@/components/cabeceraYpiePrincipal/PiePaginaPrincipal.vue';
 import Sidebar from '../../../components/componenteDashboard/Sidebar.vue';
-import { getProductosCompradosCliente, cancelarPedido } from '../../../services/realizarPedidoEndpoint';
-import { pedidosRealizadosMarketPlace } from '../../../services/marketplaceEndpoint';
-import { misReservas, cancelarReserva } from '../../../services/reservasEndpoint';
+import { obtenerMisPedidos, cancelarPedido } from '../../../Services/realizarPedidoEndpoint';
+import { pedidosRealizadosMarketPlace } from '../../../Services/marketplaceEndpoint';
+import { misReservas, cancelarReserva } from '../../../Services/reservasEndpoint';
 import { message, notification } from 'ant-design-vue';
 import { useAuth, ACCESS_LEVELS } from '@/composables/useAuth';
 
@@ -34,7 +34,7 @@ function generarNotificacion(tipo, titulo, texto) {
 watch(usuarioListo, async () => {
     try {
         const [pedidos, reservas, marketplace] = await Promise.all([
-            getProductosCompradosCliente(),
+            obtenerMisPedidos(),
             misReservas(),
             pedidosRealizadosMarketPlace()
         ]);
@@ -53,7 +53,7 @@ async function eliminarPedido(pedido) {
     try {
         await cancelarPedido(pedido.id);
         generarNotificacion('success', 'Pedido cancelado', `El pedido del ${pedido.created_at} ha sido cancelado correctamente.`);
-        listaPedidos.value = await getProductosCompradosCliente();
+        listaPedidos.value = await obtenerMisPedidos();
     } catch (err) {
         console.error("Error al cancelar pedido:", err);
         generarNotificacion('error', 'Error al cancelar', 'No se pudo cancelar el pedido. Inténtalo más tarde.');

@@ -1,37 +1,37 @@
-const menuRepo = require('../repositories/menuRepository');
+const repositorioMenu = require('../repositories/menuRepository');
 
-exports.getAllItems = () => menuRepo.getAllItems();
+exports.obtenerTodosItems = () => repositorioMenu.getAllItems();
 
-exports.getCategories = () => menuRepo.getAllCategories();
+exports.obtenerCategorias = () => repositorioMenu.getAllCategories();
 
-exports.getItemsByCategory = (idcategory) => menuRepo.getItemsByCategory(idcategory);
+exports.obtenerItemsPorCategoria = (idcategory) => repositorioMenu.getItemsByCategory(idcategory);
 
-exports.createItem = async ({ name, ingredients, description, img_src, available, price, id_category }) => {
+exports.crearItem = async ({ name, ingredients, description, img_src, available, price, id_category }) => {
     if (!name || !price || !id_category) {
-        const err = new Error('Faltan campos obligatorios: name, price, id_category');
-        err.status = 400;
-        throw err;
+        const error = new Error('Faltan campos obligatorios: name, price, id_category');
+        error.status = 400;
+        throw error;
     }
-    const id = await menuRepo.insertItem({ name, ingredients, description, img_src, available, price, id_category });
+    const id = await repositorioMenu.insertItem({ name, ingredients, description, img_src, available, price, id_category });
     return { id, message: 'Plato insertado correctamente' };
 };
 
-exports.createCategory = async (name) => {
+exports.crearCategoria = async (name) => {
     if (!name) {
-        const err = new Error('El nombre de la categoría es obligatorio');
-        err.status = 400;
-        throw err;
+        const error = new Error('El nombre de la categoria es obligatorio');
+        error.status = 400;
+        throw error;
     }
-    const id = await menuRepo.insertCategory(name);
-    return { id, message: 'Categoría insertada correctamente' };
+    const id = await repositorioMenu.insertCategory(name);
+    return { id, message: 'Categoria insertada correctamente' };
 };
 
-exports.updateItem = async ({ id, name, ingredients, description, img_src, available, price, id_category }) => {
+exports.actualizarItem = async ({ id, name, ingredients, description, img_src, available, price, id_category }) => {
     if (!id) {
-        const err = new Error('El id del plato es obligatorio');
-        err.status = 400;
-        throw err;
+        const error = new Error('El id del plato es obligatorio');
+        error.status = 400;
+        throw error;
     }
-    const changes = await menuRepo.updateItem({ id, name, ingredients, description, img_src, available, price, id_category });
-    return { message: 'Plato actualizado correctamente', changes };
+    const cambios = await repositorioMenu.updateItem({ id, name, ingredients, description, img_src, available, price, id_category });
+    return { message: 'Plato actualizado correctamente', cambios };
 };

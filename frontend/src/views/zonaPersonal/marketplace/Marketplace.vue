@@ -2,7 +2,7 @@
 import PiePaginaPrincipal from '../../../components/cabeceraYpiePrincipal/PiePaginaPrincipal.vue';
 import CabeceraZonaPersonal from '../../../components/componenteDashboard/CabeceraZonaPersonal.vue';
 import Sidebar from '../../../components/componenteDashboard/Sidebar.vue';
-import { listaProductosMarketplace, cangearProductoMarkePlace } from '../../../services/marketplaceEndpoint';
+import { listaProductosMarketplace, canjearProductoMarketplace } from '../../../Services/marketplaceEndpoint';
 import { notification } from 'ant-design-vue';
 import { ref, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
@@ -49,7 +49,7 @@ function estaDesbloqueado(producto) {
 async function adquirirProducto(producto) {
     if (!estaDesbloqueado(producto)) return;
     try {
-        await cangearProductoMarkePlace(producto.id);
+        await canjearProductoMarketplace(producto.id);
         generarNotificacion('success', 'Canjeo de producto', 'El producto fue canjeado con éxito. Tus puntos se han actualizado.');
     } catch (error) {
         generarNotificacion('error', '¡Advertencia!', 'Hubo un error al canjear el producto. Verifique si tiene puntos suficientes.');

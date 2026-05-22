@@ -2,10 +2,10 @@
 import PiePaginaPrincipal from '../../../components/cabeceraYpiePrincipal/PiePaginaPrincipal.vue';
 import CabeceraZonaPersonal from '../../../components/componenteDashboard/CabeceraZonaPersonal.vue';
 import Sidebar from '../../../components/componenteDashboard/Sidebar.vue';
-import { getMyReviews, addReview } from '../../../services/comentariosEndpoint';
-import { getProductosCompradosCliente } from '../../../services/realizarPedidoEndpoint';
-import { informacionUsuario } from '../../../services/usuariosEndpoint';
-import { getMenu } from '../../../services/menuEndpoint';
+import { obtenerMisResenias, agregarResenia } from '../../../Services/comentariosEndpoint';
+import { obtenerMisPedidos } from '../../../Services/realizarPedidoEndpoint';
+import { informacionUsuario } from '../../../Services/usuariosEndpoint';
+import { obtenerMenu } from '../../../Services/menuEndpoint';
 import { ref, computed, watch } from 'vue';
 import { message, notification } from 'ant-design-vue';
 import { useAuth, ACCESS_LEVELS } from '@/composables/useAuth';
@@ -67,7 +67,7 @@ const guardarResenia = async () => {
 
     confirmLoading.value = true;
     try {
-        const res = await addReview({
+        const res = await agregarResenia({
             id_plato: formModal.value.id_plato,
             descripcion: formModal.value.descripcion,
             puntuacion: formModal.value.puntuacion
@@ -79,8 +79,8 @@ const guardarResenia = async () => {
 
         [user.value, listaResenias.value, productosComprados.value] = await Promise.all([
             informacionUsuario(),
-            getMyReviews(),
-            getProductosCompradosCliente()
+            obtenerMisResenias(),
+            obtenerMisPedidos()
         ]);
 
     } catch (err) {
@@ -95,9 +95,9 @@ watch(usuarioListo, async () => {
     try {
         [user.value, listaResenias.value, productosComprados.value, menuCompleto.value] = await Promise.all([
             informacionUsuario(),
-            getMyReviews(),
-            getProductosCompradosCliente(),
-            getMenu()
+            obtenerMisResenias(),
+            obtenerMisPedidos(),
+            obtenerMenu()
         ]);
     } catch (err) {
         message.error(`Error cargando datos: ${err}`);

@@ -1,41 +1,42 @@
 const db = require('../utils/db');
 
-const query = (sql, params = []) => new Promise((resolve, reject) =>
-    db.all(sql, params, (err, rows) => err ? reject(err) : resolve(rows))
+const consulta = (sql, params = []) => new Promise((resolve, reject) =>
+    db.all(sql, params, (err, filas) => err ? reject(err) : resolve(filas))
 );
-const queryOne = (sql, params = []) => new Promise((resolve, reject) =>
-    db.get(sql, params, (err, row) => err ? reject(err) : resolve(row))
+const consultaUno = (sql, params = []) => new Promise((resolve, reject) =>
+    db.get(sql, params, (err, fila) => err ? reject(err) : resolve(fila))
 );
-const run = (sql, params = []) => new Promise((resolve, reject) =>
-    db.run(sql, params, function (err) { err ? reject(err) : resolve(this) })
+const ejecutar = (sql, params = []) => new Promise((resolve, reject) =>
+    db.run(sql, params, function (err) { err ? reject(err) : resolve(this); })
 );
 
 exports.getMesasActivas = () =>
-    query('SELECT id FROM mesas WHERE activo = 1');
+    consulta('SELECT id FROM mesas WHERE activo = 1');
 
 exports.getMesasActivasPorOcupantes = (ocupantes) => {
-    if (!ocupantes)
-        return query('SELECT id, nombre AS name, n_ocupantes FROM mesas WHERE activo = 1');
-    const max = Number(ocupantes) + 2;
-    return query(
+    if (!ocupantes) {
+        return consulta('SELECT id, nombre AS name, n_ocupantes FROM mesas WHERE activo = 1');
+    }
+    const maximo = Number(ocupantes) + 2;
+    return consulta(
         'SELECT id, nombre AS name, n_ocupantes FROM mesas WHERE activo = 1 AND n_ocupantes >= ? AND n_ocupantes <= ?',
-        [Number(ocupantes), max]
+        [Number(ocupantes), maximo]
     );
 };
 
-exports.getReservasPorMes = (year, month) =>
-    query(
+exports.getReservasPorMes = (anio, mes) =>
+    consulta(
         `SELECT r.fecha_reserva AS reserve_date, r.hora_reserva AS reserve_hour, mr.id_mesa
          FROM reservas r
          JOIN mesas_reservadas mr ON mr.id_reserva = r.id
          WHERE strftime('%Y', r.fecha_reserva) = ?
            AND strftime('%m', r.fecha_reserva) = ?
            AND (r.estado IS NULL OR r.estado != 'cancel')`,
-        [year, month]
+        [anio, mes]
     );
 
 exports.getReservasPorFecha = (fecha) =>
-    query(
+    consulta(
         `SELECT r.hora_reserva AS reserve_hour, mr.id_mesa
          FROM reservas r
          JOIN mesas_reservadas mr ON mr.id_reserva = r.id
@@ -44,17 +45,17 @@ exports.getReservasPorFecha = (fecha) =>
         [fecha]
     );
 
-exports.getReservaByIdAndUser = (idReserva, userId) =>
-    queryOne(
+exports.getReservaByIdAndUser = (idReserva, idUsuario) =>
+    consultaUno(
         'SELECT id, fecha_reserva AS reserve_date, hora_reserva AS reserve_hour FROM reservas WHERE id = ? AND id_usuario = ?',
-        [idReserva, userId]
+        [idReserva, idUsuario]
     );
 
 exports.getMesaActivaById = (idMesa) =>
-    queryOne('SELECT id FROM mesas WHERE id = ? AND activo = 1', [idMesa]);
+    consultaUno('SELECT id FROM mesas WHERE id = ? AND activo = 1', [idMesa]);
 
 exports.getConflictoMesa = (idMesa, fecha, hora) =>
-    queryOne(
+    consultaUno(
         `SELECT mr.id
          FROM mesas_reservadas mr
          JOIN reservas r ON mr.id_reserva = r.id
@@ -66,36 +67,36 @@ exports.getConflictoMesa = (idMesa, fecha, hora) =>
     );
 
 exports.insertMesaReservada = async (idReserva, idMesa) => {
-    const result = await run(
+    const resultado = await ejecutar(
         'INSERT INTO mesas_reservadas (id_reserva, id_mesa) VALUES (?, ?)',
         [idReserva, idMesa]
     );
-    return result.lastID;
+    return resultado.lastID;
 };
 
 exports.getTodasMesas = () =>
-    query('SELECT id, nombre AS name, n_ocupantes, activo FROM mesas ORDER BY activo DESC, id ASC');
+    consulta('SELECT id, nombre AS name, n_ocupantes, activo FROM mesas ORDER BY activo DESC, id ASC');
 
-exports.insertMesa = async (name, n_ocupantes) => {
-    const result = await run(
+exports.insertMesa = async (name, nOcupantes) => {
+    const resultado = await ejecutar(
         'INSERT INTO mesas (nombre, n_ocupantes, activo) VALUES (?, ?, 1)',
-        [name, n_ocupantes]
+        [name, nOcupantes]
     );
-    return result.lastID;
+    return resultado.lastID;
 };
 
-exports.updateMesa = async (id, name, n_ocupantes, activo) => {
-    const result = await run(
+exports.updateMesa = async (id, name, nOcupantes, activo) => {
+    const resultado = await ejecutar(
         'UPDATE mesas SET nombre = ?, n_ocupantes = ?, activo = ? WHERE id = ?',
-        [name, n_ocupantes, activo, id]
+        [name, nOcupantes, activo, id]
     );
-    return result.changes;
+    return resultado.changes;
 };
 
 exports.desactivarMesa = async (id) => {
-    const result = await run(
+    const resultado = await ejecutar(
         'UPDATE mesas SET activo = 0 WHERE id = ?',
         [id]
     );
-    return result.changes;
+    return resultado.changes;
 };

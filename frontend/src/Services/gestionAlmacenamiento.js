@@ -1,4 +1,4 @@
-export const getTokenAutentificacion = () => {
+export const obtenerTokenAutentificacion = () => {
     try {
         return localStorage.getItem('loginUserToken');
     } catch {
@@ -6,7 +6,7 @@ export const getTokenAutentificacion = () => {
     }
 };
 
-export const getTokenAdmin = () => {
+export const obtenerTokenAdmin = () => {
     try {
         return localStorage.getItem('adminToken');
     } catch {

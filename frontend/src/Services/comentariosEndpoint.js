@@ -1,48 +1,47 @@
 import axios from 'axios';
-const API_URL = import.meta.env.VITE_API_URL;
-import { getTokenAutentificacion, cerrarSesionUsuario } from './gestionAlmacenamiento';
+const URL_API = import.meta.env.VITE_API_URL;
+import { obtenerTokenAutentificacion, cerrarSesionUsuario } from './gestionAlmacenamiento';
 
-
-export const addReview = async (data = {}) => {
+export const agregarResenia = async (datos = {}) => {
     try {
-        const token = getTokenAutentificacion();
-        const config = {
+        const token = obtenerTokenAutentificacion();
+        const configuracion = {
             headers: { authorization: `Bearer ${token}` },
         };
-        const response = await axios.post(`${API_URL}/api/resenias`, data, config);
-        return response.data;
+        const respuesta = await axios.post(`${URL_API}/api/resenias`, datos, configuracion);
+        return respuesta.data;
     } catch (error) {
         if (error.response?.status === 401) {
             cerrarSesionUsuario();
         }
-        console.error('Error al añadir reseña:', error);
+        console.error('Error al agregar resenia:', error);
         throw error;
     }
 };
 
-export const getMyReviews = async () => {
+export const obtenerMisResenias = async () => {
     try {
-        const token = getTokenAutentificacion();
-        const config = {
+        const token = obtenerTokenAutentificacion();
+        const configuracion = {
             headers: { authorization: `Bearer ${token}` },
         };
-        const response = await axios.get(`${API_URL}/api/resenias/my-reviews`, config);
-        return response.data;
+        const respuesta = await axios.get(`${URL_API}/api/resenias/misResenias`, configuracion);
+        return respuesta.data;
     } catch (error) {
         if (error.response?.status === 401) {
             cerrarSesionUsuario();
         }
-        console.error('Error al obtener mis reseñas:', error);
+        console.error('Error al obtener mis resenias:', error);
         throw error;
     }
 };
 
-export const getReviewsByDish = async (idPlato) => {
+export const obtenerReseniasPorPlato = async (idPlato) => {
     try {
-        const response = await axios.get(`${API_URL}/api/resenias/${idPlato}`);
-        return response.data;
+        const respuesta = await axios.get(`${URL_API}/api/resenias/${idPlato}`);
+        return respuesta.data;
     } catch (error) {
-        console.error('Error al obtener reseñas del plato:', error);
+        console.error('Error al obtener resenias del plato:', error);
         throw error;
     }
 };

@@ -1,8 +1,33 @@
 const express = require('express');
-require('dotenv')['config']();
-const cors = require('cors'), http = require('http'), userRoutes = require('./routes/userRoutes'), menuRoutes = require('./routes/menuRoutes'), reserveRoutes = require('./routes/reserveRoutes.js'), ticketsRoutes = require('./routes/ticketsRoutes.js'), marketRoutes = require('./routes/marketRoutes.js'), reseniasRoutes = require('./routes/reseniasRoutes.js'), orderRoutes = require('./routes/orderRoutes.js'), mesasRoutes = require('./routes/mesasRoutes.js'), app = express();
-app['use'](cors()), app['use'](express['json']()), app['use']('/api/user', userRoutes), app['use']('/api/menu', menuRoutes), app['use']('/api/reservas', reserveRoutes), app['use']('/api/tickets', ticketsRoutes), app['use']('/api/marketplace', marketRoutes), app['use']('/api/resenias', reseniasRoutes), app['use']('/api/orders', orderRoutes), app['use']('/api/mesas', mesasRoutes), app['use']('/uploads', express['static']('uploads'));
-const PORT = process.env.PORT;
-app['listen'](PORT, () => {
-    console['log']('Servidor\x20escuchando\x20en\x20http://localhost/:' + PORT);
+const cors = require('cors');
+const http = require('http');
+require('dotenv').config();
+
+const rutasUsuario = require('./routes/usuarioRoutes.js');
+const rutasMenu = require('./routes/menuRoutes');
+const rutasReservas = require('./routes/reservaRoutes.js');
+const rutasTickets = require('./routes/ticketsRoutes.js');
+const rutasMercado = require('./routes/mercadoRoutes.js');
+const rutasResenias = require('./routes/comentarioRoutes.js');
+const rutasPedidos = require('./routes/pedidoRoutes.js');
+const rutasMesas = require('./routes/mesaRoutes.js');
+
+const aplicacion = express();
+const PUERTO = process.env.PORT;
+
+aplicacion.use(cors());
+aplicacion.use(express.json());
+
+aplicacion.use('/api/usuario', rutasUsuario);
+aplicacion.use('/api/menu', rutasMenu);
+aplicacion.use('/api/reservas', rutasReservas);
+aplicacion.use('/api/tickets', rutasTickets);
+aplicacion.use('/api/marketplace', rutasMercado);
+aplicacion.use('/api/resenias', rutasResenias);
+aplicacion.use('/api/orders', rutasPedidos);
+aplicacion.use('/api/mesas', rutasMesas);
+aplicacion.use('/uploads', express.static('uploads'));
+
+aplicacion.listen(PUERTO, () => {
+    console.log(`Servidor escuchando en http://localhost:${PUERTO}`);
 });

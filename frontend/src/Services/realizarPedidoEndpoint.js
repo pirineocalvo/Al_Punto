@@ -1,87 +1,83 @@
 import axios from 'axios';
-const API_URL = import.meta.env.VITE_API_URL;
-import { getTokenAutentificacion, cerrarSesionUsuario } from './gestionAlmacenamiento';
+const URL_API = import.meta.env.VITE_API_URL;
+import { obtenerTokenAutentificacion, cerrarSesionUsuario } from './gestionAlmacenamiento';
 
-export const getProductosCompradosCliente = async () => {
+export const obtenerMisPedidos = async () => {
     try {
-        const token = getTokenAutentificacion();
-        const config = {
+        const token = obtenerTokenAutentificacion();
+        const configuracion = {
             headers: { authorization: `Bearer ${token}` },
         };
-        const response = await axios.get(`${API_URL}/api/orders/mis-pedidos`, config);
-        return response.data;
+        const respuesta = await axios.get(`${URL_API}/api/orders/misPedidos`, configuracion);
+        return respuesta.data;
     } catch (error) {
         if (error.response.status === 401) {
             cerrarSesionUsuario();
         }
-        console.error('Error getting pedidos:', error);
+        console.error('Error al obtener pedidos:', error);
         throw error;
     }
 };
 
-export const guardarCarritoCompraClientes = async (data = {}) => {
+export const guardarCarritoCompraClientes = async (datos = {}) => {
     try {
-        const token = getTokenAutentificacion();
-        const config = {
+        const token = obtenerTokenAutentificacion();
+        const configuracion = {
             headers: { authorization: `Bearer ${token}` },
         };
-        const response = await axios.post(`${API_URL}/api/orders/create`, data, config);
-        return response.data;
+        const respuesta = await axios.post(`${URL_API}/api/orders/crear`, datos, configuracion);
+        return respuesta.data;
     } catch (error) {
         if (error.response.status === 401) {
             cerrarSesionUsuario();
         }
-        console.error('Error subiendo pedidos:', error);
+        console.error('Error al subir pedido:', error);
         throw error;
     }
 };
 
 export const cancelarPedido = async (id) => {
     try {
-        const token = getTokenAutentificacion()
-        const config = {
-            headers: { authorization: `Bearer ${token}` },
-        }
-
-        const response = await axios.delete(`${API_URL}/api/orders/cancelar/${id}`, config)
-        return response.data
-    } catch (error) {
-        if (error.response?.status === 401) {
-            cerrarSesionUsuario()
-        }
-        console.error('Error cancelando pedido:', error)
-        throw error
-    }
-}
-
-// Obtener TODOS los pedidos
-export const getTodosLosPedidosAdmin = async () => {
-    try {
-        const token = getTokenAutentificacion();
-        const config = {
+        const token = obtenerTokenAutentificacion();
+        const configuracion = {
             headers: { authorization: `Bearer ${token}` },
         };
+        const respuesta = await axios.delete(`${URL_API}/api/orders/cancelar/${id}`, configuracion);
+        return respuesta.data;
+    } catch (error) {
+        if (error.response?.status === 401) {
+            cerrarSesionUsuario();
+        }
+        console.error('Error al cancelar pedido:', error);
+        throw error;
+    }
+};
 
-        const response = await axios.get(`${API_URL}/api/orders/admin/todos`, config);
-        return response.data;
+export const obtenerTodosLosPedidosAdmin = async () => {
+    try {
+        const token = obtenerTokenAutentificacion();
+        const configuracion = {
+            headers: { authorization: `Bearer ${token}` },
+        };
+        const respuesta = await axios.get(`${URL_API}/api/orders/admin/todos`, configuracion);
+        return respuesta.data;
     } catch (error) {
         console.error('Error al obtener pedidos globales:', error);
         throw error;
     }
 };
 
-export const actualizarEstadoOrden = async (id, status, is_picked_up = false) => {
+export const actualizarEstadoOrden = async (id, estado, recogido = false) => {
     try {
-        const token = getTokenAutentificacion();
-        const config = {
+        const token = obtenerTokenAutentificacion();
+        const configuracion = {
             headers: { authorization: `Bearer ${token}` },
         };
-
-        const response = await axios.patch(`${API_URL}/api/orders/admin/${id}/status`, {
-            status,
-            is_picked_up: is_picked_up ? 1 : 0
-        }, config);
-        return response.data;
+        const respuesta = await axios.patch(`${URL_API}/api/orders/admin/${id}/estado`, {
+            estado,
+            recogido: recogido ? 1 : 0,
+        }, configuracion);
+        return respuesta.data;
     } catch (error) {
         console.error('Error al actualizar estado del pedido:', error);
         throw error;
