@@ -67,3 +67,15 @@ exports.actualizarContrasena = async (req, res) => {
         res.status(error.status || 500).json({ error: error.message });
     }
 };
+
+exports.checkin = async (req, res) => {
+    try {
+        const usuario = await servicioUsuario.obtenerUsuarioPorId(req.params.id);
+        if (!usuario) {
+            return res.status(404).json({ error: 'Usuario no encontrado' });
+        }
+        res.json({ nombre: `${usuario.nombre} ${usuario.apellido}` });
+    } catch (error) {
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
+};

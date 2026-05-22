@@ -37,6 +37,7 @@ exports.insertWallet = (idUsuario, puntos) =>
 exports.getUserInfo = (idUsuario) =>
     consultaUno(
         `SELECT
+             u.id,
              u.nombre        AS first_name,
              u.apellido      AS last_name,
              u.telefono      AS phone,
@@ -81,3 +82,7 @@ exports.updatePerfil = (idUsuario, first_name, last_name, phone) =>
 
 exports.updatePassword = (idUsuario, nuevoHash) =>
     ejecutar('UPDATE usuarios SET hash_contrasena = ? WHERE id = ?', [nuevoHash, idUsuario]);
+
+exports.obtenerUsuarioPorId = (id) =>
+    consulta('SELECT nombre, apellido FROM usuarios WHERE id = ?', [id])
+        .then(filas => filas[0] ?? null);

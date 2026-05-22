@@ -2,10 +2,10 @@
 import PiePaginaPrincipal from '../../../components/cabeceraYpiePrincipal/PiePaginaPrincipal.vue';
 import CabeceraZonaPersonal from '../../../components/componenteDashboard/CabeceraZonaPersonal.vue';
 import Sidebar from '../../../components/componenteDashboard/Sidebar.vue';
-import { obtenerMisResenias, agregarResenia } from '../../../Services/comentariosEndpoint';
-import { obtenerMisPedidos } from '../../../Services/realizarPedidoEndpoint';
-import { informacionUsuario } from '../../../Services/usuariosEndpoint';
-import { obtenerMenu } from '../../../Services/menuEndpoint';
+import { obtenerMisResenias, agregarResenia } from '../../../services/comentariosEndpoint';
+import { obtenerMisPedidos } from '../../../services/realizarPedidoEndpoint';
+import { informacionUsuario } from '../../../services/usuariosEndpoint';
+import { obtenerMenu } from '../../../services/menuEndpoint';
 import { ref, computed, watch } from 'vue';
 import { message, notification } from 'ant-design-vue';
 import { useAuth, ACCESS_LEVELS } from '@/composables/useAuth';

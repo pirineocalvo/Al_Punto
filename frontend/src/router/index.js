@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { informacionUsuario } from '@/services/usuariosEndpoint'
-import { ACCESS_LEVELS } from '@/composables/useAuth'
+import { informacionUsuario } from '@/services/usuariosEndpoint.js'
+import { ACCESS_LEVELS } from '@/composables/useAuth.js'
 
 // ─── Rutas ───────────────────────────────────────────────────────────────────
 const routes = [
@@ -29,6 +29,10 @@ const routes = [
   {
     path: '/noAutorizado',
     component: () => import('@/views/zonaPersonal/administracion/NoAutorizado.vue'),
+  },
+  {
+    path: '/checkin',
+    component: () => import('@/views/zonaPersonal/QrCheck.vue'),
   },
 
   // ── Rutas protegidas: cualquier usuario autenticado ───────────────────────
@@ -88,13 +92,12 @@ const routes = [
   },
 ]
 
-//web history mejora la navegacion guardando por donde se mueve o por donde queria ir el usuario
 const router = createRouter({
   history: createWebHistory(),
   routes,
 })
 
-let rutaUsuarioCacheada = null;  
+let rutaUsuarioCacheada = null;
 
 router.beforeEach(async (to) => {
 

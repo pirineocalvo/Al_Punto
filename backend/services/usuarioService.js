@@ -118,3 +118,7 @@ exports.actualizarContrasena = async (idUsuario, password_actual, password_nueva
     await repositorioUsuario.updatePassword(idUsuario, cifrarContrasena(password_nueva));
     return { message: 'Contraseña actualizada correctamente' };
 };
+
+exports.obtenerUsuarioPorId = async (id) => {
+    return await repositorioUsuario.obtenerUsuarioPorId(id);
+};

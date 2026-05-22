@@ -20,9 +20,7 @@ const collapsed = ref(false);
 const chartRef = ref(null);
 let chartInstance = null;
 
-
 const qr = ref('');
-
 
 const generarCodigoQR = (userId) => {
     return encodeURIComponent(userId);
@@ -36,18 +34,17 @@ const fetchReserve = async () => {
     }
 };
 
-// TO DO: pantalla verificada tras escanear (cuando despleguemos)
 const generarQR = async () => {
     if (!user.value) return;
 
     const code = generarCodigoQR(user.value.id);
-    const url = `https://tudominio.com/checkin?code=${code}`;
+    const baseUrl = window.location.origin;
+    const url = `${baseUrl}/checkin?code=${code}`;
     try {
         qr.value = await QRCode.toDataURL(url);
     } catch (error) {
-
+        message.error('Error al generar el QR');
     }
-
 };
 
 const chartData = computed(() => [
@@ -60,9 +57,7 @@ const renderChart = async () => {
     try {
         await nextTick();
     } catch (error) {
-
     }
-
 
     if (!chartRef.value) return;
 
@@ -102,12 +97,10 @@ watch(usuarioListo, async () => {
     try {
         await generarQR();
     } catch (error) {
-        message.error('Error al cargar el qr en el watch');
+        message.error('Error al cargar el QR');
     }
-
 }, { immediate: true });
 
-//si se pone en el de arriba no carga
 watch(cargado, () => {
     if (cargado.value) {
         renderChart();
@@ -120,7 +113,6 @@ onBeforeUnmount(() => {
         chartInstance = null;
     }
 });
-
 </script>
 
 <template>
@@ -184,12 +176,9 @@ onBeforeUnmount(() => {
                         </a-card>
                     </a-row>
 
-
-
                     <a-card class="tarjetaGrafico">
                         <div ref="chartRef" class="contenedorGrafico"></div>
                     </a-card>
-
                 </div>
             </a-layout-content>
         </a-layout>
@@ -248,7 +237,6 @@ onBeforeUnmount(() => {
     align-items: center;
     gap: 10px;
     font-weight: 600;
-
 }
 
 .iconoEstadistica {

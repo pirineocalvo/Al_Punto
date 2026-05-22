@@ -10,5 +10,6 @@ enrutador.get('/transacciones', authMiddleware, controladorUsuario.obtenerTransa
 enrutador.get('/niveles', controladorUsuario.obtenerNiveles);
 enrutador.put('/perfil', authMiddleware, controladorUsuario.actualizarPerfil);
 enrutador.put('/contrasena', authMiddleware, controladorUsuario.actualizarContrasena);
+enrutador.get('/checkin/:id', controladorUsuario.checkin);
 
 module.exports = enrutador;

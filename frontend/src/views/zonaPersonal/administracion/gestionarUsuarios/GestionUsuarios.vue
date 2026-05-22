@@ -1,9 +1,9 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
 import { CalendarOutlined, ClockCircleOutlined, TeamOutlined, NumberOutlined } from '@ant-design/icons-vue';
-import { usarProductoMarket } from '../../../../Services/marketplaceEndpoint';
-import { obtenerTodosLosPedidosAdmin, actualizarEstadoOrden, cancelarPedido } from '../../../../Services/realizarPedidoEndpoint';
-import { obtenerTodasLasReservasAdmin, actualizarEstadoReservaAdmin } from '../../../../Services/reservasEndpoint';
+import { usarProductoMarket } from '../../../../services/marketplaceEndpoint';
+import { obtenerTodosLosPedidosAdmin, actualizarEstadoOrden, cancelarPedido } from '../../../../services/realizarPedidoEndpoint';
+import { obtenerTodasLasReservasAdmin, actualizarEstadoReservaAdmin } from '../../../../services/reservasEndpoint';
 import { notification, message } from 'ant-design-vue';
 import CabeceraZonaPersonal from '@/components/componenteDashboard/CabeceraZonaPersonal.vue';
 import PiePaginaPrincipal from '@/components/cabeceraYpiePrincipal/PiePaginaPrincipal.vue';
