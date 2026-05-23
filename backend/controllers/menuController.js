@@ -1,55 +1,55 @@
-const menuService = require('../services/menuService');
+const servicioMenu = require('../services/menuService');
 
-exports.getAllItems = async (req, res) => {
+exports.obtenerTodosItems = async (req, res) => {
     try {
-        const items = await menuService.getAllItems();
+        const items = await servicioMenu.obtenerTodosItems();
         res.json(items);
-    } catch (err) {
-        res.status(err.status || 500).json({ error: err.message });
+    } catch (error) {
+        res.status(error.status || 500).json({ error: error.message });
     }
 };
 
-exports.getCategories = async (req, res) => {
+exports.obtenerCategorias = async (req, res) => {
     try {
-        const categories = await menuService.getCategories();
-        res.json(categories);
-    } catch (err) {
-        res.status(err.status || 500).json({ error: err.message });
+        const categorias = await servicioMenu.obtenerCategorias();
+        res.json(categorias);
+    } catch (error) {
+        res.status(error.status || 500).json({ error: error.message });
     }
 };
 
-exports.getItemsByCategory = async (req, res) => {
+exports.obtenerItemsPorCategoria = async (req, res) => {
     try {
-        const items = await menuService.getItemsByCategory(req.params.idcategory);
+        const items = await servicioMenu.obtenerItemsPorCategoria(req.params.idcategory);
         res.json(items);
-    } catch (err) {
-        res.status(err.status || 500).json({ error: err.message });
+    } catch (error) {
+        res.status(error.status || 500).json({ error: error.message });
     }
 };
 
-exports.createItem = async (req, res) => {
+exports.crearItem = async (req, res) => {
     try {
-        const result = await menuService.createItem(req.body);
-        res.status(201).json(result);
-    } catch (err) {
-        res.status(err.status || 500).json({ error: err.message });
+        const resultado = await servicioMenu.crearItem(req.body);
+        res.status(201).json(resultado);
+    } catch (error) {
+        res.status(error.status || 500).json({ error: error.message });
     }
 };
 
-exports.createCategory = async (req, res) => {
+exports.crearCategoria = async (req, res) => {
     try {
-        const result = await menuService.createCategory(req.body.name);
-        res.status(201).json(result);
-    } catch (err) {
-        res.status(err.status || 500).json({ error: err.message });
+        const resultado = await servicioMenu.crearCategoria(req.body.name);
+        res.status(201).json(resultado);
+    } catch (error) {
+        res.status(error.status || 500).json({ error: error.message });
     }
 };
 
-exports.updateItem = async (req, res) => {
+exports.actualizarItem = async (req, res) => {
     try {
-        const result = await menuService.updateItem(req.body);
-        res.json(result);
-    } catch (err) {
-        res.status(err.status || 500).json({ error: err.message });
+        const resultado = await servicioMenu.actualizarItem(req.body);
+        res.json(resultado);
+    } catch (error) {
+        res.status(error.status || 500).json({ error: error.message });
     }
 };

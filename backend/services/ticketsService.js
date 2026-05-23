@@ -1,75 +1,75 @@
-const ticketsRepo = require('../repositories/ticketsRepository');
+const repositorioTickets = require('../repositories/ticketsRepository');
 const Tesseract = require('tesseract.js');
 
 const RESTAURANTES_CONOCIDOS = ['Al Punto'];
 
-async function analizarTicket(imagePath) {
-    const { data: { text } } = await Tesseract.recognize(imagePath, 'spa');
+async function analizarTicket(rutaImagen) {
+    const { data: { text } } = await Tesseract.recognize(rutaImagen, 'spa');
     return text;
 }
 
-function calcularPuntos(text) {
-    const match = text.match(/Total:\s*.*?(\d+(?:[.,]\d{1,2})?)\s*€/i);
-    return match ? parseFloat(match[1]) * 100 : 0;
+function calcularPuntos(texto) {
+    const coincidencia = texto.match(/Total:\s*.*?(\d+(?:[.,]\d{1,2})?)\s*€/i);
+    return coincidencia ? parseFloat(coincidencia[1]) * 100 : 0;
 }
 
-function extraerNombreRestaurante(text) {
-    const limpio = text
+function extraerNombreRestaurante(texto) {
+    const limpio = texto
         .toUpperCase()
         .replace(/[\[\](){}|<>*#@!¡?¿"'\\\/\-_=+~^]/g, ' ')
         .replace(/\s+/g, ' ');
     return RESTAURANTES_CONOCIDOS.find(n => limpio.includes(n.toUpperCase())) ?? null;
 }
 
-function detectarSubidaNivel(levels, puntosAntes, puntosDespues) {
-    const prevLevel = levels.find(l => puntosAntes >= l.min_points && puntosAntes <= l.max_points);
-    const newLevel  = levels.find(l => puntosDespues >= l.min_points && puntosDespues <= l.max_points);
-    if (prevLevel && newLevel && prevLevel.name !== newLevel.name)
-        return newLevel.name;
+function detectarSubidaNivel(niveles, puntosAntes, puntosDespues) {
+    const nivelAnterior = niveles.find(n => puntosAntes >= n.min_points && puntosAntes <= n.max_points);
+    const nivelNuevo = niveles.find(n => puntosDespues >= n.min_points && puntosDespues <= n.max_points);
+    if (nivelAnterior && nivelNuevo && nivelAnterior.name !== nivelNuevo.name) {
+        return nivelNuevo.name;
+    }
     return null;
 }
 
-exports.uploadTicket = async (userId, file, fileName) => {
-    if (!file) {
-        const err = new Error('No se ha subido ninguna imagen');
-        err.status = 400;
-        throw err;
+exports.subirTicket = async (idUsuario, archivo, nombreArchivo) => {
+    if (!archivo) {
+        const error = new Error('No se ha subido ninguna imagen');
+        error.status = 400;
+        throw error;
     }
 
-    const ocrText    = await analizarTicket(file.path);
-    const restaurante = extraerNombreRestaurante(ocrText);
+    const textoOcr = await analizarTicket(archivo.path);
+    const restaurante = extraerNombreRestaurante(textoOcr);
 
     if (!restaurante) {
-        const err = new Error('El ticket no pertenece a Al Punto');
-        err.status = 400;
-        throw err;
+        const error = new Error('El ticket no pertenece a Al Punto');
+        error.status = 400;
+        throw error;
     }
 
-    const points = calcularPuntos(ocrText);
-    const status = points === 0 ? 'review' : 'ok';
+    const puntos = calcularPuntos(textoOcr);
+    const estado = puntos === 0 ? 'review' : 'ok';
 
-    const ticketId = await ticketsRepo.insertTicket(userId, fileName, ocrText, points, status);
+    const idTicket = await repositorioTickets.insertTicket(idUsuario, nombreArchivo, textoOcr, puntos, estado);
+    const monedero = await repositorioTickets.getWalletByUser(idUsuario);
+    const puntosTras = monedero.points + puntos;
 
-    const wallet    = await ticketsRepo.getWalletByUser(userId);
-    const newPoints = wallet.points + points;   // era wallet.puntos
+    await repositorioTickets.updateWalletPoints(puntosTras, idUsuario);
+    await repositorioTickets.insertPointTransaction(idUsuario, monedero.id, puntos);
 
-    await ticketsRepo.updateWalletPoints(newPoints, userId);
-    await ticketsRepo.insertPointTransaction(userId, wallet.id, points);
-
-    const levels     = await ticketsRepo.getLevels();
-    const nuevoNivel = detectarSubidaNivel(levels, wallet.points, newPoints);  // era wallet.puntos
+    const niveles = await repositorioTickets.getLevels();
+    const nuevoNivel = detectarSubidaNivel(niveles, monedero.points, puntosTras);
 
     return {
         message: 'Ticket subido y procesado correctamente',
-        fileName,
-        text:     ocrText,
-        points,
-        status,
-        ticketId,
-        walletId: wallet.id,
-        newPoints,
+        nombreArchivo,
+        texto: textoOcr,
+        puntos,
+        estado,
+        idTicket,
+        idMonedero: monedero.id,
+        puntosTras,
         ...(nuevoNivel && { nuevoNivel }),
     };
 };
 
-exports.getMyTickets = (userId) => ticketsRepo.getTicketsByUser(userId);
+exports.obtenerMisTickets = (idUsuario) => repositorioTickets.getTicketsByUser(idUsuario);

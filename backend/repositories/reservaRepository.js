@@ -1,22 +1,22 @@
 const db = require('../utils/db');
 
-const query = (sql, params = []) => new Promise((resolve, reject) =>
-    db.all(sql, params, (err, rows) => err ? reject(err) : resolve(rows))
+const consulta = (sql, params = []) => new Promise((resolve, reject) =>
+    db.all(sql, params, (err, filas) => err ? reject(err) : resolve(filas))
 );
-const run = (sql, params = []) => new Promise((resolve, reject) =>
-    db.run(sql, params, function (err) { err ? reject(err) : resolve(this) })
+const ejecutar = (sql, params = []) => new Promise((resolve, reject) =>
+    db.run(sql, params, function (err) { err ? reject(err) : resolve(this); })
 );
 
-exports.insertReserva = async (userId, fecha, hora, comensales) => {
-    const result = await run(
+exports.insertReserva = async (idUsuario, fecha, hora, comensales) => {
+    const resultado = await ejecutar(
         'INSERT INTO reservas (id_usuario, fecha_reserva, hora_reserva, comensales) VALUES (?, ?, ?, ?)',
-        [userId, fecha, hora, comensales]
+        [idUsuario, fecha, hora, comensales]
     );
-    return result.lastID;
+    return resultado.lastID;
 };
 
-exports.getReservasByUser = (userId) =>
-    query(
+exports.getReservasByUser = (idUsuario) =>
+    consulta(
         `SELECT r.id, r.fecha_reserva AS reserve_date, r.hora_reserva AS reserve_hour,
                 r.comensales AS guests, r.atendido AS attended, r.estado AS status,
                 r.creado_en AS created_at,
@@ -26,19 +26,19 @@ exports.getReservasByUser = (userId) =>
          LEFT JOIN mesas m             ON mr.id_mesa = m.id
          WHERE r.id_usuario = ?
          ORDER BY r.fecha_reserva DESC, r.hora_reserva DESC`,
-        [userId]
+        [idUsuario]
     );
 
-exports.cancelarReserva = async (reservaId, userId) => {
-    const result = await run(
+exports.cancelarReserva = async (idReserva, idUsuario) => {
+    const resultado = await ejecutar(
         'UPDATE reservas SET estado = "cancel" WHERE id = ? AND id_usuario = ?',
-        [reservaId, userId]
+        [idReserva, idUsuario]
     );
-    return result.changes;
+    return resultado.changes;
 };
 
 exports.getAllPendingReservas = () =>
-    query(
+    consulta(
         `SELECT r.id, r.fecha_reserva AS reserve_date, r.hora_reserva AS reserve_hour,
                 r.comensales AS guests, r.atendido AS attended, r.estado AS status,
                 r.creado_en AS created_at,
@@ -52,10 +52,10 @@ exports.getAllPendingReservas = () =>
          ORDER BY r.fecha_reserva DESC, r.hora_reserva DESC`
     );
 
-exports.updateReservaStatus = async (reservaId, status, attended) => {
-    const result = await run(
+exports.updateReservaStatus = async (idReserva, estado, atendido) => {
+    const resultado = await ejecutar(
         'UPDATE reservas SET estado = ?, atendido = ? WHERE id = ?',
-        [status, attended, reservaId]
+        [estado, atendido, idReserva]
     );
-    return result.changes;
+    return resultado.changes;
 };

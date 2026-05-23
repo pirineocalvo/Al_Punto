@@ -1,80 +1,78 @@
 import axios from 'axios';
-const API_URL = import.meta.env.VITE_API_URL;
-import { getTokenAdmin, getTokenAutentificacion} from './gestionAlmacenamiento';
+const URL_API = import.meta.env.VITE_API_URL;
+import { obtenerTokenAdmin, obtenerTokenAutentificacion } from './gestionAlmacenamiento';
 
-export const getMenu = async (data = {}) => {
+export const obtenerMenu = async () => {
     try {
-        const response = await axios.get(`${API_URL}/api/menu`);
-        return response.data;
+        const respuesta = await axios.get(`${URL_API}/api/menu`);
+        return respuesta.data;
     } catch (error) {
-        console.error('Error fetching protected data:', error);
+        console.error('Error al obtener el menu:', error);
         throw error;
     }
 };
 
-
-export const getCategorias = async () => {
+export const obtenerCategorias = async () => {
     try {
-        const response = await axios.get(`${API_URL}/api/menu/categorias`);
-        return response.data;
+        const respuesta = await axios.get(`${URL_API}/api/menu/categorias`);
+        return respuesta.data;
     } catch (error) {
-        console.error('Error fetching categories:', error);
+        console.error('Error al obtener las categorias:', error);
         throw error;
     }
 };
 
-//REVISAR SI SE USA EN ALGUNA PARTE
-export const getMenuByIdCategory = async (data = {}) => {
+export const obtenerMenuPorCategoria = async (datos = {}) => {
     try {
-        const response = await axios.get(`${API_URL}/api/menu/${data.idcategory}`);
-        return response.data;
+        const respuesta = await axios.get(`${URL_API}/api/menu/${datos.idcategory}`);
+        return respuesta.data;
     } catch (error) {
-        console.error('Error fetching protected data:', error);
+        console.error('Error al obtener el menu por categoria:', error);
         throw error;
     }
 };
 
-export const addMenuItem = async (data = {}) => {
+export const agregarItemMenu = async (datos = {}) => {
     try {
-        const token = getTokenAutentificacion();
-        const adminToken = getTokenAdmin();
-        const config = {
-            headers: token ? { Authorization: `Bearer ${token} ${adminToken}` } : {},
+        const token = obtenerTokenAutentificacion();
+        const tokenAdmin = obtenerTokenAdmin();
+        const configuracion = {
+            headers: token ? { Authorization: `Bearer ${token} ${tokenAdmin}` } : {},
         };
-        const response = await axios.post(`${API_URL}/api/menu/add`, data, config);
-        return response.data;
+        const respuesta = await axios.post(`${URL_API}/api/menu/agregar`, datos, configuracion);
+        return respuesta.data;
     } catch (error) {
-        console.error('Error posting protected data:', error);
+        console.error('Error al agregar item al menu:', error);
         throw error;
     }
 };
 
-export const updateMenuItem = async (data = {}) => {
+export const actualizarItemMenu = async (datos = {}) => {
     try {
-        const token = getTokenAutentificacion();
-        const adminToken = getTokenAdmin();
-        const config = {
-            headers: token ? { Authorization: `Bearer ${token} ${adminToken}` } : {},
+        const token = obtenerTokenAutentificacion();
+        const tokenAdmin = obtenerTokenAdmin();
+        const configuracion = {
+            headers: token ? { Authorization: `Bearer ${token} ${tokenAdmin}` } : {},
         };
-        const response = await axios.post(`${API_URL}/api/menu/update`, data, config);
-        return response.data;
+        const respuesta = await axios.post(`${URL_API}/api/menu/actualizar`, datos, configuracion);
+        return respuesta.data;
     } catch (error) {
-        console.error('Error posting protected data:', error);
+        console.error('Error al actualizar item del menu:', error);
         throw error;
     }
 };
 
-export const addCategory = async (data = {}) => {
+export const agregarCategoria = async (datos = {}) => {
     try {
-        const token = getTokenAutentificacion();
-        const adminToken = getTokenAdmin();
-        const config = {
-            headers: token ? { Authorization: `Bearer ${token} ${adminToken}` } : {},
+        const token = obtenerTokenAutentificacion();
+        const tokenAdmin = obtenerTokenAdmin();
+        const configuracion = {
+            headers: token ? { Authorization: `Bearer ${token} ${tokenAdmin}` } : {},
         };
-        const response = await axios.post(`${API_URL}/api/menu/addcategory`, data, config);
-        return response.data;
+        const respuesta = await axios.post(`${URL_API}/api/menu/agregarCategoria`, datos, configuracion);
+        return respuesta.data;
     } catch (error) {
-        console.error('Error posting protected data:', error);
+        console.error('Error al agregar categoria:', error);
         throw error;
     }
 };

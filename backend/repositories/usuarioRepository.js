@@ -1,42 +1,43 @@
 const db = require('../utils/db');
 
-const query = (sql, params = []) => new Promise((resolve, reject) =>
-    db.all(sql, params, (err, rows) => err ? reject(err) : resolve(rows))
+const consulta = (sql, params = []) => new Promise((resolve, reject) =>
+    db.all(sql, params, (err, filas) => err ? reject(err) : resolve(filas))
 );
-const queryOne = (sql, params = []) => new Promise((resolve, reject) =>
-    db.get(sql, params, (err, row) => err ? reject(err) : resolve(row))
+const consultaUno = (sql, params = []) => new Promise((resolve, reject) =>
+    db.get(sql, params, (err, fila) => err ? reject(err) : resolve(fila))
 );
-const run = (sql, params = []) => new Promise((resolve, reject) =>
-    db.run(sql, params, function (err) { err ? reject(err) : resolve(this) })
+const ejecutar = (sql, params = []) => new Promise((resolve, reject) =>
+    db.run(sql, params, function (err) { err ? reject(err) : resolve(this); })
 );
 
 exports.getUserByEmail = (email) =>
-    queryOne('SELECT * FROM usuarios WHERE email = ?', [email]);
+    consultaUno('SELECT * FROM usuarios WHERE email = ?', [email]);
 
-exports.getUserById = (userId) =>
-    queryOne('SELECT hash_contrasena FROM usuarios WHERE id = ?', [userId]);
+exports.getUserById = (idUsuario) =>
+    consultaUno('SELECT hash_contrasena FROM usuarios WHERE id = ?', [idUsuario]);
 
-exports.insertLoginLog = (userId, success, ip) =>
-    run(
+exports.insertLoginLog = (idUsuario, exitoso, ip) =>
+    ejecutar(
         'INSERT INTO registro_accesos (id_usuario, exitoso, ip_address) VALUES (?, ?, ?)',
-        [userId, success ? 1 : 0, ip]
+        [idUsuario, exitoso ? 1 : 0, ip]
     );
 
 exports.insertUser = async ({ firstName, lastName, phone, email, passwordHash, birthDate }) => {
-    const result = await run(
+    const resultado = await ejecutar(
         `INSERT INTO usuarios (nombre, apellido, telefono, email, hash_contrasena, fecha_nacimiento)
          VALUES (?, ?, ?, ?, ?, ?)`,
         [firstName, lastName, phone, email, passwordHash, birthDate || null]
     );
-    return result.lastID;
+    return resultado.lastID;
 };
 
-exports.insertWallet = (userId, points) =>
-    run('INSERT INTO monedero (id_usuario, puntos) VALUES (?, ?)', [userId, points]);
+exports.insertWallet = (idUsuario, puntos) =>
+    ejecutar('INSERT INTO monedero (id_usuario, puntos) VALUES (?, ?)', [idUsuario, puntos]);
 
-exports.getUserInfo = (userId) =>
-    queryOne(
+exports.getUserInfo = (idUsuario) =>
+    consultaUno(
         `SELECT
+             u.id,
              u.nombre        AS first_name,
              u.apellido      AS last_name,
              u.telefono      AS phone,
@@ -56,28 +57,32 @@ exports.getUserInfo = (userId) =>
          FROM usuarios u
          LEFT JOIN monedero m ON u.id = m.id_usuario
          WHERE u.id = ?`,
-        [userId]
+        [idUsuario]
     );
 
-exports.getTransactions = (userId) =>
-    query(
+exports.getTransactions = (idUsuario) =>
+    consulta(
         `SELECT * FROM transacciones_puntos
          WHERE id_usuario = ?
          ORDER BY id DESC
          LIMIT 50`,
-        [userId]
+        [idUsuario]
     );
 
 exports.getLevels = () =>
-    query(
+    consulta(
         'SELECT id, nombre, puntos_min, puntos_max, hex_bkg, hex_text FROM niveles ORDER BY puntos_min ASC'
     );
 
-exports.updatePerfil = (userId, first_name, last_name, phone) =>
-    run(
+exports.updatePerfil = (idUsuario, first_name, last_name, phone) =>
+    ejecutar(
         'UPDATE usuarios SET nombre = ?, apellido = ?, telefono = ? WHERE id = ?',
-        [first_name, last_name, phone, userId]
+        [first_name, last_name, phone, idUsuario]
     );
 
-exports.updatePassword = (userId, newHash) =>
-    run('UPDATE usuarios SET hash_contrasena = ? WHERE id = ?', [newHash, userId]);
+exports.updatePassword = (idUsuario, nuevoHash) =>
+    ejecutar('UPDATE usuarios SET hash_contrasena = ? WHERE id = ?', [nuevoHash, idUsuario]);
+
+exports.obtenerUsuarioPorId = (id) =>
+    consulta('SELECT nombre, apellido FROM usuarios WHERE id = ?', [id])
+        .then(filas => filas[0] ?? null);

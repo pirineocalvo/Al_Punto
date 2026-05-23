@@ -1,16 +1,16 @@
 const db = require('../utils/db');
 
-const query = (sql, params = []) => new Promise((resolve, reject) =>
-    db.all(sql, params, (err, rows) => err ? reject(err) : resolve(rows))
+const consulta = (sql, params = []) => new Promise((resolve, reject) =>
+    db.all(sql, params, (err, filas) => err ? reject(err) : resolve(filas))
 );
-const queryOne = (sql, params = []) => new Promise((resolve, reject) =>
-    db.get(sql, params, (err, row) => err ? reject(err) : resolve(row))
+const consultaUno = (sql, params = []) => new Promise((resolve, reject) =>
+    db.get(sql, params, (err, fila) => err ? reject(err) : resolve(fila))
 );
-const run = (sql, params = []) => new Promise((resolve, reject) =>
-    db.run(sql, params, function (err) { err ? reject(err) : resolve(this) })
+const ejecutar = (sql, params = []) => new Promise((resolve, reject) =>
+    db.run(sql, params, function (err) { err ? reject(err) : resolve(this); })
 );
 
-const MENU_SELECT = `
+const SELECCION_MENU = `
     SELECT m.id, c.nombre AS category_name, m.id_categoria AS id_category,
            m.nombre AS name, m.ingredientes AS ingredients, m.descripcion AS description,
            m.img_src, m.disponible AS available, m.precio AS price
@@ -18,39 +18,39 @@ const MENU_SELECT = `
     LEFT JOIN categorias_menu c ON m.id_categoria = c.id
 `;
 
-exports.getAllItems = () => query(MENU_SELECT);
+exports.getAllItems = () => consulta(SELECCION_MENU);
 
-exports.getAllCategories = () => query('SELECT id, nombre AS name FROM categorias_menu ORDER BY id');
+exports.getAllCategories = () => consulta('SELECT id, nombre AS name FROM categorias_menu ORDER BY id');
 
-exports.getItemsByCategory = (idcategory) => query(
-    `${MENU_SELECT} WHERE m.id_categoria = ?`,
+exports.getItemsByCategory = (idcategory) => consulta(
+    `${SELECCION_MENU} WHERE m.id_categoria = ?`,
     [idcategory]
 );
 
 exports.insertItem = async ({ name, ingredients, description, img_src, available, price, id_category }) => {
-    const result = await run(
+    const resultado = await ejecutar(
         `INSERT INTO menu (nombre, ingredientes, descripcion, img_src, disponible, precio, id_categoria)
          VALUES (?, ?, ?, ?, ?, ?, ?)`,
         [name, ingredients, description, img_src, available, price, id_category]
     );
-    return result.lastID;
+    return resultado.lastID;
 };
 
 exports.insertCategory = async (name) => {
-    const result = await run(
+    const resultado = await ejecutar(
         'INSERT INTO categorias_menu (nombre) VALUES (?)',
         [name]
     );
-    return result.lastID;
+    return resultado.lastID;
 };
 
 exports.updateItem = async ({ id, name, ingredients, description, img_src, available, price, id_category }) => {
-    const result = await run(
+    const resultado = await ejecutar(
         `UPDATE menu
          SET nombre = ?, ingredientes = ?, descripcion = ?, img_src = ?,
              disponible = ?, precio = ?, id_categoria = ?
          WHERE id = ?`,
         [name, ingredients, description, img_src, available, price, id_category, id]
     );
-    return result.changes;
+    return resultado.changes;
 };

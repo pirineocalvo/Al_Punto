@@ -2,7 +2,7 @@
 import CabeceraPrincipal from '../../components/cabeceraYpiePrincipal/CabeceraPrincipal.vue';
 import PiePaginaPrincipal from '../../components/cabeceraYpiePrincipal/PiePaginaPrincipal.vue';
 import { nuevaReserva, misReservas, vincularMesaReserva } from '../../services/reservasEndpoint';
-import { getDisponibilidadMes, todasLasMesasLibresPorDia } from '../../services/mesasEndpoint';
+import { obtenerDisponibilidadMes, todasLasMesasLibresPorDia } from '../../services/mesasEndpoint';
 import { ref, onMounted } from 'vue';
 import dayjs from 'dayjs';
 import { message, notification } from 'ant-design-vue';
@@ -92,7 +92,7 @@ async function onPanelChange(value) {
 
 async function cargarMes(year, month) {
     try {
-        diasBloqueados.value = await getDisponibilidadMes(year, month);
+        diasBloqueados.value = await obtenerDisponibilidadMes(year, month);
     } catch (error) {
         message.error('Error al cargar disponibilidad del mes');
     }
@@ -145,7 +145,7 @@ async function guardarReserva() {
         cargandoReserva.value = true;
         try {
             const idUltimaReserva = await nuevaReserva(dato);
-            const bodyGuardarMesaReservada = { idReserva: idUltimaReserva.reservationId, idMesa: datosForm.value.mesa };
+            const bodyGuardarMesaReservada = { idReserva: idUltimaReserva.idReserva, idMesa: datosForm.value.mesa };
             await vincularMesaReserva(bodyGuardarMesaReservada);
             await cargarMes(fechasCalendario.value.year(), fechasCalendario.value.month() + 1);
             datosForm.value = { comensales: null, mesa: null, hora: null };

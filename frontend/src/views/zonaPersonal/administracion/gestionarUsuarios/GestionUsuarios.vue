@@ -2,7 +2,7 @@
 import { ref, computed, watch } from 'vue';
 import { CalendarOutlined, ClockCircleOutlined, TeamOutlined, NumberOutlined } from '@ant-design/icons-vue';
 import { usarProductoMarket } from '../../../../services/marketplaceEndpoint';
-import { getTodosLosPedidosAdmin, actualizarEstadoOrden, cancelarPedido } from '../../../../services/realizarPedidoEndpoint';
+import { obtenerTodosLosPedidosAdmin, actualizarEstadoOrden, cancelarPedido } from '../../../../services/realizarPedidoEndpoint';
 import { obtenerTodasLasReservasAdmin, actualizarEstadoReservaAdmin } from '../../../../services/reservasEndpoint';
 import { notification, message } from 'ant-design-vue';
 import CabeceraZonaPersonal from '@/components/componenteDashboard/CabeceraZonaPersonal.vue';
@@ -30,7 +30,7 @@ function generarNotificacion(tipo, titulo, texto) {
 
 async function cargarPedidos() {
     try {
-        const res = await getTodosLosPedidosAdmin();
+        const res = await obtenerTodosLosPedidosAdmin();
         listaPedidos.value = res;
     } catch (err) {
         message.error('Error al cargar pedidos');
@@ -282,9 +282,10 @@ const formatearFecha = (fechaStr) => {
 </template>
 
 <style scoped>
-.colorAvatar{
+.colorAvatar {
     background-color: var(--color-principal);
 }
+
 .textoFecha {
     float: right;
     font-weight: normal;

@@ -3,8 +3,8 @@ import { ref, computed, onMounted, onUnmounted } from 'vue';
 import CabeceraPrincipal from '../../../components/cabeceraYpiePrincipal/CabeceraPrincipal.vue';
 import PiePaginaPrincipal from '../../../components/cabeceraYpiePrincipal/PiePaginaPrincipal.vue';
 import TarjetaPlato from '../../../components/componenteMenu/TarjetaPlato.vue';
-import { getReviewsByDish } from '../../../services/comentariosEndpoint';
-import { getMenu, getCategorias } from '../../../services/menuEndpoint';
+import { obtenerReseniasPorPlato } from '../../../services/comentariosEndpoint';
+import { obtenerMenu, obtenerCategorias } from '../../../services/menuEndpoint';
 import { RightOutlined, LeftOutlined } from '@ant-design/icons-vue';
 
 const categorias = ref([]);
@@ -56,7 +56,7 @@ async function seleccionarPlato(plato) {
   resenias.value = [];
   cargandoResenias.value = true;
   try {
-    resenias.value = await getReviewsByDish(plato.id);
+    resenias.value = await obtenerReseniasPorPlato(plato.id);
   } catch (err) {
     console.error('Error cargando reseñas:', err);
   } finally {
@@ -67,7 +67,7 @@ async function seleccionarPlato(plato) {
 onMounted(() => {
   window.addEventListener('resize', actualizarAncho);
 
-  Promise.all([getCategorias(), getMenu()])
+  Promise.all([obtenerCategorias(), obtenerMenu()])
     .then(([cats, datos]) => {
       categorias.value = cats;
       datos.forEach(plato => {
@@ -82,6 +82,7 @@ onUnmounted(() => {
   window.removeEventListener('resize', actualizarAncho);
 });
 </script>
+
 <template>
   <CabeceraPrincipal />
 
@@ -186,7 +187,7 @@ onUnmounted(() => {
                           <a-typography-text strong size="small">Ingredientes:</a-typography-text>
                           <div class="ingredientesTarjeta">
                             <a-tag v-for="ing in plato.ingredients" :key="ing" class="etiquetaIngrediente">{{ ing
-                              }}</a-tag>
+                            }}</a-tag>
                           </div>
                           <a-typography-text strong class="precioTarjeta">
                             {{ plato.price }} €
@@ -327,7 +328,6 @@ onUnmounted(() => {
   justify-content: center;
   font-size: 13px;
   font-weight: 500;
-
   flex-shrink: 0;
 }
 

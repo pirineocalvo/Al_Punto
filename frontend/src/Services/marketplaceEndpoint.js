@@ -1,72 +1,68 @@
 import axios from 'axios';
-const API_URL = import.meta.env.VITE_API_URL;
-import { getTokenAutentificacion, cerrarSesionUsuario } from './gestionAlmacenamiento';
-
+const URL_API = import.meta.env.VITE_API_URL;
+import { obtenerTokenAutentificacion, cerrarSesionUsuario } from './gestionAlmacenamiento';
 
 export const pedidosRealizadosMarketPlace = async () => {
     try {
-        const token = getTokenAutentificacion()
-        const config = {
+        const token = obtenerTokenAutentificacion();
+        const configuracion = {
             headers: { authorization: `Bearer ${token}` },
-        }
-
-        const response = await axios.get(`${API_URL}/api/marketplace/mypocket`, config)
-        return response.data
+        };
+        const respuesta = await axios.get(`${URL_API}/api/marketplace/miCartera`, configuracion);
+        return respuesta.data;
     } catch (error) {
         if (error.response?.status === 401) {
-            cerrarSesionUsuario()
+            cerrarSesionUsuario();
         }
-        console.error('Error cancelando pedido:', error)
-        throw error
+        console.error('Error al obtener cartera:', error);
+        throw error;
     }
-}
+};
 
 export const listaProductosMarketplace = async () => {
     try {
-        const token = getTokenAutentificacion()
-        const config = {
-            headers: { authorization: `Bearer ${token}` },
-        }
-
-        const response = await axios.get(`${API_URL}/api/marketplace/items`, config)
-        return response.data
-    } catch (error) {
-        if (error.response?.status === 401) {
-            cerrarSesionUsuario()
-        }
-        console.error('Error cancelando pedido:', error)
-        throw error
-    }
-}
-
-export const cangearProductoMarkePlace = async (id) => {
-    try {
-        const token = getTokenAutentificacion()
-        const config = {
-            headers: { authorization: `Bearer ${token}` },
-        }
-
-        const response = await axios.post(`${API_URL}/api/marketplace/comprar/${id}`, {}, config)
-        return response.data
-    } catch (error) {
-        if (error.response?.status === 401) {
-            cerrarSesionUsuario()
-        }
-        console.error('Error cancelando pedido:', error)
-        throw error
-    }
-}
-
-export const usarProductoMarket = async (userId, tokenUrl) => {
-    try {
-        const token = getTokenAutentificacion();
-        const config = {
+        const token = obtenerTokenAutentificacion();
+        const configuracion = {
             headers: { authorization: `Bearer ${token}` },
         };
-        const response = await axios.post(`${API_URL}/api/marketplace/pocket/${userId}/use/${tokenUrl}`, {}, config);
-        return response.data;
+        const respuesta = await axios.get(`${URL_API}/api/marketplace/productos`, configuracion);
+        return respuesta.data;
     } catch (error) {
+        if (error.response?.status === 401) {
+            cerrarSesionUsuario();
+        }
+        console.error('Error al obtener productos:', error);
+        throw error;
+    }
+};
+
+export const canjearProductoMarketplace = async (id) => {
+    try {
+        const token = obtenerTokenAutentificacion();
+        const configuracion = {
+            headers: { authorization: `Bearer ${token}` },
+        };
+        const respuesta = await axios.post(`${URL_API}/api/marketplace/comprar/${id}`, {}, configuracion);
+        return respuesta.data;
+    } catch (error) {
+        if (error.response?.status === 401) {
+            cerrarSesionUsuario();
+        }
         console.error('Error al canjear producto:', error);
+        throw error;
+    }
+};
+
+export const usarProductoMarket = async (idUsuario, tokenUrl) => {
+    try {
+        const token = obtenerTokenAutentificacion();
+        const configuracion = {
+            headers: { authorization: `Bearer ${token}` },
+        };
+        const respuesta = await axios.post(`${URL_API}/api/marketplace/cartera/${idUsuario}/usar/${tokenUrl}`, {}, configuracion);
+        return respuesta.data;
+    } catch (error) {
+        console.error('Error al usar producto:', error);
         throw error;
     }
 };

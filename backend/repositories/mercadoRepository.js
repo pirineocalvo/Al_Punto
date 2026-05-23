@@ -1,31 +1,31 @@
 const db = require('../utils/db');
 
-const query = (sql, params) => new Promise((resolve, reject) =>
-    db.all(sql, params, (err, rows) => err ? reject(err) : resolve(rows))
+const consulta = (sql, params) => new Promise((resolve, reject) =>
+    db.all(sql, params, (err, filas) => err ? reject(err) : resolve(filas))
 );
-const queryOne = (sql, params) => new Promise((resolve, reject) =>
-    db.get(sql, params, (err, row) => err ? reject(err) : resolve(row))
+const consultaUno = (sql, params) => new Promise((resolve, reject) =>
+    db.get(sql, params, (err, fila) => err ? reject(err) : resolve(fila))
 );
-const run = (sql, params) => new Promise((resolve, reject) =>
+const ejecutar = (sql, params) => new Promise((resolve, reject) =>
     db.run(sql, params, function (err) { err ? reject(err) : resolve(this.changes); })
 );
 
-exports.getLevelByUserPoints = (userId) => query(
+exports.getLevelByUserPoints = (idUsuario) => consulta(
     `SELECT id FROM niveles
      WHERE puntos_min <= (SELECT puntos FROM monedero WHERE id_usuario = ?)
        AND puntos_max >= (SELECT puntos FROM monedero WHERE id_usuario = ?)`,
-    [userId, userId]
+    [idUsuario, idUsuario]
 );
 
-exports.getItemsByLevel = (levelId) => query(
+exports.getItemsByLevel = (idNivel) => consulta(
     `SELECT id, nombre AS name, descripcion AS description,
             precio_puntos AS points_price, id_nivel_min AS min_level_id,
             img_src, creado_en AS created_at
      FROM mercado WHERE id_nivel_min <= ?`,
-    [levelId]
+    [idNivel]
 );
 
-exports.getPocketByUser = (userId) => query(
+exports.getPocketByUser = (idUsuario) => consulta(
     `SELECT c.id AS pocket_id, c.usado AS is_used, c.anadido_en AS added_at,
             c.usado_en AS used_at, c.token_url,
             m.id AS product_id, m.nombre AS name, m.descripcion AS description,
@@ -34,35 +34,35 @@ exports.getPocketByUser = (userId) => query(
      INNER JOIN mercado m ON c.id_producto = m.id
      WHERE c.id_usuario = ?
      ORDER BY c.usado ASC, c.anadido_en DESC`,
-    [userId]
+    [idUsuario]
 );
 
-exports.getProductById = (productId) => queryOne(
+exports.getProductById = (idProducto) => consultaUno(
     'SELECT precio_puntos AS points_price FROM mercado WHERE id = ?',
-    [productId]
+    [idProducto]
 );
 
-exports.getWalletByUser = (userId) => queryOne(
+exports.getWalletByUser = (idUsuario) => consultaUno(
     'SELECT id, puntos AS points FROM monedero WHERE id_usuario = ?',
-    [userId]
+    [idUsuario]
 );
 
-exports.deductPoints = (userId, amount) => run(
+exports.deductPoints = (idUsuario, cantidad) => ejecutar(
     'UPDATE monedero SET puntos = puntos - ? WHERE id_usuario = ?',
-    [amount, userId]
+    [cantidad, idUsuario]
 );
 
-exports.insertPocketItem = (userId, productId, tokenUrl) => run(
+exports.insertPocketItem = (idUsuario, idProducto, tokenUrl) => ejecutar(
     'INSERT INTO cartera (id_usuario, id_producto, token_url) VALUES (?, ?, ?)',
-    [userId, productId, tokenUrl]
+    [idUsuario, idProducto, tokenUrl]
 );
 
-exports.insertPointTransaction = (userId, walletId, amount, type) => run(
+exports.insertPointTransaction = (idUsuario, idMonedero, cantidad, tipo) => ejecutar(
     `INSERT INTO transacciones_puntos (id_usuario, id_monedero, cantidad_transaccion, tipo) VALUES (?, ?, ?, ?)`,
-    [userId, walletId, amount, type]
+    [idUsuario, idMonedero, cantidad, tipo]
 );
 
-exports.getPocketByToken = (tokenUrl, userId) => queryOne(
+exports.getPocketByToken = (tokenUrl, idUsuario) => consultaUno(
     `SELECT c.id AS pocket_id, c.usado AS is_used, c.usado_en AS used_at,
             c.expira_en AS expires_at, c.anadido_en AS added_at,
             m.id AS product_id, m.nombre AS product_name,
@@ -72,15 +72,15 @@ exports.getPocketByToken = (tokenUrl, userId) => queryOne(
      INNER JOIN mercado m ON c.id_producto = m.id
      INNER JOIN usuarios u ON c.id_usuario = u.id
      WHERE c.token_url = ? AND c.id_usuario = ?`,
-    [tokenUrl, userId]
+    [tokenUrl, idUsuario]
 );
 
-exports.getPocketStatusByToken = (tokenUrl, userId) => queryOne(
+exports.getPocketStatusByToken = (tokenUrl, idUsuario) => consultaUno(
     'SELECT id, usado AS is_used, expira_en AS expires_at FROM cartera WHERE token_url = ? AND id_usuario = ?',
-    [tokenUrl, userId]
+    [tokenUrl, idUsuario]
 );
 
-exports.markPocketAsUsed = (pocketId, usedAt) => run(
+exports.markPocketAsUsed = (idCartera, usadoEn) => ejecutar(
     'UPDATE cartera SET usado = 1, usado_en = ? WHERE id = ? AND usado = 0',
-    [usedAt, pocketId]
+    [usadoEn, idCartera]
 );

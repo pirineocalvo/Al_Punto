@@ -1,19 +1,19 @@
-const ticketsService = require('../services/ticketsService');
+const servicioTickets = require('../services/ticketsService');
 
-exports.uploadTicket = async (req, res) => {
+exports.subirTicket = async (req, res) => {
     try {
-        const result = await ticketsService.uploadTicket(req.userId, req.file, req.generatedFileName);
-        res.json(result);
-    } catch (err) {
-        res.status(err.status || 500).json({ error: err.message });
+        const resultado = await servicioTickets.subirTicket(req.userId, req.file, req.nombreArchivoGenerado);
+        res.json(resultado);
+    } catch (error) {
+        res.status(error.status || 500).json({ error: error.message });
     }
 };
 
-exports.getMyTickets = async (req, res) => {
+exports.obtenerMisTickets = async (req, res) => {
     try {
-        const tickets = await ticketsService.getMyTickets(req.userId);
+        const tickets = await servicioTickets.obtenerMisTickets(req.userId);
         res.json(tickets);
-    } catch (err) {
-        res.status(err.status || 500).json({ error: err.message });
+    } catch (error) {
+        res.status(error.status || 500).json({ error: error.message });
     }
 };

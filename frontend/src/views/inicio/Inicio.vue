@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router';
 import CabeceraPrincipal from '../../components/cabeceraYpiePrincipal/CabeceraPrincipal.vue';
 import PiePaginaPrincipal from '../../components/cabeceraYpiePrincipal/PiePaginaPrincipal.vue';
 import Historia from '../../components/modales/Historia.vue';
-import {getMenu} from '../../services/menuEndpoint';
+import {obtenerMenu} from '../../services/menuEndpoint';
 import { message } from 'ant-design-vue';
 
 const router = useRouter();
@@ -30,7 +30,7 @@ function irAReservas() {
 
 async function buscarPlatos() {
   try {
-    const listaMenu = await getMenu();
+    const listaMenu = await obtenerMenu();
 
     let listaYaSeleccionado = [];
 
@@ -47,8 +47,7 @@ async function buscarPlatos() {
         platosDestacados.value.push(element);
       }
     });
-    console.log(platosDestacados.value);
-    
+
     } catch (err) {
         message.error('Error al cargar la página');
     }
