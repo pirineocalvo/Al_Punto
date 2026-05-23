@@ -39,7 +39,11 @@ watch(usuarioListo, async () => {
             pedidosRealizadosMarketPlace()
         ]);
 
-        listaPedidos.value = pedidos;
+        const pedidosOrdenados = pedidos.sort((a, b) => {
+            return new Date(b.created_at) - new Date(a.created_at);
+        });
+        listaPedidos.value = pedidosOrdenados;
+        
         listaReservas.value = reservas;
         listaMarketPlaceReclamado.value = marketplace;
     } catch (err) {
@@ -70,6 +74,10 @@ async function pararReserva(reserva) {
         generarNotificacion('error', 'Error al cancelar', 'Hubo un problema al cancelar tu reserva.');
     }
 }
+
+const formatearFecha = (fechaStr) => {
+    return new Date(fechaStr).toLocaleDateString();
+};
 </script>
 
 <template>
@@ -97,7 +105,7 @@ async function pararReserva(reserva) {
                                 <template #header>
                                     <a-row class="datosTituloAcordeon" :gutter="[6, 12]" justify="space-between">
                                         <a-col :xs="24" :lg="11">
-                                            <span>{{ reserva.reserve_date }}</span>
+                                            <span>{{formatearFecha(reserva.reserve_date)}}</span>
                                         </a-col>
                                         <a-col :xs="24" :lg="11" class="etiquetaDerecha">
                                             <a-tag v-if="reserva.status === 'confirmed'" color="lime">Atendido</a-tag>
@@ -134,7 +142,7 @@ async function pararReserva(reserva) {
                                 <template #header>
                                     <a-row class="datosTituloAcordeon" :gutter="[6, 12]">
                                         <a-col :xs="24" :lg="11">
-                                            <span>{{ pedido.created_at }}</span>
+                                            <span>{{ formatearFecha(pedido.created_at) }}</span>
                                         </a-col>
                                         <a-col :xs="24" :lg="11" class="etiquetaDerecha">
                                             <a-tag color="purple" v-if="pedido.status === 'pendiente'">Pendiente de

@@ -16,63 +16,46 @@ const { user, usuarioListo } = useAuth({ minAccessLevel: ACCESS_LEVELS.EMPLEADO 
 const tickets = ref([]);
 const collapsed = ref(false);
 
-const parseTicketText = (text) => {
-    if (!text) return {};
+function prepararTickets(ticketsUsuarioSinProcesar) {
+    tickets.value = [];
+    
+    ticketsUsuarioSinProcesar.forEach(ticketSinProcesar => {
 
-    let clean = text
+        const ticketLimpio = limpiarDatosTicket(ticketSinProcesar.ocr_content);
+
+        const datosTicket = extraerdatosTicket(ticketLimpio);
+
+        if (datosTicket) {
+            tickets.value.push({
+                ...ticketSinProcesar,
+                parsed: datosTicket
+            })
+        };
+    });
+};
+
+function limpiarDatosTicket(ticketSinProcesar) {
+    if (!ticketSinProcesar) return '';
+    return ticketSinProcesar
         .replace(/\n/g, ' ')
         .replace(/[^\w\s€:.,()-]/g, ' ')
         .replace(/\s+/g, ' ')
         .trim();
+}
 
-    const totalMatch = clean.match(/total[:\s]*([\d,.]+)\s*€/i);
-    const subtotalMatch = clean.match(/subtotal[:\s]*([\d,.]+)\s*€/i);
-    const fechaMatch = clean.match(/fecha[:\s]*([\d-]{8,10})/i);
-    const horaMatch = clean.match(/hora[:\s]*([\d:]{4,5})/i);
-    const direccionMatch = clean.match(/(paseo|calle|avda|avenida)[^,]+,\s*\d+/i);
-
-    const productos = [];
-    const productRegex = /([A-Za-zÁÉÍÓÚñ\s]+?)\s*\(?(\d+)\s*(uds?|ud)?\)?\s*([\d,.]+)\s*€/gi;
-
-    let match;
-    while ((match = productRegex.exec(clean)) !== null) {
-        const nombre = match[1].trim();
-        if (/total|subtotal|fecha|hora/i.test(nombre)) continue;
-        productos.push({
-            nombre,
-            cantidad: parseInt(match[2]),
-            precio: parseFloat(match[4].replace(',', '.'))
-        });
-    }
+function extraerdatosTicket(ticketLimpio) {
+    if (!ticketLimpio) return {};
 
     return {
         tipo: 'Ticket OCR',
-        total: totalMatch ? parseFloat(totalMatch[1].replace(',', '.')) : 0,
-        subtotal: subtotalMatch ? parseFloat(subtotalMatch[1].replace(',', '.')) : null,
-        fecha: fechaMatch ? fechaMatch[1] : null,
-        hora: horaMatch ? horaMatch[1] : null,
-        direccion: direccionMatch ? direccionMatch[0] : null,
-        productos
+        total: extraerImporte(ticketLimpio, /total[:\s]*([\d,.]+)\s*€/i) ?? 0,
+        subtotal: extraerImporte(ticketLimpio, /subtotal[:\s]*([\d,.]+)\s*€/i),
+        fecha: extraer(ticketLimpio, /fecha[:\s]*([\d-]{8,10})/i),
+        hora: extraer(ticketLimpio, /hora[:\s]*([\d:]{4,5})/i),
+        direccion: extraer(ticketLimpio, /(paseo|calle|avda|avenida)[^,]+,\s*\d+/i, 0),
+        productos: extraerProductos(ticketLimpio),
     };
-};
-
-watch(usuarioListo, async () => {
-    try {
-        const data = await misTickets();
-
-        tickets.value = data.map(t => ({
-            ...t,
-            parsed: parseTicketText(t.ocr_content)
-        }));
-    } catch (error) {
-        message.error('Error al cargar los tickets');
-    } finally {
-        cargado.value = true;
-    }
-console.log(tickets.value);
-
-}, { immediate: true });
-
+}
 
 const separarFechaHora = (fecha) => {
     if (!fecha) return { fecha: '—', hora: '—' };
@@ -82,6 +65,47 @@ const separarFechaHora = (fecha) => {
         hora: h || '—'
     };
 };
+
+const extraer = (text, regex, grupo = 1) =>
+    text.match(regex)?.[grupo] ?? null;
+
+const extraerImporte = (text, regex) => {
+    const valor = extraer(text, regex);
+    return valor ? parseFloat(valor.replace(',', '.')) : null;
+};
+
+const extraerProductos = (text) => {
+    const regex = /([A-Za-zÁÉÍÓÚñ\s]+?)\s*\(?(\d+)\s*(uds?|ud)?\)?\s*([\d,.]+)\s*€/gi;
+    const resultados = [];
+    let match;
+
+    while ((match = regex.exec(text)) !== null) {
+        const nombre = match[1].trim();
+        if (/total|subtotal|fecha|hora/i.test(nombre)) continue;
+
+        resultados.push({
+            nombre,
+            cantidad: parseInt(match[2]),
+            precio: parseFloat(match[4].replace(',', '.')),
+        });
+    }
+
+    return resultados;
+};
+
+watch(usuarioListo, async () => {
+    try {
+        const data = await misTickets();
+        prepararTickets(data);
+
+    } catch (error) {
+        message.error('Error al cargar los tickets');
+        console.error(error);
+    } finally {
+        cargado.value = true;
+    }
+
+}, { immediate: true });
 
 const columnasProductos = [
     {

@@ -149,7 +149,7 @@ async function guardarReserva() {
             await vincularMesaReserva(bodyGuardarMesaReservada);
             await cargarMes(fechasCalendario.value.year(), fechasCalendario.value.month() + 1);
             datosForm.value = { comensales: null, mesa: null, hora: null };
-            generarNotificacion('success', '¡Reserva realizada!', 'Su reserva esta lista, ¡Te esperamos!.');
+            generarNotificacion('success', '¡Reserva realizada!', 'Su reserva esta lista, ¡Te esperamos!');
         } catch (error) {
             generarNotificacion('error', 'Error al realizar la reserva', 'Si el error persiste contacte con el establecimiento.');
         } finally {

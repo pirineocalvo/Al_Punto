@@ -1,6 +1,7 @@
 <script setup>
 import { ref, watch } from 'vue';
 import { crearMesa, todasLasMesas, actualizarMesa, desactivarMesa } from '../../../../services/mesasEndpoint';
+import { obtenerTodasLasReservasAdmin } from '../../../../services/reservasEndpoint';
 import CabeceraZonaPersonal from '@/components/componenteDashboard/CabeceraZonaPersonal.vue';
 import { notification, message } from 'ant-design-vue';
 import PiePaginaPrincipal from '@/components/cabeceraYpiePrincipal/PiePaginaPrincipal.vue';
@@ -22,6 +23,8 @@ const cargandoActualizar = ref(false);
 
 const mesaEliminarId = ref(null);
 const cargandoEliminar = ref(false);
+
+let mensajeConfirmarEliminar = ref('¿Seguro que desea eliminar esta mesa?');
 
 async function cargarMesas() {
     try {
@@ -126,11 +129,29 @@ async function eliminarMesa() {
         generarNotificacion('success', 'Mesa eliminada', 'La mesa se ha desactivado del sistema.');
         mesaEliminarId.value = null;
         await cargarMesas();
+        mensajeConfirmarEliminar.value = "¿Seguro que desea eliminar esta mesa?";
     } catch (error) {
         generarNotificacion('error', 'Error al eliminar', 'Hubo un problema al intentar dar de baja la mesa.');
     } finally {
         cargandoEliminar.value = false;
     }
+}
+
+async function conustarSiMesaOcupada(){
+    try {
+        const reservas = await obtenerTodasLasReservasAdmin();
+        
+            const mesaUtilizada = reservas.reservations.some(res => res.table_id == mesaEliminarId.value);
+            
+            if(mesaUtilizada){
+                mensajeConfirmarEliminar.value = "La mesa contiene una o mas reservas por confirmar, ¿Está seguro que desea eliminarla?";
+            }else{
+                mensajeConfirmarEliminar.value = "¿Seguro que desea eliminar esta mesa?";
+            }
+    } catch (error) {
+        message.error('Error al confirmar si la mesa contiene reservas');
+    }
+
 }
 </script>
 
@@ -205,10 +226,10 @@ async function eliminarMesa() {
                                         </a-select-option>
                                     </a-select>
                                 </a-form-item>
-                                <a-popconfirm title="¿Seguro que desea eliminar esta mesa?" ok-text="Sí" cancel-text="No"
+                                <a-popconfirm :title="mensajeConfirmarEliminar" ok-text="Sí" cancel-text="No"
                                     @confirm="eliminarMesa"  :disabled="!mesaEliminarId">
                                 <a-button type="primary" html-type="submit" :loading="cargandoEliminar"
-                                    :disabled="!mesaEliminarId" block>
+                                    :disabled="!mesaEliminarId" block @click="conustarSiMesaOcupada()">
                                     Eliminar mesa
                                 </a-button>
                                 </a-popconfirm>

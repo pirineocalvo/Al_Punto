@@ -45,12 +45,13 @@ const agregarTicket = async () => {
         const formData = new FormData();
         formData.append('imagen', archivo.value);
         const data = await subirTicket(formData);
-
-        ticketInfo.value = parsearTicket(data.text);
+        
+        ticketInfo.value = parsearTicket(data.texto);
 
         archivo.value = null;
         generarNotificacion('success', '¡Ticket subido!', 'Los puntos del ticket fueron añadidos a su cuenta, para verificarlo acceda a su zona personal.');
-    } catch {
+    } catch  (error){
+        
         generarNotificacion('error', 'Error al subir el ticket', 'Verifique que la imagen es nitida y que pertenece al restaurante.');
     } finally {
         cargando.value = false;

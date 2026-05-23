@@ -130,7 +130,7 @@ const reseniasPendientes = computed(() => {
     return productosPendientes;
 });
 
-const formatearFecha = (fechaStr) => {
+const formatearFecha = (fechaStr) => {    
     return new Date(fechaStr).toLocaleDateString();
 };
 </script>
@@ -168,7 +168,7 @@ const formatearFecha = (fechaStr) => {
                                     <div class="tarjetaPiePaginaPrincipal">
                                         <a-rate :value="resenia.puntuacion" disabled />
                                         <div>
-                                            <a-tag color="orange">{{ formatearFecha(resenia.created_at) }}</a-tag>
+                                            <a-tag color="orange">{{ formatearFecha(resenia.creado_en) }}</a-tag>
                                         </div>
                                     </div>
                                 </a-card>
