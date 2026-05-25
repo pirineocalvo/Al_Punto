@@ -25,6 +25,8 @@ function generarNotificacion(tipo, titulo, texto) {
 }
 
 function clasificarMenu() {
+    menuClasificado.value = [];
+
     categorias.value.forEach(catego => {
         const inforCatego = {
             categoria: catego.name,
@@ -55,6 +57,7 @@ function addCarritoProducto(nuevoProducto) {
             edicion: false
         };
         productosElegidos.value.push(crearNuevoProducto);
+        generarNotificacion('info', 'Notificación', 'El producto fue añadido a la cesta');
     }
 }
 
@@ -83,6 +86,7 @@ function eliminarProductoCarrito(productoEliminar) {
     const posicion = productosElegidos.value.findIndex(pro => pro.name === productoEliminar.name);
     if (posicion !== -1) {
         productosElegidos.value.splice(posicion, 1);
+        generarNotificacion('info', 'Notificación', 'El producto fue eliminado de la cesta');
     }
 }
 
@@ -191,7 +195,7 @@ watch(usuarioListo, async () => {
                                             <template #icon>
                                                 <QuestionCircleOutlined />
                                             </template>
-                                            <a-button type="text" size="small">Eliminar</a-button>
+                                            <a-button type="text" danger size="small">Eliminar</a-button>
                                         </a-popconfirm>
                                     </template>
 
