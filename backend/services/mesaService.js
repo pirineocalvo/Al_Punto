@@ -1,4 +1,5 @@
 const repositorioMesa = require('../repositories/mesaRepository');
+const Mesa = require('../clases/Mesa');
 
 const HORARIOS = [
     '13:30:00', '14:00:00', '14:30:00', '15:00:00', '15:30:00',
@@ -59,12 +60,12 @@ exports.obtenerDisponibilidadDia = async (fecha, ocupantes) => {
     }
 
     return mesas
-        .map(mesa => ({
-            id: mesa.id,
-            name: mesa.name,
-            n_ocupantes: mesa.n_ocupantes,
-            horasDisponibles: HORARIOS.filter(hora => !(horasOcupadas[mesa.id] || []).includes(hora)),
-        }))
+        .map(mesa => {
+            mesa.horasDisponibles = HORARIOS.filter(
+                hora => !(horasOcupadas[mesa.id] || []).includes(hora)
+            );
+            return mesa;
+        })
         .filter(mesa => mesa.horasDisponibles.length > 0);
 };
 
@@ -108,7 +109,8 @@ exports.crearMesa = async (name, nOcupantes) => {
         error.status = 400;
         throw error;
     }
-    const id = await repositorioMesa.insertMesa(name, Number(nOcupantes));
+    const mesa = new Mesa({ name, n_ocupantes: nOcupantes });
+    const id   = await repositorioMesa.insertMesa(mesa.name, mesa.nOcupantes);
     return { message: 'Mesa creada correctamente', id };
 };
 

@@ -1,7 +1,9 @@
 const db = require('../utils/db');
+const Mesa = require('../clases/Mesa');
+const Reserva = require('../clases/Reserva');
 
 const consulta = (sql, params = []) => new Promise((resolve, reject) =>
-    db.all(sql, params, (err, filas) => err ? reject(err) : resolve(filas))
+    db.all(sql, params, (err, fila) => err ? reject(err) : resolve(fila))
 );
 const consultaUno = (sql, params = []) => new Promise((resolve, reject) =>
     db.get(sql, params, (err, fila) => err ? reject(err) : resolve(fila))
@@ -10,22 +12,25 @@ const ejecutar = (sql, params = []) => new Promise((resolve, reject) =>
     db.run(sql, params, function (err) { err ? reject(err) : resolve(this); })
 );
 
-exports.getMesasActivas = () =>
-    consulta('SELECT id FROM mesas WHERE activo = 1');
-
-exports.getMesasActivasPorOcupantes = (ocupantes) => {
-    if (!ocupantes) {
-        return consulta('SELECT id, nombre AS name, n_ocupantes FROM mesas WHERE activo = 1');
-    }
-    const maximo = Number(ocupantes) + 2;
-    return consulta(
-        'SELECT id, nombre AS name, n_ocupantes FROM mesas WHERE activo = 1 AND n_ocupantes >= ? AND n_ocupantes <= ?',
-        [Number(ocupantes), maximo]
-    );
+exports.getMesasActivas = async () =>{
+    const fila = await consulta('SELECT id FROM mesas WHERE activo = 1');
+    return fila.map(f => new Mesa(f));
 };
 
-exports.getReservasPorMes = (anio, mes) =>
-    consulta(
+exports.getMesasActivasPorOcupantes = async (ocupantes) => {
+    if (!ocupantes) {
+        const fila = await consulta('SELECT id, nombre AS name, n_ocupantes FROM mesas WHERE activo = 1');
+        return fila.map(f => new Mesa(f));
+    }
+    const maximo = Number(ocupantes) + 2;
+    
+    const fila = await  consulta('SELECT id, nombre AS name, n_ocupantes FROM mesas WHERE activo = 1 AND n_ocupantes >= ? AND n_ocupantes <= ?',
+        [Number(ocupantes), maximo]);
+    return fila.map(f => new Mesa(f));
+};
+
+exports.getReservasPorMes = async (anio, mes) =>{
+    const fila = await consulta(
         `SELECT r.fecha_reserva AS reserve_date, r.hora_reserva AS reserve_hour, mr.id_mesa
          FROM reservas r
          JOIN mesas_reservadas mr ON mr.id_reserva = r.id
@@ -35,8 +40,11 @@ exports.getReservasPorMes = (anio, mes) =>
         [anio, mes]
     );
 
-exports.getReservasPorFecha = (fecha) =>
-    consulta(
+    return fila;
+};
+
+exports.getReservasPorFecha = async (fecha) =>{
+    const fila = await consulta(
         `SELECT r.hora_reserva AS reserve_hour, mr.id_mesa
          FROM reservas r
          JOIN mesas_reservadas mr ON mr.id_reserva = r.id
@@ -45,17 +53,23 @@ exports.getReservasPorFecha = (fecha) =>
         [fecha]
     );
 
-exports.getReservaByIdAndUser = (idReserva, idUsuario) =>
-    consultaUno(
+    return fila;
+};
+exports.getReservaByIdAndUser = async (idReserva, idUsuario) =>{
+    const fila = await consultaUno(
         'SELECT id, fecha_reserva AS reserve_date, hora_reserva AS reserve_hour FROM reservas WHERE id = ? AND id_usuario = ?',
         [idReserva, idUsuario]
     );
 
-exports.getMesaActivaById = (idMesa) =>
-    consultaUno('SELECT id FROM mesas WHERE id = ? AND activo = 1', [idMesa]);
-
-exports.getConflictoMesa = (idMesa, fecha, hora) =>
-    consultaUno(
+    return fila ? new Reserva(fila) : null;
+};
+exports.getMesaActivaById = async (idMesa) =>{
+    const fila = await consultaUno('SELECT id FROM mesas WHERE id = ? AND activo = 1', [idMesa]);
+    
+    return fila ? new Mesa(fila) : null;
+}
+exports.getConflictoMesa = async (idMesa, fecha, hora) =>{
+    const fila = await consultaUno(
         `SELECT mr.id
          FROM mesas_reservadas mr
          JOIN reservas r ON mr.id_reserva = r.id
@@ -65,6 +79,9 @@ exports.getConflictoMesa = (idMesa, fecha, hora) =>
            AND (r.estado IS NULL OR r.estado != 'cancel')`,
         [idMesa, fecha, hora]
     );
+    
+    return fila ? new Mesa(fila) : null;
+}
 
 exports.insertMesaReservada = async (idReserva, idMesa) => {
     const resultado = await ejecutar(
@@ -74,9 +91,10 @@ exports.insertMesaReservada = async (idReserva, idMesa) => {
     return resultado.lastID;
 };
 
-exports.getTodasMesas = () =>
-    consulta('SELECT id, nombre AS name, n_ocupantes, activo FROM mesas ORDER BY activo DESC, id ASC');
-
+exports.getTodasMesas = async () =>{
+    const fila = await consulta('SELECT id, nombre AS name, n_ocupantes, activo FROM mesas ORDER BY activo DESC, id ASC');
+    return fila.map(f => new Mesa(f));
+}
 exports.insertMesa = async (name, nOcupantes) => {
     const resultado = await ejecutar(
         'INSERT INTO mesas (nombre, n_ocupantes, activo) VALUES (?, ?, 1)',

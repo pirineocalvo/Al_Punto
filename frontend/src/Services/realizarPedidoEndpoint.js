@@ -9,6 +9,7 @@ export const obtenerMisPedidos = async () => {
             headers: { authorization: `Bearer ${token}` },
         };
         const respuesta = await axios.get(`${URL_API}/api/orders/misPedidos`, configuracion);
+        
         return respuesta.data;
     } catch (error) {
         if (error.response.status === 401) {

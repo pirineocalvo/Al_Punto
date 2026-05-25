@@ -1,15 +1,14 @@
 const repositorioMercado = require('../repositories/mercadoRepository');
 
 exports.obtenerProductosDisponibles = async (idUsuario) => {
-    const niveles = await repositorioMercado.getLevelByUserPoints(idUsuario);
-    if (!niveles || niveles.length === 0) {
+    const nivel = await repositorioMercado.getLevelByUserPoints(idUsuario);
+    if (!nivel) {
         const error = new Error('Nivel no encontrado para el usuario');
         error.status = 404;
         throw error;
     }
-    return repositorioMercado.getItemsByLevel(niveles[0].id);
+    return repositorioMercado.getItemsByLevel(nivel.id);
 };
-
 exports.obtenerCarteraUsuario = (idUsuario) => repositorioMercado.getPocketByUser(idUsuario);
 
 exports.comprarProducto = async (idUsuario, idProducto) => {
@@ -21,50 +20,53 @@ exports.comprarProducto = async (idUsuario, idProducto) => {
     }
 
     const monedero = await repositorioMercado.getWalletByUser(idUsuario);
-    if (monedero.points < producto.points_price) {
-        const error = new Error('No tienes suficientes puntos');
-        error.status = 400;
+    if (!monedero) {
+        const error = new Error('Monedero no encontrado');
+        error.status = 404;
         throw error;
     }
 
+    monedero.deducir(producto.pointsPrice);
+
     const tokenUrl = `${idUsuario}-${idProducto}-${Date.now()}`;
-    await repositorioMercado.deductPoints(idUsuario, producto.points_price);
+    await repositorioMercado.deductPoints(idUsuario, producto.pointsPrice);
     await repositorioMercado.insertPocketItem(idUsuario, idProducto, tokenUrl);
-    await repositorioMercado.insertPointTransaction(idUsuario, monedero.id, producto.points_price, 'buy market');
+    await repositorioMercado.insertPointTransaction(
+        idUsuario, monedero.id, -producto.pointsPrice, 'buy market'
+    );
 };
 
 exports.obtenerTokenCartera = async (idUsuario, tokenUrl) => {
     validarFormatoToken(idUsuario, tokenUrl);
 
-    const cartera = await repositorioMercado.getPocketByToken(tokenUrl, idUsuario);
-    if (!cartera) {
+    const item = await repositorioMercado.getPocketByToken(tokenUrl, idUsuario);
+    if (!item) {
         const error = new Error('Token no encontrado');
         error.status = 404;
         throw error;
     }
-    if (cartera.expires_at && new Date(cartera.expires_at) < new Date()) {
+    if (item.expirado) {
         const error = new Error('Token expirado');
         error.status = 410;
-        error.extra = { expired: true, expires_at: cartera.expires_at };
         throw error;
     }
 
     return {
-        valid: cartera.is_used === 0,
-        already_used: cartera.is_used === 1,
-        used_at: cartera.used_at,
-        pocket_id: cartera.pocket_id,
+        valid:        item.canjeable,
+        already_used: item.isUsed,
+        used_at:      item.usedAt,
+        pocket_id:    item.pocketId,
         product: {
-            id: cartera.product_id,
-            name: cartera.product_name,
-            description: cartera.product_description,
-            img_src: cartera.img_src,
+            id:          item.productId,
+            name:        item.name,
+            description: item.description,
+            img_src:     item.imgSrc,
         },
         user: {
-            id: cartera.user_id,
-            first_name: cartera.first_name,
-            last_name: cartera.last_name,
-            email: cartera.email,
+            id:         item.idUsuario,
+            first_name: item.firstName,
+            last_name:  item.lastName,
+            email:      item.email,
         },
     };
 };
@@ -72,33 +74,33 @@ exports.obtenerTokenCartera = async (idUsuario, tokenUrl) => {
 exports.usarTokenCartera = async (idUsuario, tokenUrl) => {
     validarFormatoToken(idUsuario, tokenUrl);
 
-    const cartera = await repositorioMercado.getPocketStatusByToken(tokenUrl, idUsuario);
-    if (!cartera) {
+    const item = await repositorioMercado.getPocketStatusByToken(tokenUrl, idUsuario);
+    if (!item) {
         const error = new Error('Token no encontrado');
         error.status = 404;
         throw error;
     }
-    if (cartera.is_used) {
+    if (item.isUsed) {
         const error = new Error('Este articulo ya fue canjeado');
         error.status = 409;
         throw error;
     }
-    if (cartera.expires_at && new Date(cartera.expires_at) < new Date()) {
+    if (item.expirado) {
         const error = new Error('Token expirado');
         error.status = 410;
         throw error;
     }
 
-    const usadoEn = new Date().toISOString();
-    const cambios = await repositorioMercado.markPocketAsUsed(cartera.id, usadoEn);
+    item.marcarUsado();
+
+    const cambios = await repositorioMercado.markPocketAsUsed(item.pocketId, item.usedAt);
     if (cambios === 0) {
         const error = new Error('Este articulo ya fue canjeado');
         error.status = 409;
         throw error;
     }
-    return { message: 'Articulo canjeado con exito', used_at: usadoEn };
+    return { message: 'Articulo canjeado con exito', used_at: item.usedAt };
 };
-
 function validarFormatoToken(idUsuario, tokenUrl) {
     const partes = tokenUrl.split('-');
     if (partes.length !== 3) {
