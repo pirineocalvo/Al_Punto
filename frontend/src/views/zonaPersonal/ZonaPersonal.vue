@@ -38,7 +38,8 @@ const generarQR = async () => {
     if (!user.value) return;
 
     const code = generarCodigoQR(user.value.id);
-    const baseUrl = window.location.origin;
+    // Usa VITE_FRONTEND_URL en Docker, y como fallback window.location.origin para desarrollo local
+    const baseUrl = import.meta.env.VITE_FRONTEND_URL || window.location.origin;
     const url = `${baseUrl}/checkin?code=${code}`;
     try {
         qr.value = await QRCode.toDataURL(url);
@@ -114,7 +115,6 @@ onBeforeUnmount(() => {
     }
 });
 </script>
-
 <template>
     <a-layout>
         <CabeceraZonaPersonal :user="user" />
@@ -154,7 +154,6 @@ onBeforeUnmount(() => {
                                 {{ reserveInfo.length }}
                             </div>
                         </a-card>
-
                         <a-card class="tarjetaEstadistica">
                             <div class="cabeceraEstadistica">
                                 <UserOutlined class="iconoEstadistica" />
@@ -185,7 +184,6 @@ onBeforeUnmount(() => {
         <PiePaginaPrincipal />
     </a-layout>
 </template>
-
 <style scoped>
 .contenedorContenido {
     width: 100%;

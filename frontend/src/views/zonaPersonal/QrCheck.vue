@@ -2,9 +2,13 @@
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
+import { Spin, Result, Typography, Card } from 'ant-design-vue';
+import { CheckCircleFilled, CloseCircleFilled } from '@ant-design/icons-vue';
+
+const { Title, Text } = Typography;
 
 const route = useRoute();
-const estado = ref('cargando'); 
+const estado = ref('cargando');
 const nombreUsuario = ref('');
 
 onMounted(async () => {
@@ -27,31 +31,52 @@ onMounted(async () => {
 </script>
 
 <template>
-    <div class="checkinContenedor">
-        <div v-if="estado === 'cargando'" class="checkinTarjeta">
-            <div class="spinner"></div>
-            <p class="checkinSubtexto">Verificando código...</p>
-        </div>
-        <div v-else-if="estado === 'ok'" class="checkinTarjeta checkinOk">
-            <div class="checkinIcono">✓</div>
-            <h1 class="checkinBienvenido">¡Bienvenido!</h1>
-            <h2 class="checkinNombre">{{ nombreUsuario }}</h2>
-            <p class="checkinSubtexto">Nos alegra tenerte aquí. Disfruta de tu visita.</p>
-            <div class="checkinLinea"></div>
-            <p class="checkinPie">Check-in registrado correctamente</p>
-        </div>
-        <div v-else class="checkinTarjeta checkinError">
-            <div class="checkinIconoError">✕</div>
-            <h1 class="checkinBienvenido">Código inválido</h1>
-            <p class="checkinSubtexto">No se pudo verificar este QR. Pide al cliente que lo regenere.</p>
-        </div>
+    <div class="checkin-contenedor">
+        <a-card class="checkin-tarjeta" :bordered="false">
+            <div v-if="estado === 'cargando'" class="checkin-estado">
+                <a-spin size="large" />
+                <a-typography-text class="subtexto">Verificando código...</a-typography-text>
+            </div>
+            <a-result v-else-if="estado === 'ok'" class="checkin-estado">
+                <template #icon>
+                    <check-circle-filled class="icono-ok" />
+                </template>
+                <template #title>
+                    <a-typography-title :level="1" class="titulo">¡Bienvenido!</a-typography-title>
+                </template>
+                <template #subTitle>
+                    <a-typography-title :level="3" class="nombre">{{ nombreUsuario }}</a-typography-title>
+                    <a-typography-text class="subtexto">
+                        Nos alegra tenerte aquí. Disfruta de tu visita.
+                    </a-typography-text>
+                </template>
+                <template #extra>
+                    <div class="linea-decorativa" />
+                    <a-typography-text class="pie">Check-in registrado correctamente</a-typography-text>
+                </template>
+            </a-result>
+            <a-result v-else class="checkin-estado">
+                <template #icon>
+                    <close-circle-filled class="icono-error" />
+                </template>
+                <template #title>
+                    <a-typography-title :level="2" class="titulo">Código inválido</a-typography-title>
+                </template>
+                <template #subTitle>
+                    <a-typography-text class="subtexto">
+                        No se pudo verificar este QR. Pide al cliente que lo regenere.
+                    </a-typography-text>
+                </template>
+            </a-result>
+
+        </a-card>
     </div>
 </template>
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Lato:wght@300;400&display=swap');
 
-.checkinContenedor {
+.checkin-contenedor {
     min-height: 100vh;
     display: flex;
     align-items: center;
@@ -59,119 +84,124 @@ onMounted(async () => {
     background: #1a1a1a;
     background-image:
         radial-gradient(ellipse at 20% 50%, rgba(217, 119, 66, 0.15) 0%, transparent 60%),
-        radial-gradient(ellipse at 80% 20%, rgba(184, 95, 52, 0.1) 0%, transparent 50%);
+        radial-gradient(ellipse at 80% 20%, rgba(184, 95, 52, 0.10) 0%, transparent 50%);
     font-family: 'Lato', sans-serif;
     padding: 24px;
 }
 
-.checkinTarjeta {
-    background: #242424;
-    border: 1px solid rgba(217, 119, 66, 0.2);
-    border-radius: 24px;
-    padding: 56px 48px;
+.checkin-tarjeta {
+    background: #242424 !important;
+    border: 1px solid rgba(217, 119, 66, 0.2) !important;
+    border-radius: 24px !important;
     max-width: 420px;
     width: 100%;
-    text-align: center;
     box-shadow:
-        0 0 0 1px rgba(255,255,255,0.03),
-        0 32px 64px rgba(0,0,0,0.5);
+        0 0 0 1px rgba(255, 255, 255, 0.03),
+        0 32px 64px rgba(0, 0, 0, 0.5);
     animation: entrar 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+:deep(.ant-card-body) {
+    padding: 48px 40px !important;
 }
 
 @keyframes entrar {
     from { opacity: 0; transform: translateY(24px) scale(0.97); }
-    to   { opacity: 1; transform: translateY(0) scale(1); }
+    to   { opacity: 1; transform: translateY(0)    scale(1); }
 }
 
-.checkinIcono {
-    width: 72px;
-    height: 72px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #D97742, #B85F34);
-    color: white;
-    font-size: 2rem;
+.checkin-estado {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    margin: 0 auto 28px;
-    box-shadow: 0 8px 24px rgba(217, 119, 66, 0.4);
+    text-align: center;
+}
+
+:deep(.ant-spin-dot-item) {
+    background-color: #D97742 !important;
+}
+
+.checkin-estado > :deep(.ant-spin) {
+    margin-bottom: 24px;
+}
+
+:deep(.ant-result) {
+    padding: 0 !important;
+    background: transparent !important;
+}
+:deep(.ant-result-icon) {
+    margin-bottom: 20px !important;
+}
+:deep(.ant-result-title) {
+    margin-bottom: 8px !important;
+}
+:deep(.ant-result-subtitle) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+:deep(.ant-result-extra) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 0 !important;
+}
+
+.icono-ok {
+    font-size: 72px;
+    color: #D97742;
+    filter: drop-shadow(0 8px 24px rgba(217, 119, 66, 0.5));
     animation: pulso 2s ease-in-out infinite;
 }
 
+.icono-error {
+    font-size: 72px;
+    color: #c0392b;
+    filter: drop-shadow(0 8px 24px rgba(192, 57, 43, 0.4));
+}
+
 @keyframes pulso {
-    0%, 100% { box-shadow: 0 8px 24px rgba(217, 119, 66, 0.4); }
-    50%       { box-shadow: 0 8px 36px rgba(217, 119, 66, 0.7); }
+    0%, 100% { filter: drop-shadow(0 8px 24px rgba(217, 119, 66, 0.4)); }
+    50%       { filter: drop-shadow(0 8px 36px rgba(217, 119, 66, 0.75)); }
 }
 
-.checkinIconoError {
-    width: 72px;
-    height: 72px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #c0392b, #922b21);
-    color: white;
-    font-size: 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 28px;
-}
-
-.checkinBienvenido {
-    font-family: 'Playfair Display', serif;
-    font-size: 2rem;
-    font-weight: 900;
-    color: #ffffff;
-    margin: 0 0 8px;
+.titulo {
+    font-family: 'Playfair Display', serif !important;
+    font-weight: 900 !important;
+    color: #ffffff !important;
+    margin: 0 !important;
     letter-spacing: -0.5px;
 }
 
-.checkinNombre {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #D97742;
-    margin: 0 0 16px;
+.nombre {
+    font-family: 'Playfair Display', serif !important;
+    font-weight: 700 !important;
+    color: #D97742 !important;
+    margin: 0 0 12px !important;
 }
 
-.checkinSubtexto {
-    font-size: 0.95rem;
-    color: rgba(255,255,255,0.45);
-    font-weight: 300;
-    line-height: 1.6;
-    margin: 0;
+.subtexto {
+    font-size: 0.95rem !important;
+    color: rgba(255, 255, 255, 0.45) !important;
+    font-weight: 300 !important;
+    line-height: 1.6 !important;
+    display: block;
+    margin-top: 8px;
 }
 
-.checkinLinea {
+.linea-decorativa {
     width: 48px;
     height: 2px;
     background: linear-gradient(90deg, #D97742, #B85F34);
-    margin: 28px auto;
     border-radius: 2px;
+    margin: 24px auto 16px;
 }
 
-.checkinPie {
-    font-size: 0.8rem;
-    color: rgba(255,255,255,0.25);
-    letter-spacing: 0.05em;
+.pie {
+    font-size: 0.75rem !important;
+    color: rgba(255, 255, 255, 0.25) !important;
+    letter-spacing: 0.07em;
     text-transform: uppercase;
-    margin: 0;
-}
-
-.spinner {
-    width: 48px;
-    height: 48px;
-    border: 3px solid rgba(217, 119, 66, 0.2);
-    border-top-color: #D97742;
-    border-radius: 50%;
-    margin: 0 auto 24px;
-    animation: girar 0.8s linear infinite;
-}
-
-@keyframes girar {
-    to { transform: rotate(360deg); }
-}
-
-.checkinError .checkinBienvenido {
-    font-size: 1.5rem;
 }
 </style>
