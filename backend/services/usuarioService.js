@@ -2,7 +2,6 @@ const repositorioUsuario = require('../repositories/usuarioRepository');
 const { cifrarContrasena, compararContrasena } = require('../utils/crypto');
 const jwt = require('jsonwebtoken');
 
-const claveJwt = process.env.SHARED_JWT_SECRET || process.env.JWT_SECRET_KEY;
 const PUNTOS_INICIALES_MONEDERO = 500;
 
 exports.iniciarSesion = async (email, contrasena, ip) => {
@@ -30,7 +29,7 @@ exports.iniciarSesion = async (email, contrasena, ip) => {
 
     const token = jwt.sign(
         { id: usuario.id, email: usuario.email },
-        claveJwt,
+        process.env.SHARED_JWT_SECRET || process.env.JWT_SECRET_KEY,
         { expiresIn: '7d' }
     );
 

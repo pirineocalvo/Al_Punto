@@ -28,6 +28,31 @@ aplicacion.use('/api/orders', rutasPedidos);
 aplicacion.use('/api/mesas', rutasMesas);
 aplicacion.use('/uploads', express.static('uploads'));
 
+// server.js — Añadir ANTES de app.listen()
+
+// Middleware de errores global (debe tener 4 parámetros obligatoriamente)
+aplicacion.use((err, req, res, next) => {
+  console.error('═══════════════════════════════════════');
+  console.error('[ERROR GLOBAL]', req.method, req.path);
+  console.error('Mensaje:', err.message);
+  console.error('Stack:', err.stack);
+  console.error('═══════════════════════════════════════');
+  res.status(err.status || 500).json({
+    error: err.message,
+    stack: process.env.NODE_ENV !== 'production' ? err.stack : undefined
+  });
+});
+
+// Capturar promesas no manejadas (causa frecuente de silencio)
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('[unhandledRejection]', reason);
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('[uncaughtException]', err.message, err.stack);
+  process.exit(1);
+});
+
 aplicacion.listen(PUERTO, () => {
     console.log(`Servidor escuchando en http://localhost:${PUERTO}`);
 });

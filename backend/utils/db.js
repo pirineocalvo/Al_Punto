@@ -2,9 +2,14 @@ const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const fs = require('fs');
 
-const directorioDb = path.resolve(__dirname, 'db');
+// FIX: apuntar explícitamente a la subcarpeta /db donde está montado el volumen
+const directorioDb = path.join(__dirname, 'db');
 const rutaDb = path.join(directorioDb, 'restaurante.db');
 const rutaSeed = path.join(directorioDb, 'seed.sql');
+
+// Diagnóstico al arrancar (puedes quitarlo después del TFG)
+console.log('[SQLite] Buscando BD en:', rutaDb);
+console.log('[SQLite] Archivo existe:', fs.existsSync(rutaDb));
 
 if (!fs.existsSync(directorioDb)) {
     fs.mkdirSync(directorioDb, { recursive: true });
@@ -14,8 +19,8 @@ const dbExistiaAntes = fs.existsSync(rutaDb);
 
 const db = new sqlite3.Database(rutaDb, err => {
     if (err) {
-        console.error('Error al cargar la base de datos SQLite:', err);
-        return;
+        console.error('[SQLite] Error al cargar la base de datos:', err.message);
+        process.exit(1); // Crash limpio, no 500 silencioso
     }
     console.log('Base de datos activa');
 
