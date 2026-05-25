@@ -1,5 +1,8 @@
 const db = require('../utils/db');
 
+const Pedido = require('../clases/Pedido');
+const PedidoAdmin = require('../clases/PedidoAdmin');
+
 const consulta = (sql, params = []) => new Promise((resolve, reject) =>
     db.all(sql, params, (err, filas) => err ? reject(err) : resolve(filas))
 );
@@ -15,7 +18,14 @@ exports.insertOrder = async (idUsuario, precioTotal) => {
         'INSERT INTO pedidos (id_usuario, precio_total, estado, recogido) VALUES (?, ?, ?, ?)',
         [idUsuario, precioTotal, 'pendiente', 0]
     );
-    return resultado.lastID;
+
+    return new Pedido({
+        id:          resultado.lastID,
+        id_usuario:  idUsuario,
+        total_price: precioTotal,
+        status:      'pendiente',
+        items:       [],
+    });
 };
 
 exports.insertOrderItem = (idPedido, idProducto, cantidad, precioEnCompra) =>
@@ -24,8 +34,8 @@ exports.insertOrderItem = (idPedido, idProducto, cantidad, precioEnCompra) =>
         [idPedido, idProducto, cantidad, precioEnCompra]
     );
 
-exports.getOrdersByUser = (idUsuario) =>
-    consulta(
+exports.getOrdersByUser = async (idUsuario) =>{
+    const filas = await consulta(
         `SELECT p.id, p.precio_total AS total_price, p.estado AS status,
                 p.creado_en AS created_at, p.recogido AS is_picked_up,
                 ip.id AS item_id, ip.cantidad AS quantity,
@@ -36,8 +46,36 @@ exports.getOrdersByUser = (idUsuario) =>
          LEFT JOIN menu m          ON ip.id_producto = m.id
          WHERE p.id_usuario = ?
          ORDER BY p.creado_en DESC`,
-        [idUsuario]
-    );
+        [idUsuario]  
+    )
+    const mapa = {};
+        for (const fila of filas) {
+            if (!mapa[fila.id]) {
+                mapa[fila.id] = new Pedido({
+                    id:          fila.id,
+                    id_usuario:  idUsuario,
+                    total_price: fila.total_price,
+                    status:      fila.status,
+                    created_at:  fila.created_at,
+                    is_picked_up: fila.is_picked_up,
+                    items:       [],
+                });
+            }
+            if (fila.item_id) {
+                mapa[fila.id].items.push({
+                    id:           fila.item_id,
+                    product_id:   fila.product_id,
+                    quantity:     fila.quantity,
+                    price_at_time: fila.price_at_time,
+                    product_name: fila.product_name,
+                    img_src:      fila.img_src,
+                });
+            }
+        }
+        console.log();
+        
+    return Object.values(mapa);
+};
 
 exports.cancelOrder = async (idPedido, idUsuario) => {
     const resultado = await ejecutar(
@@ -47,8 +85,8 @@ exports.cancelOrder = async (idPedido, idUsuario) => {
     return resultado.changes;
 };
 
-exports.getAllOrders = () =>
-    consulta(
+exports.getAllOrders = async () =>{
+    const filas = await consulta(
         `SELECT p.id, p.precio_total AS total_price, p.estado AS status,
                 p.creado_en AS created_at, p.recogido AS is_picked_up,
                 u.nombre AS first_name, u.apellido AS last_name, u.email,
@@ -61,6 +99,34 @@ exports.getAllOrders = () =>
          LEFT JOIN menu m          ON ip.id_producto = m.id
          ORDER BY p.creado_en DESC`
     );
+
+    const mapa = {};
+        for (const fila of filas) {
+            if (!mapa[fila.id]) {
+                mapa[fila.id] = new PedidoAdmin({
+                    id: fila.id,
+                    id_usuario: null,
+                    total_price: fila.total_price,
+                    status: fila.status,
+                    created_at: fila.created_at,
+                    is_picked_up: fila.is_picked_up,
+                    first_name: fila.first_name,
+                    last_name: fila.last_name,
+                    email: fila.email,
+                    items: [],
+                });
+            }
+            if (fila.item_id) {
+                mapa[fila.id].items.push({
+                    id:           fila.item_id,
+                    quantity:     fila.quantity,
+                    price_at_time: fila.price_at_time,
+                    product_name: fila.product_name,
+                });
+            }
+        }
+    return Object.values(mapa);
+}
 
 exports.getOrderById = (idPedido) =>
     consultaUno('SELECT id_usuario AS user_id FROM pedidos WHERE id = ?', [idPedido]);

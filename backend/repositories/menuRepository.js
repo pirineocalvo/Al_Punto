@@ -1,4 +1,5 @@
 const db = require('../utils/db');
+const MenuItem = require('../clases/MenuItem')
 
 const consulta = (sql, params = []) => new Promise((resolve, reject) =>
     db.all(sql, params, (err, filas) => err ? reject(err) : resolve(filas))
@@ -18,14 +19,21 @@ const SELECCION_MENU = `
     LEFT JOIN categorias_menu c ON m.id_categoria = c.id
 `;
 
-exports.getAllItems = () => consulta(SELECCION_MENU);
+exports.getAllItems = async () => {
+    const filas = await consulta(SELECCION_MENU);
+    return filas.map(f => new MenuItem(f));
+};
+
 
 exports.getAllCategories = () => consulta('SELECT id, nombre AS name FROM categorias_menu ORDER BY id');
 
-exports.getItemsByCategory = (idcategory) => consulta(
-    `${SELECCION_MENU} WHERE m.id_categoria = ?`,
-    [idcategory]
-);
+exports.getItemsByCategory = async (idcategory) => {
+    const filas = await consulta(
+        `${SELECCION_MENU} WHERE m.id_categoria = ?`,
+        [idcategory]
+    );
+    return filas.map(f => new MenuItem(f));
+};
 
 exports.insertItem = async ({ name, ingredients, description, img_src, available, price, id_category }) => {
     const resultado = await ejecutar(

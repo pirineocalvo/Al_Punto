@@ -1,0 +1,51 @@
+/**
+ * Clase que representa un plato del menú del restaurante.
+ */
+class MenuItem {
+    /**
+     * @param {object} datos
+     * @param {number}  datos.id
+     * @param {string}  datos.name
+     * @param {string}  [datos.ingredients]
+     * @param {string}  [datos.description]
+     * @param {string}  [datos.img_src]
+     * @param {boolean} [datos.available=true]
+     * @param {number}  datos.price
+     * @param {number}  datos.id_category
+     * @param {string}  [datos.category_name]
+     */
+    constructor({ id = null, name, ingredients = '', description = '',
+        img_src = null, available = true, price, id_category,
+        category_name = null } = {}) {
+        this.id = id;
+        this.name = name;
+        this.ingredients = ingredients;
+        this.description = description;
+        this.imgSrc = img_src;
+        this.available = Boolean(available);
+        this.price = Number(price);
+        this.idCategory = id_category;
+        this.categoryName = category_name;
+    }
+
+    /** Precio formateado con símbolo de euro */
+    get precioFormateado() {
+        return `${this.price.toFixed(2)} €`;
+    }
+
+    toJSON() {
+        return {
+            id: this.id,
+            name: this.name,
+            ingredients: this.ingredients,
+            description: this.description,
+            img_src: this.imgSrc,
+            available: this.available,
+            price: this.price,
+            id_category: this.idCategory,
+            category_name: this.categoryName,
+        };
+    }
+}
+
+module.exports = MenuItem;

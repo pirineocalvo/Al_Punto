@@ -1,4 +1,5 @@
 const db = require('../utils/db');
+const Ticket = require('../clases/Ticket');
 
 const consulta = (sql, params = []) => new Promise((resolve, reject) =>
     db.all(sql, params, (err, filas) => err ? reject(err) : resolve(filas))
@@ -38,8 +39,8 @@ exports.insertPointTransaction = (idUsuario, idMonedero, puntos) =>
 exports.getLevels = () =>
     consulta('SELECT nombre AS name, puntos_min AS min_points, puntos_max AS max_points FROM niveles ORDER BY puntos_min ASC');
 
-exports.getTicketsByUser = (idUsuario) =>
-    consulta(
+exports.getTicketsByUser = async (idUsuario) =>{
+     const fila = await consulta(
         `SELECT id, url_imagen AS image_url, contenido_json AS ocr_content,
                 puntos_otorgados AS points_granted, estado AS status,
                 creado_en AS created_at
@@ -47,3 +48,6 @@ exports.getTicketsByUser = (idUsuario) =>
          ORDER BY creado_en DESC`,
         [idUsuario]
     );
+    
+        return fila.map(f => new Ticket(f));
+};

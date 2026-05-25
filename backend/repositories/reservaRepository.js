@@ -1,4 +1,5 @@
 const db = require('../utils/db');
+const Reserva = require('../clases/Reserva');
 
 const consulta = (sql, params = []) => new Promise((resolve, reject) =>
     db.all(sql, params, (err, filas) => err ? reject(err) : resolve(filas))
@@ -15,8 +16,8 @@ exports.insertReserva = async (idUsuario, fecha, hora, comensales) => {
     return resultado.lastID;
 };
 
-exports.getReservasByUser = (idUsuario) =>
-    consulta(
+exports.getReservasByUser = async(idUsuario) =>{
+    const fila = await consulta(
         `SELECT r.id, r.fecha_reserva AS reserve_date, r.hora_reserva AS reserve_hour,
                 r.comensales AS guests, r.atendido AS attended, r.estado AS status,
                 r.creado_en AS created_at,
@@ -28,7 +29,8 @@ exports.getReservasByUser = (idUsuario) =>
          ORDER BY r.fecha_reserva DESC, r.hora_reserva DESC`,
         [idUsuario]
     );
-
+    return fila.map(f => new Reserva(f));
+};
 exports.cancelarReserva = async (idReserva, idUsuario) => {
     const resultado = await ejecutar(
         'UPDATE reservas SET estado = "cancel" WHERE id = ? AND id_usuario = ?',
@@ -37,8 +39,8 @@ exports.cancelarReserva = async (idReserva, idUsuario) => {
     return resultado.changes;
 };
 
-exports.getAllPendingReservas = () =>
-    consulta(
+exports.getAllPendingReservas = async () =>{
+    const fila = await consulta(
         `SELECT r.id, r.fecha_reserva AS reserve_date, r.hora_reserva AS reserve_hour,
                 r.comensales AS guests, r.atendido AS attended, r.estado AS status,
                 r.creado_en AS created_at,
@@ -51,6 +53,8 @@ exports.getAllPendingReservas = () =>
          WHERE r.estado IS NULL
          ORDER BY r.fecha_reserva DESC, r.hora_reserva DESC`
     );
+    return fila.map(f => new Reserva(f));
+};
 
 exports.updateReservaStatus = async (idReserva, estado, atendido) => {
     const resultado = await ejecutar(

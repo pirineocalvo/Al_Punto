@@ -1,5 +1,5 @@
 const repositorioComentario = require('../repositories/comentarioRepository');
-
+const Resenia = require('../clases/Resenia');
 const PUNTOS_RESENIA = 5;
 
 exports.crearResenia = async (idUsuario, id_plato, descripcion, puntuacion) => {
@@ -9,12 +9,22 @@ exports.crearResenia = async (idUsuario, id_plato, descripcion, puntuacion) => {
         throw error;
     }
 
-    await repositorioComentario.insertResenia(id_plato, descripcion, puntuacion, idUsuario);
+    const resenia = new Resenia({ id_plato, id_usuario: idUsuario, descripcion, puntuacion });
+
+    await repositorioComentario.insertResenia(
+        resenia.idPlato, resenia.descripcion, resenia.puntuacion, resenia.idUsuario
+    );
 
     const monedero = await repositorioComentario.getWalletByUser(idUsuario);
-    const idMonedero = monedero?.id ?? null;
+    if (!monedero) {
+        const error = new Error('Monedero no encontrado');
+        error.status = 404;
+        throw error;
+    }
 
-    await repositorioComentario.insertPointTransaction(idUsuario, idMonedero, PUNTOS_RESENIA);
+    monedero.sumar(PUNTOS_RESENIA);
+
+    await repositorioComentario.insertPointTransaction(idUsuario, monedero.id, PUNTOS_RESENIA);
     await repositorioComentario.addPoints(idUsuario, PUNTOS_RESENIA);
 
     return {
@@ -22,6 +32,7 @@ exports.crearResenia = async (idUsuario, id_plato, descripcion, puntuacion) => {
         reward: `Gracias! Has ganado ${PUNTOS_RESENIA} puntos por tu resenia.`,
     };
 };
+
 
 exports.obtenerMisResenias = (idUsuario) => repositorioComentario.getReviewsByUser(idUsuario);
 
