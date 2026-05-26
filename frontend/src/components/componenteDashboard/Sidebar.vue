@@ -44,6 +44,32 @@ const rutasMenu = [
     },
 ];
 
+const rutasMenuEmpleado = [
+    { ruta: '/', label: 'Inicio', icon: HomeOutlined },
+    { ruta: '/zonaPersonal', label: 'Zona Personal', icon: UserOutlined },
+    { ruta: '/historial', label: 'Historial', icon: HistoryOutlined },
+    { ruta: '/realizarPedido', label: 'Realizar Pedido', icon: ShoppingOutlined },
+    {ruta: '/comentarios', label: 'Tus comentarios', icon: CommentOutlined },
+    { ruta: '/marketplace', label: 'Marketplace', icon: ShopOutlined },
+    {
+        ruta: '',
+        label: 'Tickets',
+        icon: TagsOutlined,
+        subMenu: [
+            { ruta: '/listarTickets', label: 'Mis Tickets' },
+            { ruta: '/agregarTickets', label: 'Subir Ticket' },
+        ],
+    },
+    {
+        ruta: '',
+        label: 'Administración',
+        icon: SettingOutlined,
+        subMenu: [
+            { ruta: '/gestionarUsuarios', label: 'Gestión de usuarios' },
+        ],
+    },
+];
+
 const rutasMenuAdmin = [
     { ruta: '/', label: 'Inicio', icon: HomeOutlined },
     { ruta: '/zonaPersonal', label: 'Zona Personal', icon: UserOutlined },
@@ -70,8 +96,6 @@ const rutasMenuAdmin = [
         ],
     },
 ];
-
-
 onMounted(async () => {
     try {
         const usuarioRegistrado = ref(localStorage.getItem('loginUserToken'));
@@ -80,9 +104,11 @@ onMounted(async () => {
             try {
                 const data = await informacionUsuario();
 
-                if (data && data.access_level > 3) {
+                if (data && data.access_level >= 5) {
                     menuActual.value = rutasMenuAdmin;
-                }else{
+                }else if(data && data.access_level >= 3){
+                    menuActual.value = rutasMenuEmpleado;
+                }else {
                     menuActual.value = rutasMenu;
                 }
             } catch (error) {

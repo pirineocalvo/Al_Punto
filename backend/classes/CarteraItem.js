@@ -1,6 +1,5 @@
 class CarteraItem {
-    constructor({ pocket_id = null, id_usuario, product_id, token_url, is_used = false, added_at = null, used_at = null,
-        expires_at = null, name = null, description = null, img_src = null, points_price = null } = {}) {
+    constructor({ pocket_id = null, id_usuario, product_id, token_url, is_used = false, added_at = null, used_at = null, name = null, description = null, img_src = null, points_price = null } = {}) {
         this.pocketId = pocket_id;
         this.idUsuario = id_usuario;
         this.productId = product_id;
@@ -8,7 +7,6 @@ class CarteraItem {
         this.isUsed = Boolean(is_used);
         this.addedAt = added_at;
         this.usedAt = used_at;
-        this.expiresAt = expires_at;
         this.name = name;
         this.description = description;
         this.imgSrc = img_src;
@@ -40,7 +38,6 @@ class CarteraItem {
             is_used: this.isUsed,
             added_at: this.addedAt,
             used_at: this.usedAt,
-            expires_at: this.expiresAt,
             name: this.name,
             description: this.description,
             img_src: this.imgSrc,

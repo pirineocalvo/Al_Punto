@@ -1,13 +1,11 @@
 class Usuario {
-    constructor({ id = null, first_name, last_name, email, phone = null,
-        birth_date = null, access_level = 0, points = 0,
+    constructor({ id = null, first_name, last_name, email, phone = null,  access_level = 0, points = 0,
         hash_contrasena = null } = {}) {
         this.id = id;
         this.firstName = first_name;
         this.lastName = last_name;
         this.email = email;
         this.phone = phone;
-        this.birthDate = birth_date;
         this.accessLevel = access_level;
         this.points = points;
         this.hashContrasena = hash_contrasena;
@@ -28,7 +26,6 @@ class Usuario {
             last_name: this.lastName,
             email: this.email,
             phone: this.phone,
-            birth_date: this.birthDate,
             access_level: this.accessLevel,
             points: this.points,
         };

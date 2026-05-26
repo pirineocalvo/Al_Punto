@@ -2,14 +2,10 @@ const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const fs = require('fs');
 
-// FIX: apuntar explícitamente a la subcarpeta /db donde está montado el volumen
 const directorioDb = path.join(__dirname, 'db');
 const rutaDb = path.join(directorioDb, 'restaurante.db');
 const rutaSeed = path.join(directorioDb, 'seed.sql');
 
-// Diagnóstico al arrancar (puedes quitarlo después del TFG)
-console.log('[SQLite] Buscando BD en:', rutaDb);
-console.log('[SQLite] Archivo existe:', fs.existsSync(rutaDb));
 
 if (!fs.existsSync(directorioDb)) {
     fs.mkdirSync(directorioDb, { recursive: true });
@@ -19,10 +15,8 @@ const dbExistiaAntes = fs.existsSync(rutaDb);
 
 const db = new sqlite3.Database(rutaDb, err => {
     if (err) {
-        console.error('[SQLite] Error al cargar la base de datos:', err.message);
-        process.exit(1); // Crash limpio, no 500 silencioso
+        process.exit(1);
     }
-    console.log('Base de datos activa');
 
     db.get(
         "SELECT COUNT(*) AS n FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'",
@@ -34,7 +28,6 @@ const db = new sqlite3.Database(rutaDb, err => {
                 const seed = fs.readFileSync(rutaSeed, 'utf8');
                 db.exec(seed, (errEjecucion) => {
                     if (errEjecucion) console.error('Error importando seed.sql:', errEjecucion);
-                    else console.log('seed.sql importado correctamente');
                     aplicarMigraciones();
                 });
             } else {

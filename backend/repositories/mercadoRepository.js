@@ -40,7 +40,7 @@ exports.getItemsByLevel = async (idNivel) => {
 exports.getPocketByUser = async (idUsuario) => {
     const filas = await consulta(
         `SELECT c.id AS pocket_id, c.usado AS is_used, c.anadido_en AS added_at,
-                c.usado_en AS used_at, c.token_url, c.expira_en AS expires_at,
+                c.usado_en AS used_at, c.token_url,
                 m.id AS product_id, m.nombre AS name, m.descripcion AS description,
                 m.img_src, m.precio_puntos AS points_price
          FROM cartera c
@@ -86,7 +86,7 @@ exports.insertPointTransaction = (idUsuario, idMonedero, cantidad, tipo) => ejec
 exports.getPocketByToken = async (tokenUrl, idUsuario) => {
     const fila = await consultaUno(
         `SELECT c.id AS pocket_id, c.usado AS is_used, c.usado_en AS used_at,
-                c.expira_en AS expires_at, c.anadido_en AS added_at,
+                c.anadido_en AS added_at,
                 m.id AS product_id, m.nombre AS name,
                 m.descripcion AS description, m.img_src,
                 u.id AS user_id, u.nombre AS first_name, u.apellido AS last_name, u.email
@@ -101,7 +101,7 @@ exports.getPocketByToken = async (tokenUrl, idUsuario) => {
 
 exports.getPocketStatusByToken = async (tokenUrl, idUsuario) => {
     const fila = await consultaUno(
-        'SELECT id AS pocket_id, usado AS is_used, expira_en AS expires_at FROM cartera WHERE token_url = ? AND id_usuario = ?',
+        'SELECT id AS pocket_id, usado AS is_used FROM cartera WHERE token_url = ? AND id_usuario = ?',
         [tokenUrl, idUsuario]
     );
     return fila ? new CarteraItem({ ...fila, id_usuario: idUsuario, token_url: tokenUrl }) : null;
