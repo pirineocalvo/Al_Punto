@@ -12,9 +12,9 @@ exports.iniciarSesion = async (req, res) => {
 };
 
 exports.registrar = async (req, res) => {
-    const { firstName, lastName, phone, email, password, birthDate } = req.body;
+    const { firstName, lastName, phone, email, password } = req.body;
     try {
-        const resultado = await servicioUsuario.registrar({ firstName, lastName, phone, email, password, birthDate });
+        const resultado = await servicioUsuario.registrar({ firstName, lastName, phone, email, password });
         res.status(201).json(resultado);
     } catch (error) {
         res.status(error.status || 500).json({ error: error.message });
