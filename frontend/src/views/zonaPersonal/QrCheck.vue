@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
+import CryptoJS from 'crypto-js';
 import { Spin, Result, Typography, Card } from 'ant-design-vue';
 import { CheckCircleFilled, CloseCircleFilled } from '@ant-design/icons-vue';
 
@@ -11,6 +12,8 @@ const route = useRoute();
 const estado = ref('cargando');
 const nombreUsuario = ref('');
 
+const QR_SECRET = import.meta.env.VITE_QR_SECRET;
+
 onMounted(async () => {
     const code = route.query.code;
     if (!code) {
@@ -19,7 +22,12 @@ onMounted(async () => {
     }
 
     try {
-        const idUsuario = decodeURIComponent(code);
+        const decoded = decodeURIComponent(code);
+        const bytes = CryptoJS.AES.decrypt(decoded, QR_SECRET);
+        const idUsuario = bytes.toString(CryptoJS.enc.Utf8);
+
+        if (!idUsuario) throw new Error('Descifrado fallido');
+
         const URL_API = import.meta.env.VITE_API_URL;
         const respuesta = await axios.get(`${URL_API}/api/usuario/checkin/${idUsuario}`);
         nombreUsuario.value = respuesta.data.nombre;
@@ -68,7 +76,6 @@ onMounted(async () => {
                     </a-typography-text>
                 </template>
             </a-result>
-
         </a-card>
     </div>
 </template>
@@ -154,7 +161,6 @@ onMounted(async () => {
     filter: drop-shadow(0 8px 24px rgba(217, 119, 66, 0.5));
     animation: pulso 2s ease-in-out infinite;
 }
-
 .icono-error {
     font-size: 72px;
     color: #c0392b;

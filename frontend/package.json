@@ -13,6 +13,7 @@
     "@antv/g2plot": "^2.4.35",
     "ant-design-vue": "^4.2.6",
     "axios": "^1.13.6",
+    "crypto-js": "^4.2.0",
     "dayjs": "^1.11.20",
     "qrcode": "^1.5.4",
     "vue": "^3.5.29",

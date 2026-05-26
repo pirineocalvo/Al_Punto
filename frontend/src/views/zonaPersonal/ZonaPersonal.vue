@@ -5,6 +5,7 @@ import { misReservas } from '../../services/reservasEndpoint';
 import { Bar } from '@antv/g2plot';
 import { UserOutlined, TrophyOutlined, FileTextOutlined } from '@ant-design/icons-vue';
 import QRCode from 'qrcode';
+import CryptoJS from 'crypto-js';
 import CabeceraZonaPersonal from '@/components/componenteDashboard/CabeceraZonaPersonal.vue';
 import PiePaginaPrincipal from '@/components/cabeceraYpiePrincipal/PiePaginaPrincipal.vue';
 import { useAuth, ACCESS_LEVELS } from '@/composables/useAuth';
@@ -22,8 +23,11 @@ let chartInstance = null;
 
 const qr = ref('');
 
+const QR_SECRET = import.meta.env.VITE_QR_SECRET;
+
 const generarCodigoQR = (userId) => {
-    return encodeURIComponent(userId);
+    const encrypted = CryptoJS.AES.encrypt(String(userId), QR_SECRET).toString();
+    return encodeURIComponent(encrypted);
 };
 
 const fetchReserve = async () => {
@@ -38,7 +42,6 @@ const generarQR = async () => {
     if (!user.value) return;
 
     const code = generarCodigoQR(user.value.id);
-    // Usa VITE_FRONTEND_URL en Docker, y como fallback window.location.origin para desarrollo local
     const baseUrl = import.meta.env.VITE_FRONTEND_URL || window.location.origin;
     const url = `${baseUrl}/checkin?code=${code}`;
     try {
@@ -115,6 +118,7 @@ onBeforeUnmount(() => {
     }
 });
 </script>
+
 <template>
     <a-layout>
         <CabeceraZonaPersonal :user="user" />
@@ -184,6 +188,7 @@ onBeforeUnmount(() => {
         <PiePaginaPrincipal />
     </a-layout>
 </template>
+
 <style scoped>
 .contenedorContenido {
     width: 100%;
@@ -213,7 +218,6 @@ onBeforeUnmount(() => {
     font-weight: 800 !important;
     margin-bottom: 8px !important;
 }
-
 .dashboardSubtitulo {
     font-size: 1rem !important;
 }
@@ -240,7 +244,6 @@ onBeforeUnmount(() => {
 .iconoEstadistica {
     font-size: 20px;
 }
-
 .numeroEstadistica {
     font-size: 2.2rem;
     font-weight: 800;
