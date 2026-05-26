@@ -147,7 +147,8 @@ const formatearFecha = (fechaStr) => {
                                     <template #title>
                                         <div class="header-reserva">
                                             <a-avatar class="colorAvatar">
-                                                {{ reserva.user_name.charAt(0) }}
+                                                <span v-if="reserva.user_name">{{ reserva.user_name.charAt(0) }}</span>
+                                                <span v-else>U</span>
                                             </a-avatar>
                                             <div class="info-header">
                                                 <span class="nombre-cliente">{{ reserva.user_name }}</span>

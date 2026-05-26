@@ -22,11 +22,11 @@ exports.insertLoginLog = (idUsuario, exitoso, ip) =>
         [idUsuario, exitoso ? 1 : 0, ip]
     );
 
-exports.insertUser = async ({ firstName, lastName, phone, email, passwordHash, birthDate }) => {
+exports.insertUser = async ({ firstName, lastName, phone, email, passwordHash }) => {
     const resultado = await ejecutar(
-        `INSERT INTO usuarios (nombre, apellido, telefono, email, hash_contrasena, fecha_nacimiento)
-         VALUES (?, ?, ?, ?, ?, ?)`,
-        [firstName, lastName, phone, email, passwordHash, birthDate || null]
+        `INSERT INTO usuarios (nombre, apellido, telefono, email, hash_contrasena)
+         VALUES (?, ?, ?, ?, ?)`,
+        [firstName, lastName, phone, email, passwordHash || null]
     );
     return resultado.lastID;
 };
@@ -42,12 +42,9 @@ exports.getUserInfo = (idUsuario) =>
              u.apellido      AS last_name,
              u.telefono      AS phone,
              u.email,
-             u.fecha_nacimiento AS birth_date,
              u.nivel_acceso  AS access_level,
              m.puntos        AS points,
              (SELECT nombre     FROM niveles WHERE m.puntos >= puntos_min AND m.puntos <= puntos_max) AS levelName,
-             (SELECT hex_bkg    FROM niveles WHERE m.puntos >= puntos_min AND m.puntos <= puntos_max) AS levelBkg,
-             (SELECT hex_text   FROM niveles WHERE m.puntos >= puntos_min AND m.puntos <= puntos_max) AS levelText,
              (SELECT puntos_min FROM niveles WHERE m.puntos >= puntos_min AND m.puntos <= puntos_max) AS levelMin,
              (SELECT puntos_max FROM niveles WHERE m.puntos >= puntos_min AND m.puntos <= puntos_max) AS levelMax,
              (SELECT nombre FROM niveles
@@ -71,7 +68,7 @@ exports.getTransactions = (idUsuario) =>
 
 exports.getLevels = () =>
     consulta(
-        'SELECT id, nombre, puntos_min, puntos_max, hex_bkg, hex_text FROM niveles ORDER BY puntos_min ASC'
+        'SELECT id, nombre, puntos_min, puntos_max FROM niveles ORDER BY puntos_min ASC'
     );
 
 exports.updatePerfil = (idUsuario, first_name, last_name, phone) =>
