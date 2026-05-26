@@ -1,17 +1,4 @@
 class Reserva {
-    /**
-     * @param {object}  datos
-     * @param {number}  datos.id
-     * @param {number}  datos.id_usuario
-     * @param {string}  datos.reserve_date
-     * @param {string}  datos.reserve_hour
-     * @param {number}  datos.guests
-     * @param {boolean} [datos.attended=false]
-     * @param {string}  [datos.status=null]
-     * @param {string}  [datos.created_at]
-     * @param {number}  [datos.table_id]
-     * @param {string}  [datos.mesa_name]
-     */
 constructor({ id = null, id_usuario, reserve_date, reserve_hour,
     guests, attended = false, status = null,
     created_at = null, table_id = null, mesa_name = null,

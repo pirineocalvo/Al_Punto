@@ -1,12 +1,4 @@
 class Mesa {
-    /**
-     * @param {object}   datos
-     * @param {number}   datos.id
-     * @param {string}   datos.name
-     * @param {number}   datos.n_ocupantes
-     * @param {boolean}  [datos.activo=true]
-     * @param {string[]} [datos.horasDisponibles=[]]
-     */
     constructor({ id = null, name, n_ocupantes, activo = true,
         horasDisponibles = [] } = {}) {
         this.id = id;

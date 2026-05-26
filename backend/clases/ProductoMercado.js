@@ -1,14 +1,4 @@
 class ProductoMercado {
-    /**
-     * @param {object} datos
-     * @param {number} datos.id
-     * @param {string} datos.name
-     * @param {string} [datos.description]
-     * @param {number} datos.points_price
-     * @param {number} datos.min_level_id
-     * @param {string} [datos.img_src]
-     * @param {string} [datos.created_at]
-     */
     constructor({ id = null, name, description = '', points_price,
         min_level_id, img_src = null, created_at = null } = {}) {
         this.id = id;
@@ -20,10 +10,6 @@ class ProductoMercado {
         this.createdAt = created_at;
     }
 
-    /**
-     * @param {number} points
-     * @param {number} levelId
-     */
     disponiblePara(points, levelId) {
         return points >= this.pointsPrice && levelId >= this.minLevelId;
     }

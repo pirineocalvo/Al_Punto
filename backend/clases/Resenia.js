@@ -1,20 +1,5 @@
 class Resenia {
-    /**
-     * @param {object} datos
-     * @param {number} datos.id
-     * @param {number} datos.id_plato
-     * @param {number} datos.id_usuario
-     * @param {string} datos.descripcion
-     * @param {number} datos.puntuacion   - Valor entre 1 y 5
-     * @param {string} [datos.creado_en]
-     * @param {string} [datos.plato_name]
-     * @param {string} [datos.plato_img]
-     * @param {string} [datos.first_name]
-     * @param {string} [datos.last_name]
-     */
-    constructor({ id = null, id_plato, id_usuario, descripcion, puntuacion,
-        creado_en = null, plato_name = null, plato_img = null,
-        first_name = null, last_name = null } = {}) {
+    constructor({ id = null, id_plato, id_usuario, descripcion, puntuacion, creado_en = null, plato_name = null, plato_img = null, first_name = null, last_name = null } = {}) {
         if (puntuacion < 1 || puntuacion > 5) {
             throw new RangeError('La puntuación debe estar entre 1 y 5');
         }
@@ -30,7 +15,7 @@ class Resenia {
         this.lastName = last_name;
     }
 
-    /** Nombre completo del autor (disponible en consultas JOIN con usuarios) */
+
     get autor() {
         if (!this.firstName) return null;
         return `${this.firstName} ${this.lastName ?? ''}`.trim();
