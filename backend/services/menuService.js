@@ -1,5 +1,5 @@
 const repositorioMenu = require('../repositories/menuRepository');
-const MenuItem = require('../clases/MenuItem');
+const MenuItem = require('../classes/MenuItem');
 
 
 exports.obtenerTodosItems = () => repositorioMenu.getAllItems();

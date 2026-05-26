@@ -1,5 +1,5 @@
 const repositorioMesa = require('../repositories/mesaRepository');
-const Mesa = require('../clases/Mesa');
+const Mesa = require('../classes/Mesa');
 
 const HORARIOS = [
     '13:30:00', '14:00:00', '14:30:00', '15:00:00', '15:30:00',

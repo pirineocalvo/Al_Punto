@@ -1,5 +1,5 @@
 const db = require('../utils/db');
-const MenuItem = require('../clases/MenuItem')
+const MenuItem = require('../classes/MenuItem')
 
 const consulta = (sql, params = []) => new Promise((resolve, reject) =>
     db.all(sql, params, (err, filas) => err ? reject(err) : resolve(filas))

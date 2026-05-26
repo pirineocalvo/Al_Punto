@@ -1,9 +1,9 @@
 const db = require('../utils/db');
 
-const Monedero = require('../clases/Monedero');
-const ProductoMercado = require('../clases/ProductoMercado');
-const CarteraItem  = require('../clases/CarteraItem');
-const Nivel = require('../clases/Nivel');
+const Monedero = require('../classes/Monedero');
+const ProductoMercado = require('../classes/ProductoMercado');
+const CarteraItem  = require('../classes/CarteraItem');
+const Nivel = require('../classes/Nivel');
 
 const consulta    = (sql, params = []) => new Promise((resolve, reject) =>
     db.all(sql, params, (err, filas) => err ? reject(err) : resolve(filas))

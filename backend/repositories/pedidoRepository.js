@@ -1,7 +1,7 @@
 const db = require('../utils/db');
 
-const Pedido = require('../clases/Pedido');
-const PedidoAdmin = require('../clases/PedidoAdmin');
+const Pedido = require('../classes/Pedido');
+const PedidoAdmin = require('../classes/PedidoAdmin');
 
 const consulta = (sql, params = []) => new Promise((resolve, reject) =>
     db.all(sql, params, (err, filas) => err ? reject(err) : resolve(filas))

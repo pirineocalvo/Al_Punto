@@ -1,5 +1,5 @@
 const repositorioComentario = require('../repositories/comentarioRepository');
-const Resenia = require('../clases/Resenia');
+const Resenia = require('../classes/Resenia');
 const PUNTOS_RESENIA = 5;
 
 exports.crearResenia = async (idUsuario, id_plato, descripcion, puntuacion) => {

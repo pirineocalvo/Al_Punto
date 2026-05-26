@@ -1,6 +1,6 @@
 const db = require('../utils/db');
-const Mesa = require('../clases/Mesa');
-const Reserva = require('../clases/Reserva');
+const Mesa = require('../classes/Mesa');
+const Reserva = require('../classes/Reserva');
 
 const consulta = (sql, params = []) => new Promise((resolve, reject) =>
     db.all(sql, params, (err, fila) => err ? reject(err) : resolve(fila))

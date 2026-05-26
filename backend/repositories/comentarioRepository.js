@@ -1,7 +1,7 @@
 const db = require('../utils/db');
 
-const Monedero = require('../clases/Monedero');
-const Resenia  = require('../clases/Resenia');
+const Monedero = require('../classes/Monedero');
+const Resenia  = require('../classes/Resenia');
 
 const consulta = (sql, params = []) => new Promise((resolve, reject) =>
     db.all(sql, params, (err, filas) => err ? reject(err) : resolve(filas))
