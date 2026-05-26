@@ -44,7 +44,7 @@ exports.iniciarSesion = async (email, contrasena, ip) => {
     };
 };
 
-exports.registrar = async ({ firstName, lastName, phone, email, password, birthDate }) => {
+exports.registrar = async ({ firstName, lastName, phone, email, password }) => {
     if (!firstName || !lastName || !email || !password) {
         const error = new Error('Faltan campos obligatorios');
         error.status = 400;
@@ -59,7 +59,7 @@ exports.registrar = async ({ firstName, lastName, phone, email, password, birthD
     }
 
     const passwordHash = cifrarContrasena(password);
-    const idNuevoUsuario = await repositorioUsuario.insertUser({ firstName, lastName, phone, email, passwordHash, birthDate });
+    const idNuevoUsuario = await repositorioUsuario.insertUser({ firstName, lastName, phone, email, passwordHash });
 
     await repositorioUsuario.insertWallet(idNuevoUsuario, PUNTOS_INICIALES_MONEDERO);
 
