@@ -1,16 +1,4 @@
 class Usuario {
-    /**
-     * @param {object} datos
-     * @param {number}  datos.id
-     * @param {string}  datos.first_name
-     * @param {string}  datos.last_name
-     * @param {string}  datos.email
-     * @param {string}  [datos.phone]
-     * @param {string}  [datos.birth_date]
-     * @param {number}  [datos.access_level=0]
-     * @param {number}  [datos.points=0]
-     * @param {string}  [daidtos.hash_contrasena]
-     */
     constructor({ id = null, first_name, last_name, email, phone = null,
         birth_date = null, access_level = 0, points = 0,
         hash_contrasena = null } = {}) {
