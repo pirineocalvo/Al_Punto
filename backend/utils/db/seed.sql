@@ -86,10 +86,37 @@ CREATE TABLE menu (
     id_categoria INTEGER,
     FOREIGN KEY (id_categoria) REFERENCES categorias_menu(id)
 );
-INSERT INTO menu VALUES(1,'Hamburguesa Clásica','Carne 200g, Queso Cheddar, Lechuga, Tomate','Nuestra burger más vendida con ingredientes frescos.','default.jpg',1,12.5,'2026-01-25 21:22:23',2);
-INSERT INTO menu VALUES(2,'Pizza Margherita','Masa artesanal, Tomate, Mozzarella, Albahaca','Sabor tradicional italiano cocinado en horno de piedra.','default.jpg',1,10,'2026-01-25 21:22:23',2);
-INSERT INTO menu VALUES(3,'Ensalada César','Pollo a la brasa, Lechuga romana, Croutons, Salsa César','Fresca y ligera, ideal para comenzar.','default.jpg',1,9.25,'2026-01-25 21:22:23',2);
-INSERT INTO menu VALUES(4,'Tarta de Queso','Queso crema, Base de galleta, Mermelada de frutos rojos','Casera y muy cremosa.','menuitemsimg/1776891415169-41471845.jpg',1,6.5,'2026-01-25 21:22:23',4);
+
+INSERT INTO menu VALUES(1,'Tequeños de Queso','Masa de trigo, Queso blanco','Palitos de queso crujientes acompañados de salsa artesanal.','default.jpg',1,7.50,'2026-01-25 21:22:23',1);
+INSERT INTO menu VALUES(2,'Nachos con Queso y Guacamole','Totopos de maíz, Queso fundido, Guacamole, Jalapeños','Ideales para abrir el apetito.','default.jpg',1,8.90,'2026-01-25 21:22:23',1);
+INSERT INTO menu VALUES(3,'Croquetas de Jamón Ibérico','Bechamel, Jamón ibérico, Pan rallado','Sabor tradicional y textura extra cremosa.','default.jpg',1,6.50,'2026-01-25 21:22:23',1);
+INSERT INTO menu VALUES(4,'Patatas Bravas','Patatas, Salsa brava casera, Alioli','Un clásico con nuestro toque picante secreto.','default.jpg',1,5.80,'2026-01-25 21:22:23',1);
+INSERT INTO menu VALUES(5,'Sopa de Tomate','Tomates maduros, Albahaca, Aceite de oliva','Sopa templada, ligera y reconfortante.','default.jpg',1,6.00,'2026-01-25 21:22:23',1);
+
+INSERT INTO menu VALUES(6,'Hamburguesa Clásica','Carne 200g, Queso Cheddar, Lechuga, Tomate','Nuestra burger más vendida con ingredientes frescos.','default.jpg',1,12.5,'2026-01-25 21:22:23',2);
+INSERT INTO menu VALUES(7,'Pizza Margherita','Masa artesanal, Tomate, Mozzarella, Albahaca','Sabor tradicional italiano cocinado en horno de piedra.','default.jpg',1,10,'2026-01-25 21:22:23',2);
+INSERT INTO menu VALUES(8,'Ensalada César','Pollo a la brasa, Lechuga romana, Croutons, Salsa César','Fresca y ligera, ideal para comenzar.','default.jpg',1,9.25,'2026-01-25 21:22:23',2);
+INSERT INTO menu VALUES(9,'Risotto de Setas','Arroz arborio, Champiñones, Parmesano, Trufa','Delicioso arroz meloso con aroma a trufa blanca.','default.jpg',1,13.50,'2026-01-25 21:22:23',2);
+INSERT INTO menu VALUES(10,'Wok de Fideos con Verduras','Fideos de trigo, Pimientos, Calabacín, Salsa de soja','Salteado al momento, opción ligera y sabrosa.','default.jpg',1,11.00,'2026-01-25 21:22:23',2);
+
+INSERT INTO menu VALUES(11,'Entrecot de Ternera','Carne de vacuno 300g, Patatas, Pimientos','Hecho a la parrilla al punto que más te guste.','default.jpg',1,19.50,'2026-01-25 21:22:23',3);
+INSERT INTO menu VALUES(12,'Salmón al Horno','Salmón noruego, Verduras salteadas, Salsa de eneldo','Jugoso filete de salmón cocinado a baja temperatura.','default.jpg',1,16.80,'2026-01-25 21:22:23',3);
+INSERT INTO menu VALUES(13,'Secreto Ibérico','Carne de cerdo ibérico, Puré de patata','Carne tierna y sabrosa acompañada de puré casero.','default.jpg',1,15.50,'2026-01-25 21:22:23',3);
+INSERT INTO menu VALUES(14,'Pechuga de Pollo al Curry','Pollo, Arroz basmati, Salsa curry suave','Estilo oriental, especiado pero apto para todos.','default.jpg',1,12.90,'2026-01-25 21:22:23',3);
+INSERT INTO menu VALUES(15,'Lasaña Boloñesa','Pasta, Carne picada, Beicon, Tomate, Bechamel','Capas de sabor horneadas con mucho queso.','default.jpg',1,11.50,'2026-01-25 21:22:23',3);
+
+INSERT INTO menu VALUES(16,'Tarta de Queso','Queso crema, Base de galleta, Mermelada de frutos rojos','Casera y muy cremosa.','menuitemsimg/1776891415169-41471845.jpg',1,6.5,'2026-01-25 21:22:23',4);
+INSERT INTO menu VALUES(17,'Brownie con Helado','Chocolate, Nueces, Helado de vainilla','Servido caliente para derretir el helado.','default.jpg',1,6.00,'2026-01-25 21:22:23',4);
+INSERT INTO menu VALUES(18,'Tiramisú Tradicional','Bizcocho, Café, Mascarpone, Cacao','Receta clásica italiana con un toque de licor.','default.jpg',1,5.50,'2026-01-25 21:22:23',4);
+INSERT INTO menu VALUES(19,'Flan de Huevo Casero','Huevos, Leche, Azúcar, Caramelo','El de toda la vida, hecho con mucho mimo.','default.jpg',1,4.50,'2026-01-25 21:22:23',4);
+INSERT INTO menu VALUES(20,'Copa de Sorbete de Limón','Limón natural, Menta','Refrescante e ideal para terminar una buena comida.','default.jpg',1,4.00,'2026-01-25 21:22:23',4);
+
+
+INSERT INTO menu VALUES(21,'Tabla de Quesos y Embutidos','Variedad de quesos, Jamón, Salchichón, Picos','Perfecta combinación para picar entre varios.','default.jpg',1,18.00,'2026-01-25 21:22:23',5);
+INSERT INTO menu VALUES(22,'Calamares a la Romana','Calamares, Harina, Limón','Crujientes por fuera y tiernos por dentro.','default.jpg',1,10.50,'2026-01-25 21:22:23',5);
+INSERT INTO menu VALUES(23,'Fingers de Pollo','Pechuga de pollo, Rebozado crujiente, Salsa BBQ','Tiras de pollo devoradas tanto por niños como por adultos.','default.jpg',1,8.50,'2026-01-25 21:22:23',5);
+INSERT INTO menu VALUES(24,'Aperitivo de Hummus','Garbanzos, Tahini, Pan de pita, Aceite','Crema suave de garbanzos para untar.','default.jpg',1,7.00,'2026-01-25 21:22:23',5);
+INSERT INTO menu VALUES(25,'Cazuela de Gambas al Ajillo','Gambas, Ajo, Guindilla, Aceite de oliva','Servidas burbujeando, un aroma irresistible.','default.jpg',1,12.00,'2026-01-25 21:22:23',5);
 
 CREATE TABLE reservas (
     id            INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -138,36 +165,23 @@ CREATE TABLE mercado (
     FOREIGN KEY (id_nivel_min) REFERENCES niveles(id)
 );
 
-INSERT INTO menu VALUES(1,'Tequeños de Queso','Masa de trigo, Queso blanco','Palitos de queso crujientes acompañados de salsa artesanal.','default.jpg',1,7.50,'2026-01-25 21:22:23',1);
-INSERT INTO menu VALUES(2,'Nachos con Queso y Guacamole','Totopos de maíz, Queso fundido, Guacamole, Jalapeños','Ideales para abrir el apetito.','default.jpg',1,8.90,'2026-01-25 21:22:23',1);
-INSERT INTO menu VALUES(3,'Croquetas de Jamón Ibérico','Bechamel, Jamón ibérico, Pan rallado','Sabor tradicional y textura extra cremosa.','default.jpg',1,6.50,'2026-01-25 21:22:23',1);
-INSERT INTO menu VALUES(4,'Patatas Bravas','Patatas, Salsa brava casera, Alioli','Un clásico con nuestro toque picante secreto.','default.jpg',1,5.80,'2026-01-25 21:22:23',1);
-INSERT INTO menu VALUES(5,'Sopa de Tomate','Tomates maduros, Albahaca, Aceite de oliva','Sopa templada, ligera y reconfortante.','default.jpg',1,6.00,'2026-01-25 21:22:23',1);
+INSERT INTO mercado VALUES(1,'Bebida Gratis','Refresco, agua, cerveza o similar.',200,1,'2026-03-25 20:27:39',NULL);
 
-INSERT INTO menu VALUES(6,'Hamburguesa Clásica','Carne 200g, Queso Cheddar, Lechuga, Tomate','Nuestra burger más vendida con ingredientes frescos.','default.jpg',1,12.5,'2026-01-25 21:22:23',2);
-INSERT INTO menu VALUES(7,'Pizza Margherita','Masa artesanal, Tomate, Mozzarella, Albahaca','Sabor tradicional italiano cocinado en horno de piedra.','default.jpg',1,10,'2026-01-25 21:22:23',2);
-INSERT INTO menu VALUES(8,'Ensalada César','Pollo a la brasa, Lechuga romana, Croutons, Salsa César','Fresca y ligera, ideal para comenzar.','default.jpg',1,9.25,'2026-01-25 21:22:23',2);
-INSERT INTO menu VALUES(9,'Risotto de Setas','Arroz arborio, Champiñones, Parmesano, Trufa','Delicioso arroz meloso con aroma a trufa blanca.','default.jpg',1,13.50,'2026-01-25 21:22:23',2);
-INSERT INTO menu VALUES(10,'Wok de Fideos con Verduras','Fideos de trigo, Pimientos, Calabacín, Salsa de soja','Salteado al momento, opción ligera y sabrosa.','default.jpg',1,11.00,'2026-01-25 21:22:23',2);
+INSERT INTO mercado VALUES(2,'Café Especialidad','Café de especialidad preparado por barista.',150,1,'2026-03-25 20:27:39',NULL);
 
-INSERT INTO menu VALUES(11,'Entrecot de Ternera','Carne de vacuno 300g, Patatas, Pimientos','Hecho a la parrilla al punto que más te guste.','default.jpg',1,19.50,'2026-01-25 21:22:23',3);
-INSERT INTO menu VALUES(12,'Salmón al Horno','Salmón noruego, Verduras salteadas, Salsa de eneldo','Jugoso filete de salmón cocinado a baja temperatura.','default.jpg',1,16.80,'2026-01-25 21:22:23',3);
-INSERT INTO menu VALUES(13,'Secreto Ibérico','Carne de cerdo ibérico, Puré de patata','Carne tierna y sabrosa acompañada de puré casero.','default.jpg',1,15.50,'2026-01-25 21:22:23',3);
-INSERT INTO menu VALUES(14,'Pechuga de Pollo al Curry','Pollo, Arroz basmati, Salsa curry suave','Estilo oriental, especiado pero apto para todos.','default.jpg',1,12.90,'2026-01-25 21:22:23',3);
-INSERT INTO menu VALUES(15,'Lasaña Boloñesa','Pasta, Carne picada, Beicon, Tomate, Bechamel','Capas de sabor horneadas con mucho queso.','default.jpg',1,11.50,'2026-01-25 21:22:23',3);
+INSERT INTO mercado VALUES(3,'Tapa de la Casa','Tapa exclusiva disponible solo para clientes fidelizados.',350,1,'2026-03-25 20:27:39',NULL);
 
-INSERT INTO menu VALUES(16,'Tarta de Queso','Queso crema, Base de galleta, Mermelada de frutos rojos','Casera y muy cremosa.','menuitemsimg/1776891415169-41471845.jpg',1,6.5,'2026-01-25 21:22:23',4);
-INSERT INTO menu VALUES(17,'Brownie con Helado','Chocolate, Nueces, Helado de vainilla','Servido caliente para derretir el helado.','default.jpg',1,6.00,'2026-01-25 21:22:23',4);
-INSERT INTO menu VALUES(18,'Tiramisú Tradicional','Bizcocho, Café, Mascarpone, Cacao','Receta clásica italiana con un toque de licor.','default.jpg',1,5.50,'2026-01-25 21:22:23',4);
-INSERT INTO menu VALUES(19,'Flan de Huevo Casero','Huevos, Leche, Azúcar, Caramelo','El de toda la vida, hecho con mucho mimo.','default.jpg',1,4.50,'2026-01-25 21:22:23',4);
-INSERT INTO menu VALUES(20,'Copa de Sorbete de Limón','Limón natural, Menta','Refrescante e ideal para terminar una buena comida.','default.jpg',1,4.00,'2026-01-25 21:22:23',4);
+INSERT INTO mercado VALUES(4,'Postre Casero','Cualquiera de nuestros postres artesanales.',400,1,'2026-03-25 20:27:39',NULL);
 
+INSERT INTO mercado VALUES(5,'Plato Principal','Un plato principal del menú habitual.',1200,2,'2026-03-25 20:27:39',NULL);
 
-INSERT INTO menu VALUES(21,'Tabla de Quesos y Embutidos','Variedad de quesos, Jamón, Salchichón, Picos','Perfecta combinación para picar entre varios.','default.jpg',1,18.00,'2026-01-25 21:22:23',5);
-INSERT INTO menu VALUES(22,'Calamares a la Romana','Calamares, Harina, Limón','Crujientes por fuera y tiernos por dentro.','default.jpg',1,10.50,'2026-01-25 21:22:23',5);
-INSERT INTO menu VALUES(23,'Fingers de Pollo','Pechuga de pollo, Rebozado crujiente, Salsa BBQ','Tiras de pollo devoradas tanto por niños como por adultos.','default.jpg',1,8.50,'2026-01-25 21:22:23',5);
-INSERT INTO menu VALUES(24,'Aperitivo de Hummus','Garbanzos, Tahini, Pan de pita, Aceite','Crema suave de garbanzos para untar.','default.jpg',1,7.00,'2026-01-25 21:22:23',5);
-INSERT INTO menu VALUES(25,'Cazuela de Gambas al Ajillo','Gambas, Ajo, Guindilla, Aceite de oliva','Servidas burbujeando, un aroma irresistible.','default.jpg',1,12.00,'2026-01-25 21:22:23',5);
+INSERT INTO mercado VALUES(6,'Menú Completo','Incluye entrante, principal y bebida.',1800,2,'2026-03-25 20:27:39',NULL);
+
+INSERT INTO mercado VALUES(7,'Botella de Vino','Selección especial de nuestro sumiller.',1500,2,'2026-03-25 20:27:39',NULL);
+
+INSERT INTO mercado VALUES(8,'Cena para Dos','Menú degustación para dos personas.',4000,3,'2026-03-25 20:27:39',NULL);
+
+INSERT INTO mercado VALUES(9,'Experiencia con el Chef','Cocina con nuestro chef y aprende un plato estrella.',8000,3,'2026-03-25 20:27:39',NULL);
 
 CREATE TABLE cartera (
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
