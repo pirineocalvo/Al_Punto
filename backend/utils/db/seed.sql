@@ -41,7 +41,8 @@ CREATE TABLE monedero (
     puntos     INTEGER DEFAULT 0,
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id)
 );
-INSERT INTO monedero VALUES(4,9,500);
+INSERT INTO monedero VALUES(4,8,500);
+INSERT INTO monedero VALUES(5,9,500);
 
 CREATE TABLE transacciones_puntos (
     id                   INTEGER PRIMARY KEY AUTOINCREMENT,
