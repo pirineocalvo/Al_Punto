@@ -12,7 +12,8 @@ exports.iniciarSesion = async (email, contrasena, ip) => {
     }
 
     const usuario = await repositorioUsuario.getUserByEmail(email);
-    const esValido = usuario ? compararContrasena(contrasena, usuario.hash_contrasena) : false;
+
+    const esValido = usuario ? compararContrasena(contrasena, usuario.hashContrasena) : false;
 
     if (usuario) await repositorioUsuario.insertLoginLog(usuario.id, esValido, ip);
 
@@ -108,7 +109,7 @@ exports.actualizarContrasena = async (idUsuario, password_actual, password_nueva
         error.status = 404;
         throw error;
     }
-    if (!compararContrasena(password_actual, usuario.hash_contrasena)) {
+    if (!compararContrasena(password_actual, usuario.hashContrasena)) {
         const error = new Error('La contraseña actual no es correcta');
         error.status = 401;
         throw error;
@@ -119,5 +120,6 @@ exports.actualizarContrasena = async (idUsuario, password_actual, password_nueva
 };
 
 exports.obtenerUsuarioPorId = async (id) => {
-    return await repositorioUsuario.obtenerUsuarioPorId(id);
+    const usuario = await repositorioUsuario.obtenerUsuarioPorId(id);
+    return usuario; // Ya es instancia de Usuario o null
 };

@@ -1,4 +1,5 @@
 const db = require('../utils/db');
+const Usuario = require('../models/Usuario');
 
 const consulta = (sql, params = []) => new Promise((resolve, reject) =>
     db.all(sql, params, (err, filas) => err ? reject(err) : resolve(filas))
@@ -10,11 +11,37 @@ const ejecutar = (sql, params = []) => new Promise((resolve, reject) =>
     db.run(sql, params, function (err) { err ? reject(err) : resolve(this); })
 );
 
-exports.getUserByEmail = (email) =>
-    consultaUno('SELECT * FROM usuarios WHERE email = ?', [email]);
+exports.getUserByEmail = async (email) => {
+    const fila = await consultaUno('SELECT * FROM usuarios WHERE email = ?', [email]);
+    if (!fila) return null;
+    return new Usuario({
+        id: fila.id,
+        nombre: fila.nombre,
+        apellido: fila.apellido,
+        email: fila.email,
+        telefono: fila.telefono,
+        nivel_acceso: fila.nivel_acceso,
+        activo: fila.activo,
+        creado_en: fila.creado_en,
+        hash_contrasena: fila.hash_contrasena,
+    });
+};
 
-exports.getUserById = (idUsuario) =>
-    consultaUno('SELECT hash_contrasena FROM usuarios WHERE id = ?', [idUsuario]);
+exports.getUserById = async (idUsuario) => {
+    const fila = await consultaUno('SELECT * FROM usuarios WHERE id = ?', [idUsuario]);
+    if (!fila) return null;
+    return new Usuario({
+        id: fila.id,
+        nombre: fila.nombre,
+        apellido: fila.apellido,
+        email: fila.email,
+        telefono: fila.telefono,
+        nivel_acceso: fila.nivel_acceso,
+        activo: fila.activo,
+        creado_en: fila.creado_en,
+        hash_contrasena: fila.hash_contrasena,
+    });
+};
 
 exports.insertLoginLog = (idUsuario, exitoso, ip) =>
     ejecutar(
@@ -80,6 +107,8 @@ exports.updatePerfil = (idUsuario, first_name, last_name, phone) =>
 exports.updatePassword = (idUsuario, nuevoHash) =>
     ejecutar('UPDATE usuarios SET hash_contrasena = ? WHERE id = ?', [nuevoHash, idUsuario]);
 
-exports.obtenerUsuarioPorId = (id) =>
-    consulta('SELECT nombre, apellido FROM usuarios WHERE id = ?', [id])
-        .then(filas => filas[0] ?? null);
+exports.obtenerUsuarioPorId = async (id) => {
+    const fila = await consultaUno('SELECT nombre, apellido FROM usuarios WHERE id = ?', [id]);
+    if (!fila) return null;
+    return new Usuario({ id, nombre: fila.nombre, apellido: fila.apellido });
+};
