@@ -10,7 +10,10 @@ exports.crearReserva = async (idUsuario, fecha, hora, comensales) => {
     return { message: 'Reserva realizada con éxito', idReserva };
 };
 
-exports.obtenerMisReservas = (idUsuario) => repositorioReserva.getReservasByUser(idUsuario);
+exports.obtenerMisReservas = async (idUsuario) => {
+    const reservas = await repositorioReserva.getReservasByUser(idUsuario);
+    return reservas.map(r => r.toJSON());
+};
 
 exports.cancelarReserva = async (idUsuario, idReserva) => {
     const cambios = await repositorioReserva.cancelarReserva(idReserva, idUsuario);
@@ -22,7 +25,10 @@ exports.cancelarReserva = async (idUsuario, idReserva) => {
     return { message: 'Reserva cancelada con éxito' };
 };
 
-exports.obtenerTodasAdmin = () => repositorioReserva.getAllPendingReservas();
+exports.obtenerTodasAdmin = async () => {
+    const reservas = await repositorioReserva.getAllPendingReservas();
+    return reservas.map(r => r.toJSON());
+};
 
 exports.actualizarEstadoAdmin = async (idReserva, estado, atendido) => {
     if (!estado) {
