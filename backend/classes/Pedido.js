@@ -1,19 +1,23 @@
 const ESTADOS_VALIDOS = ['pendiente', 'en_preparacion', 'listo', 'entregado', 'cancelado'];
 
 class Pedido {
-    constructor({ id = null, id_usuario, precio_total = 0, estado = 'pendiente',
-        recogido = false, creado_en = null, items = [] } = {}) {
+    constructor({ id = null, id_usuario,
+        precio_total, total_price,
+        estado, status = 'pendiente',
+        recogido, is_picked_up = false,
+        creado_en = null, created_at = null,
+        items = [] } = {}) {
         this.id = id;
         this.idUsuario = id_usuario;
-        this.precioTotal = Number(precio_total);
-        this.estado = estado;
-        this.recogido = Boolean(recogido);
-        this.creadoEn = creado_en;
+        this.total_price = Number(precio_total ?? total_price ?? 0);
+        this.status = estado ?? status;
+        this.is_picked_up = Boolean(recogido ?? is_picked_up);
+        this.created_at = creado_en ?? created_at;
         this.items = items;
     }
 
     get cancelable() {
-        return this.estado === 'pendiente';
+        return this.status === 'pendiente';
     }
 
     cambiarEstado(nuevoEstado) {
@@ -22,17 +26,17 @@ class Pedido {
             error.status = 400;
             throw error;
         }
-        this.estado = nuevoEstado;
+        this.status = nuevoEstado;
     }
 
     toJSON() {
         return {
             id: this.id,
             id_usuario: this.idUsuario,
-            precio_total: this.precioTotal,
-            estado: this.estado,
-            recogido: this.recogido ? 1 : 0,
-            creado_en: this.creadoEn,
+            total_price: this.total_price,
+            status: this.status,
+            is_picked_up: this.is_picked_up ? 1 : 0,
+            created_at: this.created_at,
             items: this.items,
         };
     }

@@ -18,15 +18,15 @@ exports.crearPedido = async (idUsuario, items, precioTotal) => {
     pedido.items = items;
     return {
         message: 'Pedido creado correctamente',
-        pedido, 
-        idPedido: pedido.id,  
+        pedido: pedido.toJSON(),
+        idPedido: pedido.id,
     };
 };
 
 exports.obtenerMisPedidos = async (idUsuario) => {
-    return repositorioPedido.getOrdersByUser(idUsuario);
+    const pedidos = await repositorioPedido.getOrdersByUser(idUsuario);
+    return pedidos.map(p => p.toJSON());
 };
-
 
 exports.cancelarPedido = async (idUsuario, idPedido) => {
     const cambios = await repositorioPedido.cancelOrder(idPedido, idUsuario);
@@ -39,7 +39,8 @@ exports.cancelarPedido = async (idUsuario, idPedido) => {
 };
 
 exports.obtenerTodosAdmin = async () => {
-    return repositorioPedido.getAllOrders();
+    const pedidos = await repositorioPedido.getAllOrders();
+    return pedidos.map(p => p.toJSON());
 };
 
 exports.actualizarEstado = async (idPedido, estado, recogido) => {
