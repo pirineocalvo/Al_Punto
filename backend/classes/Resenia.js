@@ -1,6 +1,6 @@
 class Resenia {
     constructor({ id = null, id_plato, id_usuario, descripcion, puntuacion,
-        creado_en = null, nombre_plato = null, img_plato = null,
+        creado_en = null, plato_name = null, plato_img = null,
         nombre = null, apellido = null } = {}) {
         const puntuacionNum = Number(puntuacion);
         if (puntuacionNum < 1 || puntuacionNum > 5) {
@@ -12,8 +12,8 @@ class Resenia {
         this.descripcion = descripcion;
         this.puntuacion = puntuacionNum;
         this.creadoEn = creado_en;
-        this.nombrePlato = nombre_plato;
-        this.imgPlato = img_plato;
+        this.platoName = plato_name;
+        this.platoImg = plato_img;
         this.nombre = nombre;
         this.apellido = apellido;
     }
@@ -31,8 +31,8 @@ class Resenia {
             descripcion: this.descripcion,
             puntuacion: this.puntuacion,
             creado_en: this.creadoEn,
-            nombre_plato: this.nombrePlato,
-            img_plato: this.imgPlato,
+            plato_name: this.platoName,
+            plato_img: this.platoImg,
             nombre: this.nombre,
             apellido: this.apellido,
         };

@@ -120,15 +120,15 @@ onUnmounted(() => {
                 <div class="tarjetaResenia">
                   <a-flex align="center" gap="small">
                     <div class="avatarResenia">
-                      {{ resenia.first_name?.[0] }}
+                      {{ resenia.nombre?.[0] }}
                     </div>
                     <div>
                       <a-typography-text strong>
-                        {{ resenia.first_name }} {{ resenia.last_name }}
+                        {{ resenia.nombre }} {{ resenia.apellido }}
                       </a-typography-text>
                       <br />
                       <a-typography-text type="secondary">
-                        {{ resenia.created_at ? new Date(resenia.created_at).toLocaleDateString('es-ES') : '' }}
+                        {{ resenia.creado_en ? new Date(resenia.creado_en).toLocaleDateString('es-ES') : '' }}
                       </a-typography-text>
                     </div>
                   </a-flex>
@@ -186,8 +186,7 @@ onUnmounted(() => {
                         <div :style="{ marginTop: 'auto' }">
                           <a-typography-text strong size="small">Ingredientes:</a-typography-text>
                           <div class="ingredientesTarjeta">
-                            <a-tag v-for="ing in plato.ingredients" :key="ing" class="etiquetaIngrediente">{{ ing
-                            }}</a-tag>
+                            <a-tag v-for="ing in plato.ingredients" :key="ing" class="etiquetaIngrediente">{{ ing }}</a-tag>
                           </div>
                           <a-typography-text strong class="precioTarjeta">
                             {{ plato.price }} €

@@ -20,11 +20,11 @@ exports.insertOrder = async (idUsuario, precioTotal) => {
     );
 
     return new Pedido({
-        id:          resultado.lastID,
-        id_usuario:  idUsuario,
+        id: resultado.lastID,
+        id_usuario: idUsuario,
         total_price: precioTotal,
-        status:      'pendiente',
-        items:       [],
+        status: 'pendiente',
+        items: [],
     });
 };
 
@@ -34,46 +34,47 @@ exports.insertOrderItem = (idPedido, idProducto, cantidad, precioEnCompra) =>
         [idPedido, idProducto, cantidad, precioEnCompra]
     );
 
-exports.getOrdersByUser = async (idUsuario) =>{
+exports.getOrdersByUser = async (idUsuario) => {
     const filas = await consulta(
         `SELECT p.id, p.precio_total AS total_price, p.estado AS status,
                 p.creado_en AS created_at, p.recogido AS is_picked_up,
                 ip.id AS item_id, ip.cantidad AS quantity,
                 ip.precio_en_compra AS price_at_time, ip.id_producto AS product_id,
-                m.nombre AS product_name, m.img_src
+                COALESCE(m.nombre, '[Producto eliminado]') AS product_name,
+                m.img_src
          FROM pedidos p
          LEFT JOIN items_pedido ip ON p.id = ip.id_pedido
          LEFT JOIN menu m          ON ip.id_producto = m.id
          WHERE p.id_usuario = ?
          ORDER BY p.creado_en DESC`,
-        [idUsuario]  
-    )
+        [idUsuario]
+    );
+
     const mapa = {};
-        for (const fila of filas) {
-            if (!mapa[fila.id]) {
-                mapa[fila.id] = new Pedido({
-                    id:          fila.id,
-                    id_usuario:  idUsuario,
-                    total_price: fila.total_price,
-                    status:      fila.status,
-                    created_at:  fila.created_at,
-                    is_picked_up: fila.is_picked_up,
-                    items:       [],
-                });
-            }
-            if (fila.item_id) {
-                mapa[fila.id].items.push({
-                    id:           fila.item_id,
-                    product_id:   fila.product_id,
-                    quantity:     fila.quantity,
-                    price_at_time: fila.price_at_time,
-                    product_name: fila.product_name,
-                    img_src:      fila.img_src,
-                });
-            }
+    for (const fila of filas) {
+        if (!mapa[fila.id]) {
+            mapa[fila.id] = new Pedido({
+                id: fila.id,
+                id_usuario: idUsuario,
+                total_price: fila.total_price,
+                status: fila.status,
+                created_at: fila.created_at,
+                is_picked_up: fila.is_picked_up,
+                items: [],
+            });
         }
-        console.log();
-        
+        if (fila.item_id) {
+            mapa[fila.id].items.push({
+                id: fila.item_id,
+                product_id: fila.product_id,
+                quantity: fila.quantity,
+                price_at_time: fila.price_at_time,
+                product_name: fila.product_name,
+                img_src: fila.img_src,
+            });
+        }
+    }
+
     return Object.values(mapa);
 };
 
@@ -85,7 +86,7 @@ exports.cancelOrder = async (idPedido, idUsuario) => {
     return resultado.changes;
 };
 
-exports.getAllOrders = async () =>{
+exports.getAllOrders = async () => {
     const filas = await consulta(
         `SELECT p.id, p.precio_total AS total_price, p.estado AS status,
                 p.creado_en AS created_at, p.recogido AS is_picked_up,
@@ -101,30 +102,30 @@ exports.getAllOrders = async () =>{
     );
 
     const mapa = {};
-        for (const fila of filas) {
-            if (!mapa[fila.id]) {
-                mapa[fila.id] = new PedidoAdmin({
-                    id: fila.id,
-                    id_usuario: null,
-                    total_price: fila.total_price,
-                    status: fila.status,
-                    created_at: fila.created_at,
-                    is_picked_up: fila.is_picked_up,
-                    first_name: fila.first_name,
-                    last_name: fila.last_name,
-                    email: fila.email,
-                    items: [],
-                });
-            }
-            if (fila.item_id) {
-                mapa[fila.id].items.push({
-                    id:           fila.item_id,
-                    quantity:     fila.quantity,
-                    price_at_time: fila.price_at_time,
-                    product_name: fila.product_name,
-                });
-            }
+    for (const fila of filas) {
+        if (!mapa[fila.id]) {
+            mapa[fila.id] = new PedidoAdmin({
+                id: fila.id,
+                id_usuario: null,
+                total_price: fila.total_price,
+                status: fila.status,
+                created_at: fila.created_at,
+                is_picked_up: fila.is_picked_up,
+                first_name: fila.first_name,
+                last_name: fila.last_name,
+                email: fila.email,
+                items: [],
+            });
         }
+        if (fila.item_id) {
+            mapa[fila.id].items.push({
+                id: fila.item_id,
+                quantity: fila.quantity,
+                price_at_time: fila.price_at_time,
+                product_name: fila.product_name,
+            });
+        }
+    }
     return Object.values(mapa);
 }
 

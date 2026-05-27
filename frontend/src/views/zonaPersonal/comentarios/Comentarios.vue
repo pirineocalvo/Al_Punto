@@ -109,13 +109,18 @@ watch(usuarioListo, async () => {
 const reseniasHechas = computed(() => listaResenias.value);
 
 const reseniasPendientes = computed(() => {
-    const nombresReseniados = listaResenias.value.map(r => r.plato_name.toLowerCase().trim());
+    const nombresReseniados = listaResenias.value
+        .filter(r => r.plato_name)
+        .map(r => r.plato_name.toLowerCase().trim());
+
     const productosPendientes = [];
     const yaAgregadosALista = new Set();
 
     productosComprados.value.forEach(pedido => {
         if (pedido.status === 'entregado') {
             pedido.items.forEach(item => {
+                if (!item.product_name) return;
+
                 const nombreLimpio = item.product_name.toLowerCase().trim();
                 const yaReseniado = nombresReseniados.includes(nombreLimpio);
                 const enListaTemporal = yaAgregadosALista.has(nombreLimpio);

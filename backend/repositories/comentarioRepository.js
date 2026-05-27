@@ -42,7 +42,9 @@ exports.addPoints = (idUsuario, cantidad) =>
 
 exports.getReviewsByUser = async (idUsuario) => {
     const filas = await consulta(
-        `SELECT r.*, m.nombre AS plato_name, m.img_src AS plato_img
+        `SELECT r.*,
+                COALESCE(m.nombre, '[Producto eliminado]') AS plato_name,
+                m.img_src AS plato_img
          FROM resenas r
          LEFT JOIN menu m ON r.id_plato = m.id
          WHERE r.id_usuario = ?
@@ -63,7 +65,7 @@ exports.getReviewsByUser = async (idUsuario) => {
 
 exports.getReviewsByPlato = async (id_plato) => {
     const filas = await consulta(
-        `SELECT r.*, u.nombre AS first_name, u.apellido AS last_name
+        `SELECT r.*, u.nombre AS nombre, u.apellido AS apellido
          FROM resenas r
          LEFT JOIN usuarios u ON r.id_usuario = u.id
          WHERE r.id_plato = ?
@@ -77,7 +79,7 @@ exports.getReviewsByPlato = async (id_plato) => {
         descripcion: f.descripcion,
         puntuacion:  f.puntuacion,
         creado_en:   f.creado_en,
-        first_name:  f.first_name,
-        last_name:   f.last_name,
+        nombre:      f.nombre,
+        apellido:    f.apellido,
     }));
 };
