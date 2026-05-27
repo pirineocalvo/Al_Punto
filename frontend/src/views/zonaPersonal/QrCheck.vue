@@ -3,10 +3,8 @@ import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
 import CryptoJS from 'crypto-js';
-import { Spin, Result, Typography, Card } from 'ant-design-vue';
 import { CheckCircleFilled, CloseCircleFilled } from '@ant-design/icons-vue';
 
-const { Title, Text } = Typography;
 
 const route = useRoute();
 const estado = ref('cargando');
@@ -39,15 +37,15 @@ onMounted(async () => {
 </script>
 
 <template>
-    <div class="checkin-contenedor">
-        <a-card class="checkin-tarjeta" :bordered="false">
-            <div v-if="estado === 'cargando'" class="checkin-estado">
+    <div class="checkinContenedor">
+        <a-card class="checkinTarjeta" :bordered="false">
+            <div v-if="estado === 'cargando'" class="checkinEstado">
                 <a-spin size="large" />
                 <a-typography-text class="subtexto">Verificando código...</a-typography-text>
             </div>
-            <a-result v-else-if="estado === 'ok'" class="checkin-estado">
+            <a-result v-else-if="estado === 'ok'" class="checkinEstado">
                 <template #icon>
-                    <check-circle-filled class="icono-ok" />
+                    <check-circle-filled class="iconoOk" />
                 </template>
                 <template #title>
                     <a-typography-title :level="1" class="titulo">¡Bienvenido!</a-typography-title>
@@ -59,13 +57,13 @@ onMounted(async () => {
                     </a-typography-text>
                 </template>
                 <template #extra>
-                    <div class="linea-decorativa" />
+                    <div class="lineaDecorativa" />
                     <a-typography-text class="pie">Check-in registrado correctamente</a-typography-text>
                 </template>
             </a-result>
-            <a-result v-else class="checkin-estado">
+            <a-result v-else class="checkinEstado">
                 <template #icon>
-                    <close-circle-filled class="icono-error" />
+                    <close-circle-filled class="iconoError" />
                 </template>
                 <template #title>
                     <a-typography-title :level="2" class="titulo">Código inválido</a-typography-title>
@@ -81,22 +79,20 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Lato:wght@300;400&display=swap');
 
-.checkin-contenedor {
+.checkinContenedor {
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #1a1a1a;
+    background: #FFF5EC !important;
     background-image:
         radial-gradient(ellipse at 20% 50%, rgba(217, 119, 66, 0.15) 0%, transparent 60%),
         radial-gradient(ellipse at 80% 20%, rgba(184, 95, 52, 0.10) 0%, transparent 50%);
-    font-family: 'Lato', sans-serif;
     padding: 24px;
 }
 
-.checkin-tarjeta {
+.checkinTarjeta {
     background: #242424 !important;
     border: 1px solid rgba(217, 119, 66, 0.2) !important;
     border-radius: 24px !important;
@@ -117,7 +113,7 @@ onMounted(async () => {
     to   { opacity: 1; transform: translateY(0)    scale(1); }
 }
 
-.checkin-estado {
+.checkinEstado {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -125,10 +121,10 @@ onMounted(async () => {
 }
 
 :deep(.ant-spin-dot-item) {
-    background-color: #D97742 !important;
+    background-color: var(--color-principal) !important;
 }
 
-.checkin-estado > :deep(.ant-spin) {
+.checkinEstado > :deep(.ant-spin) {
     margin-bottom: 24px;
 }
 
@@ -155,13 +151,13 @@ onMounted(async () => {
     margin-top: 0 !important;
 }
 
-.icono-ok {
+.iconoOk {
     font-size: 72px;
-    color: #D97742;
+    color: var(--color-principal) !important;
     filter: drop-shadow(0 8px 24px rgba(217, 119, 66, 0.5));
     animation: pulso 2s ease-in-out infinite;
 }
-.icono-error {
+.iconoError {
     font-size: 72px;
     color: #c0392b;
     filter: drop-shadow(0 8px 24px rgba(192, 57, 43, 0.4));
@@ -173,17 +169,15 @@ onMounted(async () => {
 }
 
 .titulo {
-    font-family: 'Playfair Display', serif !important;
     font-weight: 900 !important;
-    color: #ffffff !important;
+    color: var(--color-fondo-blanco) !important;
     margin: 0 !important;
     letter-spacing: -0.5px;
 }
 
 .nombre {
-    font-family: 'Playfair Display', serif !important;
     font-weight: 700 !important;
-    color: #D97742 !important;
+    color: var(--color-principal) !important;
     margin: 0 0 12px !important;
 }
 
@@ -196,10 +190,10 @@ onMounted(async () => {
     margin-top: 8px;
 }
 
-.linea-decorativa {
+.lineaDecorativa {
     width: 48px;
     height: 2px;
-    background: linear-gradient(90deg, #D97742, #B85F34);
+    background: linear-gradient(90deg, var(--color-principal), #B85F34);
     border-radius: 2px;
     margin: 24px auto 16px;
 }
