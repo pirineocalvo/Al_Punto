@@ -13,7 +13,8 @@ const ejecutar = (sql, params = []) => new Promise((resolve, reject) =>
 
 const SELECCION_MENU = `
     SELECT m.id, c.nombre AS category_name, m.id_categoria AS id_category,
-           m.nombre AS name, m.ingredientes AS ingredients, m.descripcion AS description,
+           m.nombre AS name, COALESCE(m.ingredientes, '') AS ingredients,
+           m.descripcion AS description,
            m.img_src, m.disponible AS available, m.precio AS price
     FROM menu m
     LEFT JOIN categorias_menu c ON m.id_categoria = c.id
@@ -23,7 +24,6 @@ exports.getAllItems = async () => {
     const filas = await consulta(SELECCION_MENU);
     return filas.map(f => new MenuItem(f));
 };
-
 
 exports.getAllCategories = () => consulta('SELECT id, nombre AS name FROM categorias_menu ORDER BY id');
 

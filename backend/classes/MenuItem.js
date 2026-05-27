@@ -1,33 +1,34 @@
 class MenuItem {
-    constructor({ id = null, nombre, ingredientes = '', descripcion = '',
-        img_src = null, disponible = true, precio, id_categoria,
-        nombre_categoria = null } = {}) {
+    constructor({ id = null, nombre, name, ingredientes, ingredients,
+        descripcion = '', description = '', img_src = null, disponible = true,
+        available, precio, price, id_categoria, id_category,
+        nombre_categoria = null, category_name = null } = {}) {
         this.id = id;
-        this.nombre = nombre;
-        this.ingredientes = ingredientes;
-        this.descripcion = descripcion;
+        this.name = nombre ?? name;
+        this.ingredients = ingredientes ?? ingredients ?? '';
+        this.description = descripcion ?? description;
         this.imgSrc = img_src;
-        this.disponible = Boolean(disponible);
-        this.precio = Number(precio);
-        this.idCategoria = id_categoria;
-        this.nombreCategoria = nombre_categoria;
+        this.available = Boolean(disponible ?? available);
+        this.price = Number(precio ?? price);
+        this.idCategory = id_categoria ?? id_category;
+        this.categoryName = nombre_categoria ?? category_name;
     }
 
     get precioFormateado() {
-        return `${this.precio.toFixed(2)} €`;
+        return `${this.price.toFixed(2)} €`;
     }
 
     toJSON() {
         return {
             id: this.id,
-            nombre: this.nombre,
-            ingredientes: this.ingredientes,
-            descripcion: this.descripcion,
+            name: this.name,
+            ingredients: this.ingredients,
+            description: this.description,
             img_src: this.imgSrc,
-            disponible: this.disponible,
-            precio: this.precio,
-            id_categoria: this.idCategoria,
-            nombre_categoria: this.nombreCategoria,
+            available: this.available,
+            price: this.price,
+            id_category: this.idCategory,
+            category_name: this.categoryName,
         };
     }
 }

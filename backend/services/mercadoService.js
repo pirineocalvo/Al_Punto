@@ -7,8 +7,10 @@ exports.obtenerProductosDisponibles = async (idUsuario) => {
         error.status = 404;
         throw error;
     }
-    return repositorioMercado.getItemsByLevel(nivel.id);
+    const productos = await repositorioMercado.getItemsByLevel(nivel.id);
+    return productos.map(p => p.toJSON());
 };
+
 exports.obtenerCarteraUsuario = (idUsuario) => repositorioMercado.getPocketByUser(idUsuario);
 
 exports.comprarProducto = async (idUsuario, idProducto) => {
@@ -101,6 +103,7 @@ exports.usarTokenCartera = async (idUsuario, tokenUrl) => {
     }
     return { message: 'Articulo canjeado con exito', used_at: item.usedAt };
 };
+
 function validarFormatoToken(idUsuario, tokenUrl) {
     const partes = tokenUrl.split('-');
     if (partes.length !== 3) {

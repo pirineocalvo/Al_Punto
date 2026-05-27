@@ -1,26 +1,26 @@
 class Monedero {
-    constructor({ id = null, id_usuario, puntos = 0 } = {}) {
+    constructor({ id = null, id_usuario, puntos, points } = {}) {
         this.id = id;
         this.idUsuario = id_usuario;
-        this.puntos = puntos;
+        this.points = puntos ?? points ?? 0;
     }
 
     sumar(cantidad) {
         if (cantidad < 0) throw new Error('La cantidad a sumar no puede ser negativa');
-        this.puntos += cantidad;
+        this.points += cantidad;
     }
 
     deducir(cantidad) {
         if (cantidad < 0) throw new Error('La cantidad a deducir no puede ser negativa');
-        if (this.puntos < cantidad) throw new Error('Saldo de puntos insuficiente');
-        this.puntos -= cantidad;
+        if (this.points < cantidad) throw new Error('Saldo de puntos insuficiente');
+        this.points -= cantidad;
     }
 
     toJSON() {
         return {
             id: this.id,
             id_usuario: this.idUsuario,
-            puntos: this.puntos,
+            points: this.points,
         };
     }
 }

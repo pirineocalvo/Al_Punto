@@ -1,28 +1,29 @@
 class ProductoMercado {
-    constructor({ id = null, nombre, descripcion = '', precio_puntos,
-        id_nivel_min, img_src = null, creado_en = null } = {}) {
+    constructor({ id = null, nombre, name, descripcion = '', description = '',
+        precio_puntos, points_price, id_nivel_min, min_level_id,
+        img_src = null, creado_en = null, created_at = null } = {}) {
         this.id = id;
-        this.nombre = nombre;
-        this.descripcion = descripcion;
-        this.precioPuntos = Number(precio_puntos);
-        this.idNivelMin = id_nivel_min;
+        this.name = nombre ?? name;
+        this.description = descripcion ?? description;
+        this.pointsPrice = Number(precio_puntos ?? points_price);
+        this.minLevelId = id_nivel_min ?? min_level_id;
         this.imgSrc = img_src;
-        this.creadoEn = creado_en;
+        this.createdAt = creado_en ?? created_at;
     }
 
     disponiblePara(puntos, idNivel) {
-        return puntos >= this.precioPuntos && idNivel >= this.idNivelMin;
+        return puntos >= this.pointsPrice && idNivel >= this.minLevelId;
     }
 
     toJSON() {
         return {
             id: this.id,
-            nombre: this.nombre,
-            descripcion: this.descripcion,
-            precio_puntos: this.precioPuntos,
-            id_nivel_min: this.idNivelMin,
+            name: this.name,
+            description: this.description,
+            points_price: this.pointsPrice,
+            min_level_id: this.minLevelId,
             img_src: this.imgSrc,
-            creado_en: this.creadoEn,
+            created_at: this.createdAt,
         };
     }
 }
