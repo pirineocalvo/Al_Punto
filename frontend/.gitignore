@@ -1,4 +1,4 @@
-# Logs
+
 logs
 *.log
 npm-debug.log*
@@ -14,7 +14,6 @@ dist-ssr
 coverage
 *.local
 
-# Editor directories and files
 .vscode/*
 !.vscode/extensions.json
 .idea
@@ -28,14 +27,11 @@ coverage
 
 .eslintcache
 
-# Cypress
 /cypress/videos/
 /cypress/screenshots/
 
-# Vitest
 __screenshots__/
 
-# Vite
 *.timestamp-*-*.mjs
 
 Dockerfile

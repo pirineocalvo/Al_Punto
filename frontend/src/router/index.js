@@ -2,10 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { informacionUsuario } from '@/services/usuariosEndpoint.js'
 import { ACCESS_LEVELS } from '@/composables/useAuth.js'
 
-// ─── Rutas ───────────────────────────────────────────────────────────────────
 const routes = [
-
-  // ── Rutas públicas ────────────────────────────────────
   {
     path: '/',
     component: () => import('@/views/inicio/Inicio.vue'),
@@ -34,8 +31,6 @@ const routes = [
     path: '/checkin',
     component: () => import('@/views/zonaPersonal/QrCheck.vue'),
   },
-
-  // ── Rutas protegidas: cualquier usuario autenticado ───────────────────────
   {
     path: '/reservas',
     component: () => import('@/views/reservas/Reservas.vue'),
@@ -76,15 +71,11 @@ const routes = [
     component: () => import('@/views/zonaPersonal/tickets/agregarTickets/AgregarTickets.vue'),
     meta: { requiereAut: true },
   },
-
-  // ── Rutas protegidas: empleados y administradores (nivel >= 3) ─────────────────
   {
     path: '/gestionarUsuarios',
     component: () => import('@/views/zonaPersonal/administracion/gestionarUsuarios/GestionUsuarios.vue'),
     meta: { requiereAut: true, minAccessLevel: ACCESS_LEVELS.EMPLEADO },
   },
-
-  // ── Rutas protegidas: solo administradores (nivel = 5) ────────────────────
   {
     path: '/gestionarMesas',
     component: () => import('@/views/zonaPersonal/administracion/gestionarMesas/GestionarMesas.vue'),

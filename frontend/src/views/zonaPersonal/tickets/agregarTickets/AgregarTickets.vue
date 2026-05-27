@@ -29,7 +29,6 @@ watch(usuarioListo, () => {
     cargado.value = true;
 }, { immediate: true });
 
-// evita que Ant Design suba automáticamente
 const antesDeSubir = (file) => {
     archivo.value = file;
     return false;

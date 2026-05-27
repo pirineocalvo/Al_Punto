@@ -26,7 +26,6 @@
     --color-borde-suave: #f0f0f0;
 }
 
-/*INICIO SE SESION*/
 .tarjetaInicioSesion{
     min-height: 100vh;
     width: 100%;
@@ -44,8 +43,6 @@
 .tarjetaInicioSesion .ant-form-item {
     margin-bottom: 16px !important;
 }
-
-/*DASHBOARD*/
 
 .dashboardMainLayout {
     min-height: calc(100vh - 70px);
@@ -70,7 +67,6 @@
     align-items: center;
 }
 
-/*CABECERA*/
 .botonMenuMovil {
     background-color: transparent;
     border: none;
