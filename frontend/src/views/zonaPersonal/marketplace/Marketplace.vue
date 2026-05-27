@@ -8,7 +8,7 @@ import { ref, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuth, ACCESS_LEVELS } from '@/composables/useAuth';
 
-const { user, usuarioListo } = useAuth({ minAccessLevel: ACCESS_LEVELS.CLIENTE });
+const { user, usuarioListo, refrescarUsuario } = useAuth({ minAccessLevel: ACCESS_LEVELS.CLIENTE });
 
 const cargado = ref(false);
 const router = useRouter();
@@ -50,6 +50,7 @@ async function adquirirProducto(producto) {
     if (!estaDesbloqueado(producto)) return;
     try {
         await canjearProductoMarketplace(producto.id);
+        await refrescarUsuario();
         generarNotificacion('success', 'Canjeo de producto', 'El producto fue canjeado con éxito. Tus puntos se han actualizado.');
     } catch (error) {
         generarNotificacion('error', '¡Advertencia!', 'Hubo un error al canjear el producto. Verifique si tiene puntos suficientes.');

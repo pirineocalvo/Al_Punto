@@ -10,27 +10,30 @@ export const ACCESS_LEVELS = {
 
 const usuarioCacheado = ref(null);
 
-export function useAuth({rutaLogin ='/iniciarSesion', nivelMin = ACCESS_LEVELS.CLIENTE}) {
-    const router  = useRouter();
+export function useAuth({ rutaLogin = '/iniciarSesion', minAccessLevel = ACCESS_LEVELS.CLIENTE } = {}) {
+    const router = useRouter();
     const usuarioListo = ref(false);
+
+    const refrescarUsuario = async () => {
+        usuarioCacheado.value = await informacionUsuario();
+    };
 
     const validarUser = async () => {
         const token = localStorage.getItem('loginUserToken');
         if (!token) {
-            router.push(rutaLogin); 
+            router.push(rutaLogin);
             return;
         }
 
         try {
+            if (!usuarioCacheado.value) {
+                await refrescarUsuario();
+            }
 
-        if(!usuarioCacheado.value){
-            usuarioCacheado.value = await informacionUsuario();
-        }
-
-        if(usuarioCacheado.value.access_level < nivelMin){
-            router.push('/noAutorizado');
-        }
-        usuarioListo.value = true; 
+            if (usuarioCacheado.value.access_level < minAccessLevel) {
+                router.push('/noAutorizado');
+            }
+            usuarioListo.value = true;
 
         } catch (err) {
             router.push('/noAutorizado');
@@ -38,18 +41,17 @@ export function useAuth({rutaLogin ='/iniciarSesion', nivelMin = ACCESS_LEVELS.C
         }
     };
 
-    const limpiarCacheUser = () =>{
-    
+    const limpiarCacheUser = () => {
         usuarioCacheado.value = null;
-    localStorage.removeItem('loginUserToken');
+        localStorage.removeItem('loginUserToken');
     };
 
     validarUser();
 
-    return{
+    return {
         user: usuarioCacheado,
         usuarioListo,
-        limpiarCacheUser
+        limpiarCacheUser,
+        refrescarUsuario,
     };
 }
-

@@ -12,7 +12,7 @@ import { useAuth, ACCESS_LEVELS } from '@/composables/useAuth';
 
 const cargado = ref(false);
 
-const { user, usuarioListo } = useAuth({ minAccessLevel: ACCESS_LEVELS.EMPLEADO });
+const { user, usuarioListo } = useAuth({ minAccessLevel: ACCESS_LEVELS.CLIENTE });
 
 const listaResenias = ref([]);
 const productosComprados = ref([]);

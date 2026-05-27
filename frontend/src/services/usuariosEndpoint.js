@@ -22,7 +22,6 @@ export const informacionUsuario = async () => {
         const respuesta = await axios.get(`${URL_API}/api/usuario/informacion`, configuracion);
         return respuesta.data;
     } catch (error) {
-        // ✅ Guardado opcional: error.response puede ser undefined si no hay red
         if (error.response?.status === 401) {
             cerrarSesionUsuario();
         }

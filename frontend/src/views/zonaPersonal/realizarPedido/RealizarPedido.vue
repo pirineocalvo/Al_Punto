@@ -9,7 +9,7 @@ import { obtenerMenu, obtenerCategorias } from '../../../services/menuEndpoint';
 import { useAuth, ACCESS_LEVELS } from '@/composables/useAuth';
 import { message, notification } from 'ant-design-vue';
 
-const { user, usuarioListo } = useAuth({ minAccessLevel: ACCESS_LEVELS.ADMIN });
+const { user, usuarioListo } = useAuth({ minAccessLevel: ACCESS_LEVELS.CLIENTE });
 
 const cargado = ref(false);
 const menu = ref([]);

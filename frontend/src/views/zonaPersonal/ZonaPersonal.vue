@@ -13,7 +13,7 @@ import { message } from 'ant-design-vue';
 
 const cargado = ref(false);
 
-const { user, usuarioListo } = useAuth({ minAccessLevel: ACCESS_LEVELS.EMPLEADO });
+const { user, usuarioListo } = useAuth({ minAccessLevel: ACCESS_LEVELS.CLIENTE });
 
 const reserveInfo = ref([]);
 const collapsed = ref(false);
