@@ -1,15 +1,15 @@
 class Mesa {
-    constructor({ id = null, nombre, n_ocupantes, activo = true,
-        horas_disponibles = [] } = {}) {
+    constructor({ id = null, nombre, name, n_ocupantes,
+        activo = true, horas_disponibles, horasDisponibles } = {}) {
         this.id = id;
-        this.nombre = nombre;
-        this.nOcupantes = Number(n_ocupantes);
+        this.name = nombre ?? name;
+        this.n_ocupantes = Number(n_ocupantes);
         this.activo = Boolean(activo);
-        this.horasDisponibles = horas_disponibles;
+        this.horasDisponibles = horas_disponibles ?? horasDisponibles ?? [];
     }
 
     admiteComensales(n) {
-        return n >= 1 && n <= this.nOcupantes;
+        return n >= 1 && n <= this.n_ocupantes;
     }
 
     desactivar() {
@@ -19,10 +19,10 @@ class Mesa {
     toJSON() {
         return {
             id: this.id,
-            nombre: this.nombre,
-            n_ocupantes: this.nOcupantes,
+            name: this.name,
+            n_ocupantes: this.n_ocupantes,
             activo: this.activo,
-            horas_disponibles: this.horasDisponibles,
+            horasDisponibles: this.horasDisponibles,
         };
     }
 }

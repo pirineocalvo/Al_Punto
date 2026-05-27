@@ -66,7 +66,13 @@ exports.obtenerDisponibilidadDia = async (fecha, ocupantes) => {
             );
             return mesa;
         })
-        .filter(mesa => mesa.horasDisponibles.length > 0);
+        .filter(mesa => mesa.horasDisponibles.length > 0)
+        .map(m => m.toJSON()); 
+};
+
+exports.obtenerTodasMesas = async () => {
+    const mesas = await repositorioMesa.getTodasMesas();
+    return mesas.map(m => m.toJSON()); 
 };
 
 exports.reservarMesa = async (idUsuario, idReserva, idMesa) => {
@@ -100,8 +106,6 @@ exports.reservarMesa = async (idUsuario, idReserva, idMesa) => {
     const id = await repositorioMesa.insertMesaReservada(idReserva, idMesa);
     return { message: 'Mesa vinculada correctamente', id };
 };
-
-exports.obtenerTodasMesas = () => repositorioMesa.getTodasMesas();
 
 exports.crearMesa = async (name, nOcupantes) => {
     if (!name || !nOcupantes) {

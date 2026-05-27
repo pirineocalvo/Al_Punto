@@ -11,7 +11,10 @@ exports.obtenerProductosDisponibles = async (idUsuario) => {
     return productos.map(p => p.toJSON());
 };
 
-exports.obtenerCarteraUsuario = (idUsuario) => repositorioMercado.getPocketByUser(idUsuario);
+exports.obtenerCarteraUsuario = async (idUsuario) => {
+    const items = await repositorioMercado.getPocketByUser(idUsuario);
+    return items.map(c => c.toJSON());
+};
 
 exports.comprarProducto = async (idUsuario, idProducto) => {
     const producto = await repositorioMercado.getProductById(idProducto);
