@@ -8,31 +8,28 @@ import PiePaginaPrincipal from '@/components/cabeceraYpiePrincipal/PiePaginaPrin
 import { CalendarOutlined, ClockCircleOutlined, EuroCircleOutlined, StarOutlined, EnvironmentOutlined } from '@ant-design/icons-vue';
 import { useAuth, ACCESS_LEVELS } from '@/composables/useAuth';
 
-
 const cargado = ref(false);
 
-const { user, usuarioListo } = useAuth({ minAccessLevel: ACCESS_LEVELS.EMPLEADO });
+const { user, usuarioListo, refrescarUsuario } = useAuth({ minAccessLevel:  ACCESS_LEVELS.CLIENTE });
 
 const tickets = ref([]);
 const collapsed = ref(false);
 
 function prepararTickets(ticketsUsuarioSinProcesar) {
     tickets.value = [];
-    
+
     ticketsUsuarioSinProcesar.forEach(ticketSinProcesar => {
-
         const ticketLimpio = limpiarDatosTicket(ticketSinProcesar.ocr_content);
-
         const datosTicket = extraerdatosTicket(ticketLimpio);
 
         if (datosTicket) {
             tickets.value.push({
                 ...ticketSinProcesar,
                 parsed: datosTicket
-            })
-        };
+            });
+        }
     });
-};
+}
 
 function limpiarDatosTicket(ticketSinProcesar) {
     if (!ticketSinProcesar) return '';
@@ -97,14 +94,13 @@ watch(usuarioListo, async () => {
     try {
         const data = await misTickets();
         prepararTickets(data);
-
+        await refrescarUsuario();
     } catch (error) {
         message.error('Error al cargar los tickets');
         console.error(error);
     } finally {
         cargado.value = true;
     }
-
 }, { immediate: true });
 
 const columnasProductos = [
@@ -131,7 +127,6 @@ const columnasProductos = [
         customRender: ({ record }) => `${(record.cantidad * record.precio).toFixed(2)} €`,
     }
 ];
-
 </script>
 
 <template>

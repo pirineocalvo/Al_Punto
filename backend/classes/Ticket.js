@@ -1,37 +1,40 @@
 const ESTADOS_VALIDOS = ['ok', 'review', 'rejected'];
 
 class Ticket {
-    constructor({ id = null, id_usuario, url_imagen, contenido_json = null,
-        puntos_otorgados = 0, estado = 'review', creado_en = null } = {}) {
-        if (!ESTADOS_VALIDOS.includes(estado)) {
-            throw new Error(`Estado no válido: ${estado}. Valores permitidos: ${ESTADOS_VALIDOS.join(', ')}`);
+    constructor({ id = null, id_usuario, url_imagen, image_url,
+        contenido_json, ocr_content, puntos_otorgados, points_granted = 0,
+        estado, status = 'review', creado_en = null, created_at = null } = {}) {
+        
+        const estadoFinal = estado ?? status;
+        if (!ESTADOS_VALIDOS.includes(estadoFinal)) {
+            throw new Error(`Estado no válido: ${estadoFinal}. Valores permitidos: ${ESTADOS_VALIDOS.join(', ')}`);
         }
         this.id = id;
         this.idUsuario = id_usuario;
-        this.urlImagen = url_imagen;
-        this.contenidoJson = contenido_json;
-        this.puntosOtorgados = Number(puntos_otorgados);
-        this.estado = estado;
-        this.creadoEn = creado_en;
+        this.imageUrl = url_imagen ?? image_url;
+        this.ocrContent = contenido_json ?? ocr_content;
+        this.pointsGranted = Number(puntos_otorgados ?? points_granted);
+        this.status = estadoFinal;
+        this.createdAt = creado_en ?? created_at;
     }
 
     get procesado() {
-        return this.estado === 'ok';
+        return this.status === 'ok';
     }
 
     get necesitaRevision() {
-        return this.estado === 'review';
+        return this.status === 'review';
     }
 
     toJSON() {
         return {
             id: this.id,
             id_usuario: this.idUsuario,
-            url_imagen: this.urlImagen,
-            contenido_json: this.contenidoJson,
-            puntos_otorgados: this.puntosOtorgados,
-            estado: this.estado,
-            creado_en: this.creadoEn,
+            image_url: this.imageUrl,
+            ocr_content: this.ocrContent,
+            points_granted: this.pointsGranted,
+            status: this.status,
+            created_at: this.createdAt,
         };
     }
 }

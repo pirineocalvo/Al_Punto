@@ -72,4 +72,7 @@ exports.subirTicket = async (idUsuario, archivo, nombreArchivo) => {
     };
 };
 
-exports.obtenerMisTickets = (idUsuario) => repositorioTickets.getTicketsByUser(idUsuario);
+exports.obtenerMisTickets = async (idUsuario) => {
+    const tickets = await repositorioTickets.getTicketsByUser(idUsuario);
+    return tickets.map(t => t.toJSON());
+};
