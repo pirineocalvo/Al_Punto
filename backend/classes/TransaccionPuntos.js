@@ -1,15 +1,6 @@
 const TIPOS_VALIDOS = ['add resenia', 'add ticket', 'buy market'];
 
 class TransaccionPuntos {
-    /**
-     * @param {object} datos
-     * @param {number} datos.id
-     * @param {number} datos.id_usuario
-     * @param {number} datos.id_monedero
-     * @param {number} datos.cantidad_transaccion
-     * @param {string} datos.tipo
-     * @param {string} [datos.creado_en]
-     */
     constructor({ id = null, id_usuario, id_monedero, cantidad_transaccion,
         tipo, creado_en = null } = {}) {
         this.id = id;

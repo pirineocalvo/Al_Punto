@@ -121,5 +121,5 @@ exports.actualizarContrasena = async (idUsuario, password_actual, password_nueva
 
 exports.obtenerUsuarioPorId = async (id) => {
     const usuario = await repositorioUsuario.obtenerUsuarioPorId(id);
-    return usuario; // Ya es instancia de Usuario o null
+    return usuario; 
 };

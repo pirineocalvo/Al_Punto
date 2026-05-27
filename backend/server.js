@@ -28,9 +28,6 @@ aplicacion.use('/api/orders', rutasPedidos);
 aplicacion.use('/api/mesas', rutasMesas);
 aplicacion.use('/uploads', express.static('uploads'));
 
-// server.js — Añadir ANTES de app.listen()
-
-// Middleware de errores global (debe tener 4 parámetros obligatoriamente)
 aplicacion.use((err, req, res, next) => {
   console.error('═══════════════════════════════════════');
   console.error('[ERROR GLOBAL]', req.method, req.path);
@@ -43,7 +40,6 @@ aplicacion.use((err, req, res, next) => {
   });
 });
 
-// Capturar promesas no manejadas (causa frecuente de silencio)
 process.on('unhandledRejection', (reason, promise) => {
   console.error('[unhandledRejection]', reason);
 });

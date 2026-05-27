@@ -1,9 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt    = require('jsonwebtoken');
 
-// FIX: NO capturar process.env en el top-level del módulo.
-// Los módulos se evalúan ANTES de que dotenv cargue el .env del volumen.
-// Leer la variable en cada llamada garantiza que siempre está disponible.
 function getClaveJwt() {
     const clave = process.env.SHARED_JWT_SECRET || process.env.JWT_SECRET_KEY;
     if (!clave) {
@@ -16,7 +13,6 @@ function verificarToken(token) {
     try {
         return jwt.verify(token, getClaveJwt());
     } catch (err) {
-        // Solo logear si es un error de configuración, no de token inválido
         if (err.message.includes('JWT_SECRET_KEY')) {
             console.error('[crypto] ERROR CRÍTICO:', err.message);
         }

@@ -1,4 +1,4 @@
-const ESTADOS_VALIDOS = ['cancel'];  // Ampliar si se añaden más estados
+const ESTADOS_VALIDOS = ['cancel'];  
 
 class Reserva {
     constructor({ id = null, id_usuario, fecha_reserva, hora_reserva,
@@ -7,7 +7,6 @@ class Reserva {
         nombre_usuario = null, email_usuario = null } = {}) {
         this.id = id;
         this.idUsuario = id_usuario;
-        // Normalizar separador a guiones para que new Date() funcione correctamente
         this.fechaReserva = fecha_reserva ? fecha_reserva.replace(/\//g, '-') : fecha_reserva;
         this.horaReserva = hora_reserva;
         this.comensales = Number(comensales);
