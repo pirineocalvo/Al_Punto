@@ -36,9 +36,7 @@ exports.adminMiddleware = (req, res, next) => {
     if (!idUsuario) return;
     req.userId = idUsuario;
     db.get('SELECT nivel_acceso FROM usuarios WHERE id = ?', [idUsuario], (err, usuario) => {
-        if (err) {
-            return res.status(500).json({ error: 'Error de base de datos' });
-        }
+        if (err) return res.status(500).json({ error: 'Error de base de datos' });
         if (!usuario || usuario.nivel_acceso < 5) {
             return res.status(403).json({ error: 'Acceso denegado: se requiere nivel Administrador' });
         }

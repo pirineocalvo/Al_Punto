@@ -8,10 +8,9 @@ export const ACCESS_LEVELS = {
     ADMIN: 5,
 };
 
-const usuarioCacheado = ref(null);
-
 export function useAuth({ rutaLogin = '/iniciarSesion', minAccessLevel = ACCESS_LEVELS.CLIENTE } = {}) {
     const router = useRouter();
+    const usuarioCacheado = ref(null); // ← movido dentro de la función
     const usuarioListo = ref(false);
 
     const refrescarUsuario = async () => {
@@ -26,18 +25,16 @@ export function useAuth({ rutaLogin = '/iniciarSesion', minAccessLevel = ACCESS_
         }
 
         try {
-            if (!usuarioCacheado.value) {
-                await refrescarUsuario();
-            }
+            await refrescarUsuario(); // ← siempre refresca, sin caché
 
             if (usuarioCacheado.value.access_level < minAccessLevel) {
                 router.push('/noAutorizado');
+                return;
             }
             usuarioListo.value = true;
 
         } catch (err) {
             router.push('/noAutorizado');
-            return;
         }
     };
 

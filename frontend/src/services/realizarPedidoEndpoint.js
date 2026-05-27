@@ -56,7 +56,7 @@ export const cancelarPedido = async (id) => {
 
 export const obtenerTodosLosPedidosAdmin = async () => {
     try {
-        const token = obtenerTokenAutentificacion();
+        const token = obtenerTokenAutentificacion()
         const configuracion = {
             headers: { authorization: `Bearer ${token}` },
         };
