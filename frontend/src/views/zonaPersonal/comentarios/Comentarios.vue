@@ -141,9 +141,9 @@ const formatearFecha = (fechaStr) => {
 </script>
 
 <template>
-    <a-layout class="dashboardMainLayout">
+    <a-layout>
         <CabeceraZonaPersonal :user="user" />
-        <a-layout>
+        <a-layout class="dashboardMainLayout">
             <Sidebar />
             <a-flex v-if="!cargado" vertical align="center" justify="center" class="centrarSpin">
                 <a-spin size="large" />
