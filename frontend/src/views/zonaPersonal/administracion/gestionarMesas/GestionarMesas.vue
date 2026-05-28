@@ -123,6 +123,15 @@ async function eliminarMesa() {
         generarNotificacion('warning', 'Sin selección', 'Por favor, selecciona una mesa.');
         return;
     }
+
+    const reservas = await obtenerTodasLasReservasAdmin();
+    const mesaUtilizada = reservas.reservations.some(res => res.id_mesa == mesaEliminarId.value);
+    
+    if (mesaUtilizada) {
+        generarNotificacion('warning', 'Mesa ocupada', 'Por favor antes de eliminar la mesa cancele las reservas pendientes.');
+        return;
+    }
+
     cargandoEliminar.value = true;
     try {
         await desactivarMesa(mesaEliminarId.value);
@@ -141,7 +150,7 @@ async function conustarSiMesaOcupada(){
     try {
         const reservas = await obtenerTodasLasReservasAdmin();
         
-            const mesaUtilizada = reservas.reservations.some(res => res.table_id == mesaEliminarId.value);
+            const mesaUtilizada = reservas.reservations.some(res => res.id_mesa == mesaEliminarId.value);
             
             if(mesaUtilizada){
                 mensajeConfirmarEliminar.value = "La mesa contiene una o mas reservas por confirmar, ¿Está seguro que desea eliminarla?";

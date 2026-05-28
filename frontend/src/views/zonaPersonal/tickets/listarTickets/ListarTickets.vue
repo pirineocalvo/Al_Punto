@@ -111,7 +111,6 @@ watch(usuarioListo, async () => {
         await refrescarUsuario();
     } catch (error) {
         message.error('Error al cargar los tickets');
-        console.error(error);
     } finally {
         cargado.value = true;
     }
