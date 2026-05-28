@@ -106,7 +106,7 @@ INSERT INTO menu VALUES(13,'Secreto Ibérico','Carne de cerdo ibérico, Puré de
 INSERT INTO menu VALUES(14,'Pechuga de Pollo al Curry','Pollo, Arroz basmati, Salsa curry suave','Estilo oriental, especiado pero apto para todos.','default.jpg',1,12.90,'2026-01-25 21:22:23',3);
 INSERT INTO menu VALUES(15,'Lasaña Boloñesa','Pasta, Carne picada, Beicon, Tomate, Bechamel','Capas de sabor horneadas con mucho queso.','default.jpg',1,11.50,'2026-01-25 21:22:23',3);
 
-INSERT INTO menu VALUES(16,'Tarta de Queso','Queso crema, Base de galleta, Mermelada de frutos rojos','Casera y muy cremosa.','menuitemsimg/1776891415169-41471845.jpg',1,6.5,'2026-01-25 21:22:23',4);
+INSERT INTO menu VALUES(16,'Tarta de Queso','Queso crema, Base de galleta, Mermelada de frutos rojos','Casera y muy cremosa.','default.jpg',1,6.5,'2026-01-25 21:22:23',4);
 INSERT INTO menu VALUES(17,'Brownie con Helado','Chocolate, Nueces, Helado de vainilla','Servido caliente para derretir el helado.','default.jpg',1,6.00,'2026-01-25 21:22:23',4);
 INSERT INTO menu VALUES(18,'Tiramisú Tradicional','Bizcocho, Café, Mascarpone, Cacao','Receta clásica italiana con un toque de licor.','default.jpg',1,5.50,'2026-01-25 21:22:23',4);
 INSERT INTO menu VALUES(19,'Flan de Huevo Casero','Huevos, Leche, Azúcar, Caramelo','El de toda la vida, hecho con mucho mimo.','default.jpg',1,4.50,'2026-01-25 21:22:23',4);
