@@ -9,59 +9,17 @@ import { CalendarOutlined, ClockCircleOutlined, EuroCircleOutlined, StarOutlined
 import { useAuth, ACCESS_LEVELS } from '@/composables/useAuth';
 
 const cargado = ref(false);
-
-const { user, usuarioListo, refrescarUsuario } = useAuth({ minAccessLevel:  ACCESS_LEVELS.CLIENTE });
-
+const { user, usuarioListo, refrescarUsuario } = useAuth({ minAccessLevel: ACCESS_LEVELS.CLIENTE });
 const tickets = ref([]);
 const collapsed = ref(false);
-
-function prepararTickets(ticketsUsuarioSinProcesar) {
-    tickets.value = [];
-
-    ticketsUsuarioSinProcesar.forEach(ticketSinProcesar => {
-        const ticketLimpio = limpiarDatosTicket(ticketSinProcesar.ocr_content);
-        const datosTicket = extraerdatosTicket(ticketLimpio);
-
-        if (datosTicket) {
-            tickets.value.push({
-                ...ticketSinProcesar,
-                parsed: datosTicket
-            });
-        }
-    });
-}
 
 function limpiarDatosTicket(ticketSinProcesar) {
     if (!ticketSinProcesar) return '';
     return ticketSinProcesar
-        .replace(/\n/g, ' ')
-        .replace(/[^\w\s€:.,()-]/g, ' ')
-        .replace(/\s+/g, ' ')
+        .replace(/[^\w\s€:.,()|\-\n/áéíóúÁÉÍÓÚñÑ]/g, ' ')
+        .replace(/[ \t]+/g, ' ')
         .trim();
 }
-
-function extraerdatosTicket(ticketLimpio) {
-    if (!ticketLimpio) return {};
-
-    return {
-        tipo: 'Ticket OCR',
-        total: extraerImporte(ticketLimpio, /total[:\s]*([\d,.]+)\s*€/i) ?? 0,
-        subtotal: extraerImporte(ticketLimpio, /subtotal[:\s]*([\d,.]+)\s*€/i),
-        fecha: extraer(ticketLimpio, /fecha[:\s]*([\d-]{8,10})/i),
-        hora: extraer(ticketLimpio, /hora[:\s]*([\d:]{4,5})/i),
-        direccion: extraer(ticketLimpio, /(paseo|calle|avda|avenida)[^,]+,\s*\d+/i, 0),
-        productos: extraerProductos(ticketLimpio),
-    };
-}
-
-const separarFechaHora = (fecha) => {
-    if (!fecha) return { fecha: '—', hora: '—' };
-    const [f, h] = fecha.split(' ');
-    return {
-        fecha: f,
-        hora: h || '—'
-    };
-};
 
 const extraer = (text, regex, grupo = 1) =>
     text.match(regex)?.[grupo] ?? null;
@@ -71,23 +29,79 @@ const extraerImporte = (text, regex) => {
     return valor ? parseFloat(valor.replace(',', '.')) : null;
 };
 
-const extraerProductos = (text) => {
-    const regex = /([A-Za-zÁÉÍÓÚñ\s]+?)\s*\(?(\d+)\s*(uds?|ud)?\)?\s*([\d,.]+)\s*€/gi;
-    const resultados = [];
-    let match;
+const extraerUltimoImporte = (text) => {
+    const coincidencias = [...text.matchAll(/([\d]+[.,][\d]{1,2})\s*€/gi)];
+    if (!coincidencias.length) return 0;
+    return parseFloat(coincidencias[coincidencias.length - 1][1].replace(',', '.'));
+};
 
-    while ((match = regex.exec(text)) !== null) {
-        const nombre = match[1].trim();
-        if (/total|subtotal|fecha|hora/i.test(nombre)) continue;
+const extraerProductos = (text) => {
+    const lineas = text.split('\n');
+    const resultados = [];
+
+    for (const linea of lineas) {
+        const match = linea.match(/^(.+?)\s+(\d{1,4})\s+([\d,.]+)\s*€?\s+([\d,.]+)\s*€/);
+        if (!match) continue;
+
+        const nombre = match[1]
+            .replace(/^[^a-zA-ZáéíóúÁÉÍÓÚñÑ]+/, '')
+            .trim();
+
+        if (/total|subtotal|fecha|hora|dato|unit|cant|producto/i.test(nombre)) continue;
+        if (nombre.length < 2) continue;
 
         resultados.push({
             nombre,
             cantidad: parseInt(match[2]),
-            precio: parseFloat(match[4].replace(',', '.')),
+            precio: parseFloat(match[3].replace(',', '.')),
+            importe: parseFloat(match[4].replace(',', '.')),
         });
     }
 
     return resultados;
+};
+
+const RESTAURANTES_CONOCIDOS = ['AL PUNTO'];
+
+function extraerdatosTicket(ticketLimpio) {
+    if (!ticketLimpio) return {};
+
+    let restaurante = '';
+    const matchCorchete = ticketLimpio.match(/\[\s*([A-ZÁÉÍÓÚÑ\s]+?)\s*\]/);
+    if (matchCorchete) {
+        restaurante = matchCorchete[1].trim();
+    } else {
+        const matchMayus = ticketLimpio.match(/\b([A-ZÁÉÍÓÚÑ]{2,}(?:\s+[A-ZÁÉÍÓÚÑ0-9]{2,})+)\b/);
+        if (matchMayus) restaurante = matchMayus[1].trim();
+    }
+    const normalizado = RESTAURANTES_CONOCIDOS.find(r => restaurante.toUpperCase().includes(r));
+    if (normalizado) restaurante = normalizado;
+
+    return {
+        tipo: 'Ticket OCR',
+        restaurante,
+        total: extraerUltimoImporte(ticketLimpio),
+        subtotal: extraerImporte(ticketLimpio, /subtotal[:\s]*([\d,.]+)\s*€/i),
+        fecha: extraer(ticketLimpio, /(\d{2}[-\/]\d{2}[-\/]\d{4})/),
+        hora: extraer(ticketLimpio, /hora[:\s]*([\d:]{4,5})/i),
+        direccion: extraer(ticketLimpio, /((?:calle|paseo|avda|avenida)[^,\n]+,\s*\d+)/i, 1),
+        productos: extraerProductos(ticketLimpio),
+    };
+}
+function prepararTickets(ticketsUsuarioSinProcesar) {
+    tickets.value = ticketsUsuarioSinProcesar
+        .map(ticketSinProcesar => {
+            const ticketLimpio = limpiarDatosTicket(ticketSinProcesar.ocr_content);
+            const datosTicket = extraerdatosTicket(ticketLimpio);
+            return datosTicket ? { ...ticketSinProcesar, parsed: datosTicket } : null;
+        })
+        .filter(Boolean);
+}
+
+const separarFechaHora = (fecha) => {
+    if (!fecha) return { fecha: '—', hora: '—' };
+    const [f, h] = fecha.split(' ');
+    return { fecha: f, hora: h || '—' };
 };
 
 watch(usuarioListo, async () => {

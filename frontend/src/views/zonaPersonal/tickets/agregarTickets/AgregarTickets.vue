@@ -57,49 +57,58 @@ const agregarTicket = async () => {
     }
 }
 
+const RESTAURANTES_CONOCIDOS = ['AL PUNTO'];
+
 const parsearTicket = (textoOcr) => {
-    const lineas = textoOcr.split('\n').map(l => l.trim());
+    const lineas = textoOcr.split('\n').map(l => l.trim()).filter(Boolean);
     const ticket = { restaurante: '', direccion: '', fecha: '', hora: '', productos: [], total: 0 };
 
-    lineas.forEach(linea => {
-        const limpia = linea.replace(/^[^a-zA-Z0-9\[(]+|[^a-zA-Z0-9€)\]]+$/g, '').trim();
+    const matchCorchete = textoOcr.match(/\[\s*([A-ZÁÉÍÓÚÑ\s]+?)\s*\]/);
+    if (matchCorchete) {
+        ticket.restaurante = matchCorchete[1].trim();
+    } else {
+        const matchMayus = textoOcr.match(/\b([A-ZÁÉÍÓÚÑ]{2,}(?:\s+[A-ZÁÉÍÓÚÑ0-9]{2,})+)\b/);
+        if (matchMayus) ticket.restaurante = matchMayus[1].trim();
+    }
+    const normalizado = RESTAURANTES_CONOCIDOS.find(r => ticket.restaurante.toUpperCase().includes(r));
+    if (normalizado) ticket.restaurante = normalizado;
 
-        const matchRestaurante = limpia.match(/\[\s*(.*?)\s*\]/);
-        if (matchRestaurante) {
-            ticket.restaurante = matchRestaurante[1];
-            return;
+    for (const linea of lineas) {
+        const limpia = linea.replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s€:.,|()\-\/]/g, '').trim();
+        if (!limpia || limpia.length < 2) continue;
+
+        if (/calle|paseo|avda|avenida|plaza|c\//i.test(limpia) && !ticket.direccion) {
+            ticket.direccion = limpia;
+            continue;
         }
 
-        if (limpia.toLowerCase().includes('fecha')) {
-            const matchFecha = limpia.match(/(\d{2}-\d{2}-\d{4})/);
-            const matchHora = limpia.match(/(\d{2}:\d{2})/);
-            if (matchFecha) ticket.fecha = matchFecha[0];
-            if (matchHora) ticket.hora = matchHora[0];
-            return;
-        }
+        const matchFecha = limpia.match(/(\d{2}[-\/]\d{2}[-\/]\d{4})/);
+        const matchHora = limpia.match(/(\d{2}:\d{2})/);
+        if (matchFecha) ticket.fecha = matchFecha[1];
+        if (matchHora) ticket.hora = matchHora[1];
 
-        if (/Paseo|Calle|Avda|C\/|Plaza/i.test(limpia) || /\d{5}/.test(limpia)) {
-            ticket.direccion = limpia.replace(/^[A-Z]\s[—\-]+\s*/, '');
-            return;
-        }
-
-        const matchProducto = limpia.match(/(.+?)\s+([\d,.]+)\s*€/);
+        const matchProducto = limpia.match(/^(.+?)\s+(\d{1,4})\s+([\d,.]+)\s*€?\s+([\d,.]+)\s*€/);
         if (matchProducto) {
-            const nombre = matchProducto[1].replace(/[><\/\\|]/g, '').trim();
-            const importe = parseFloat(matchProducto[2].replace(',', '.'));
-            if (nombre.toLowerCase().includes('total') && !nombre.toLowerCase().includes('subtotal')) {
-                ticket.total = importe;
-            } else if (
-                !['importe', 'producto', 'subtotal'].some(p => nombre.toLowerCase().includes(p)) &&
-                nombre.length > 3
-            ) {
-                ticket.productos.push({ nombre, importe });
-            }
-        }
-    })
+            const nombre = matchProducto[1].replace(/^[^a-zA-ZáéíóúÁÉÍÓÚñÑ]+/, '').trim();
+            if (/total|subtotal|fecha|hora|dato|unit|cant|producto/i.test(nombre)) continue;
+            if (nombre.length < 2) continue;
 
+            const totalLinea = parseFloat(matchProducto[4].replace(',', '.'));
+            ticket.productos.push({ nombre, importe: totalLinea });
+            ticket.total += totalLinea;
+        }
+    }
+
+    if (ticket.total === 0) {
+        const coincidencias = [...textoOcr.matchAll(/([\d]+[.,][\d]{1,2})\s*€/gi)];
+        if (coincidencias.length) {
+            ticket.total = parseFloat(coincidencias[coincidencias.length - 1][1].replace(',', '.'));
+        }
+    }
+
+    ticket.total = parseFloat(ticket.total.toFixed(2));
     return ticket;
-}
+};
 
 const resetear = () => {
     ticketInfo.value = null;
