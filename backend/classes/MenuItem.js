@@ -1,12 +1,12 @@
 class MenuItem {
     constructor({ id = null, nombre, name, ingredientes, ingredients,
-        descripcion = '', description = '', img_src = null, disponible = true,
+        descripcion, description, img_src = null, disponible = true,
         available, precio, price, id_categoria, id_category,
         nombre_categoria = null, category_name = null } = {}) {
         this.id = id;
-        this.name = nombre ?? name;
-        this.ingredients = ingredientes ?? ingredients ?? '';
-        this.description = descripcion ?? description;
+        this.name = nombre || name;
+        this.ingredients = ingredientes || ingredients || '';
+        this.description = descripcion || description || '';
         this.imgSrc = img_src;
         this.available = Boolean(disponible ?? available);
         this.price = Number(precio ?? price);

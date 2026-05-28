@@ -1,10 +1,17 @@
 const repositorioMenu = require('../repositories/menuRepository');
 const MenuItem = require('../classes/MenuItem');
 
+exports.obtenerTodosItems = async () => {
+    const items = await repositorioMenu.getAllItems();
+    return items.map(i => i.toJSON());
+};
 
-exports.obtenerTodosItems = () => repositorioMenu.getAllItems();
 exports.obtenerCategorias = () => repositorioMenu.getAllCategories();
-exports.obtenerItemsPorCategoria = (idcategory) => repositorioMenu.getItemsByCategory(idcategory);
+
+exports.obtenerItemsPorCategoria = async (idcategory) => {
+    const items = await repositorioMenu.getItemsByCategory(idcategory);
+    return items.map(i => i.toJSON());
+};
 
 exports.crearItem = async (datos) => {
     if (!datos.name || !datos.price || !datos.id_category) {
@@ -27,7 +34,6 @@ exports.crearItem = async (datos) => {
 
     return { id, message: 'Plato insertado correctamente' };
 };
-
 
 exports.crearCategoria = async (name) => {
     if (!name) {
