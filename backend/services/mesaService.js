@@ -107,19 +107,19 @@ exports.reservarMesa = async (idUsuario, idReserva, idMesa) => {
     return { message: 'Mesa vinculada correctamente', id };
 };
 
-exports.crearMesa = async (name, nOcupantes) => {
-    if (!name || !nOcupantes) {
+exports.crearMesa = async (name, n_ocupantes) => {
+    if (!name || !n_ocupantes) {
         const error = new Error('Faltan name o n_ocupantes');
         error.status = 400;
         throw error;
     }
-    const mesa = new Mesa({ name, n_ocupantes: nOcupantes });
-    const id   = await repositorioMesa.insertMesa(mesa.name, mesa.nOcupantes);
+    const mesa = new Mesa({ name, n_ocupantes: n_ocupantes });
+    const id   = await repositorioMesa.insertMesa(mesa.name, mesa.n_ocupantes);
     return { message: 'Mesa creada correctamente', id };
 };
 
-exports.actualizarMesa = async (id, name, nOcupantes, activo) => {
-    const cambios = await repositorioMesa.updateMesa(id, name, Number(nOcupantes), activo ? 1 : 0);
+exports.actualizarMesa = async (id, name, n_ocupantes, activo) => {
+    const cambios = await repositorioMesa.updateMesa(id, name, Number(n_ocupantes), activo ? 1 : 0);
     if (cambios === 0) {
         const error = new Error('Mesa no encontrada');
         error.status = 404;
