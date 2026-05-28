@@ -59,7 +59,6 @@ async function eliminarPedido(pedido) {
         generarNotificacion('success', 'Pedido cancelado', `El pedido del ${pedido.created_at} ha sido cancelado correctamente.`);
         listaPedidos.value = await obtenerMisPedidos();
     } catch (err) {
-        console.error("Error al cancelar pedido:", err);
         generarNotificacion('error', 'Error al cancelar', 'No se pudo cancelar el pedido. Inténtalo más tarde.');
     }
 }
@@ -70,7 +69,6 @@ async function pararReserva(reserva) {
         generarNotificacion('success', 'Reserva cancelada', `Tu reserva para el día ${reserva.reserve_date} ha sido anulada.`);
         listaReservas.value = await misReservas();
     } catch (err) {
-        console.error("Error al cancelar reserva:", err);
         generarNotificacion('error', 'Error al cancelar', 'Hubo un problema al cancelar tu reserva.');
     }
 }

@@ -100,7 +100,6 @@ async function guardarUsuario() {
             message.error('Error al crear el usuario');
         }
     } catch (err) {
-        console.error(err);
         message.error('Error inesperado al intentar registrarse');
     } finally {
         cargandoRegistro.value = false;

@@ -85,7 +85,6 @@ const guardarResenia = async () => {
 
     } catch (err) {
         generarNotificacion('error', 'Error al publicar', 'Hubo un problema al conectar con el servidor. Inténtalo de nuevo.');
-        console.error(err);
     } finally {
         confirmLoading.value = false;
     }
