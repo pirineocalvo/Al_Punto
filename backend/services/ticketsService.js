@@ -9,8 +9,11 @@ async function analizarTicket(rutaImagen) {
 }
 
 function calcularPuntos(texto) {
-    const coincidencia = texto.match(/Total:\s*.*?(\d+(?:[.,]\d{1,2})?)\s*€/i);
-    return coincidencia ? parseFloat(coincidencia[1]) * 100 : 0;
+
+    const coincidencias = [...texto.matchAll(/([\d]+[.,][\d]{1,2})\s*€/gi)];
+    if (!coincidencias.length) return 0;
+    const total = parseFloat(coincidencias[coincidencias.length - 1][1].replace(',', '.'));
+    return Math.round(total * 100);
 }
 
 function extraerNombreRestaurante(texto) {
@@ -18,7 +21,9 @@ function extraerNombreRestaurante(texto) {
         .toUpperCase()
         .replace(/[\[\](){}|<>*#@!¡?¿"'\\\/\-_=+~^]/g, ' ')
         .replace(/\s+/g, ' ');
-    return RESTAURANTES_CONOCIDOS.find(n => limpio.includes(n.toUpperCase())) ?? null;
+    
+    const encontrado = RESTAURANTES_CONOCIDOS.find(n => limpio.includes(n.toUpperCase()));
+    return encontrado ?? null;
 }
 
 function detectarSubidaNivel(niveles, puntosAntes, puntosDespues) {
