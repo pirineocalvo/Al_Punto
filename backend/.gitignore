@@ -1,0 +1,6 @@
+node_modules
+db.db
+restaurante.db
+Dockerfile
+.dockerIgnore
+.env

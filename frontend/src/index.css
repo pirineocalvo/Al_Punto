@@ -1,0 +1,97 @@
+:root {
+    --color-principal: #D97742;
+
+    --color-menu-fondo: #3A2E2A;
+    --color-menu-texto: #FFECD1;
+
+    --color-footer-fondo: var(--color-menu-fondo);
+    --color-footer-texto: var(--color-menu-texto);
+
+    --transition-normal: 0.3s ease;
+
+    --color-fondo-blanco: #ffffff;
+    --color-fondo-naranja-suave: #FFF3E8;
+
+    --color-texto-oscuro: #1a1a1a;
+    --color-texto-secundario: #555555;
+    --color-texto-suave: #8c8c8c;
+
+    --color-acento-dorado: #E8C9A0;
+    --color-acento-marron: #a67c52;
+
+    --color-exito: #3A9E6F;
+    --color-exito-hover: #7de748;
+    --color-exito-active: #34850c;
+
+    --color-borde-suave: #f0f0f0;
+}
+
+.tarjetaInicioSesion{
+    min-height: 100vh;
+    width: 100%;
+    margin: 0;
+}
+
+.tarjetaInicioSesion .ant-form-item-row {
+    gap: 0 !important;
+}
+
+.tarjetaInicioSesion .ant-form-item-label {
+    padding: 0 0 4px 0 !important;
+}
+
+.tarjetaInicioSesion .ant-form-item {
+    margin-bottom: 16px !important;
+}
+
+.dashboardMainLayout {
+    min-height: calc(100vh - 70px);
+}
+
+.colocarContenedorPrincipalDashBoard {
+    flex:1;
+    padding: 32px;
+}
+
+.datosTituloAcordeon {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.tarjetaFooter {
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.botonMenuMovil {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    color: var(--color-menu-texto);
+    font-size: 20px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.botonMenuMovil:hover {
+    background-color: rgba(255, 245, 236, 0.1);
+    color: var(--color-principal);
+}
+
+.botonMenuMovil:active {
+    background-color: var(--color-principal);
+    color: var(--color-fondo-blanco);
+}
+
+.centrarSpin{
+    flex:1;
+}
